@@ -98,7 +98,6 @@ AUTHENTICATION_BACKENDS = (
 LANGUAGE_CODE = 'es-Es'
 TIME_ZONE = 'UTC'
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
@@ -111,11 +110,13 @@ DNS_DOMAIN = os.environ.get('DNS_DOMAIN')
 OWN_ADMIN = os.environ.get('OWN_ADMIN')
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 LANGUAGES = (
     ('es', _('Spanish')),
     ('en', _('English')),
     ('ja', _('Japanese')),
+    ('de', _('German')),
+    ('zh-hans', _('Simplified Chinese')),
 )
 
 LOCALE_PATHS = (

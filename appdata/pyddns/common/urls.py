@@ -1,13 +1,12 @@
-from django.conf.urls import url, include
+from django.urls import re_path
+
 from common.views import *
 
 urlpatterns = [
-    url(r'^logout/', logout, name="logout"),
-    url(r'^login/', login, name="login"),
-    url(r'^dologin/', dologin, name="dologin"),
-    url(r'^permission_denied', permission_denied, name="permission_denied"),
-    url(r'^sin_permiso', sin_permiso, name="sin_permiso"),
-    url(r'^$', login, name="login"),
+    re_path(r'^logout/', logout, name="logout"),
+    re_path(r'^login/', login, name="login"),
+    re_path(r'^dologin/', dologin, name="dologin"),
+    re_path(r'^permission_denied', permission_denied, name="permission_denied"),
+    re_path(r'^sin_permiso', sin_permiso, name="sin_permiso"),
+    re_path(r'^$', login, name="login"),
 ]
-
-
