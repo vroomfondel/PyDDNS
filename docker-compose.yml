@@ -85,6 +85,70 @@ services:
         condition: service_healthy
     networks:
       red:
+
+  # ---- Migration services (only run with COMPOSE_PROFILES=migration) ----
+  # It is for PYDDNS2 users who were running with postgres 9.6 and want to upgrade to the latest PYDDNS with postgres 15.
+
+  prep-migration:
+    image: alpine:3.20
+    volumes:
+      - ./data:/data
+    command: >
+      sh -c '
+      if [ ! -d /data/dbdata-old ] && [ -d /data/dbdata ]; then
+        mv /data/dbdata /data/dbdata-old &&
+        mkdir /data/dbdata &&
+        echo "==> Renamed data/dbdata to data/dbdata-old; created empty data/dbdata for postgres 15";
+      else
+        echo "==> Pre-migration setup already in place (dbdata-old exists or dbdata missing); skipping";
+      fi
+      '
+    profiles: ["migration"]
+
+  postgres-old:
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: '${DATABASE_PASS}'
+      POSTGRES_USER: '${DATABASE_NAME}'
+      POSTGRES_DB: '${DATABASE_USER}'
+    volumes:
+      - ./data/dbdata-old:/var/lib/postgresql/data
+    depends_on:
+      prep-migration:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    profiles: ["migration"]
+    networks:
+      red:
+
+  migrator:
+    image: postgres:15
+    environment:
+      PGPASSWORD: '${DATABASE_PASS}'
+      PGUSER: '${DATABASE_NAME}'
+    depends_on:
+      postgres-old:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    command: >
+      bash -c "
+      set -e;
+      echo '==> Dumping from postgres 9.6 (postgres-old)...';
+      pg_dump --clean --if-exists -h postgres-old -d '${DATABASE_USER}' > /tmp/dump.sql;
+      echo '==> Restoring into postgres 15 (postgres)...';
+      psql -h postgres -d '${DATABASE_USER}' -v ON_ERROR_STOP=1 -f /tmp/dump.sql;
+      echo '==> Migration complete!';
+      "
+    profiles: ["migration"]
+    networks:
+      red:
+
 networks:
   red:
 
