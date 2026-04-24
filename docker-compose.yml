@@ -37,6 +37,7 @@ services:
       DJANGO_SECRET_KEY: '${DJANGO_SECRET_KEY}'
       DJANGO_DEBUG: '${DJANGO_DEBUG}'
       DJANGO_ALLOWED_HOSTS: '${DJANGO_ALLOWED_HOSTS}'
+      DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE:-pyddns.settings.production}'
       OWN_ADMIN: '${OWN_ADMIN}'
       #MAX_DOMAINS_USER: '${MAX_DOMAINS_USER}'
     depends_on:
