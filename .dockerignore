@@ -1,0 +1,49 @@
+# Secrets
+.env
+.env-*
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Editor / IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Claude / local agent state
+.claude
+CLAUDE.md
+CLAUDE.local.md
+
+# Runtime data (DB, BIND zones, certs)
+data/
+
+# Frontend deps (mounted as volume, not baked into image)
+appdata/static/node_modules/
+
+# Python artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Django generated migrations (gitignored on purpose)
+appdata/pyddns/db.sqlite3
+appdata/pyddns/common/migrations/[0-9]*.py
+appdata/pyddns/pyddns/migrations/[0-9]*.py
+
+# Logs
+logs/
+*.log
+
+# Misc
+README.md
+LICENSE
+docs/
