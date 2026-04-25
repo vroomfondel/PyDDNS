@@ -180,6 +180,34 @@ class TestAddSubdomainView:
         data = json.loads(response.content)
         assert data['error'] == 'exist'
 
+    def test_anonymous_redirected(self, client, regular_user):
+        response = client.post(
+            reverse('add_subdomain'),
+            {'subdomain': 'foo', 'id_user': regular_user.id},
+        )
+        assert response.status_code in (301, 302)
+
+    @pytest.mark.parametrize('bad', [
+        'has space', '<script>', 'a&b=c', 'evil.example.com',
+        '-leadingdash', 'with_underscore', '',
+    ])
+    def test_invalid_subdomain_rejected(self, admin_client, admin_user, bad):
+        response = admin_client.post(
+            reverse('add_subdomain'),
+            {'subdomain': bad, 'id_user': admin_user.id},
+        )
+        data = json.loads(response.content)
+        assert data['error'] == 'invalid subdomain'
+        assert data['success'] is False
+
+    def test_invalid_user_id_rejected(self, admin_client):
+        response = admin_client.post(
+            reverse('add_subdomain'),
+            {'subdomain': 'valid', 'id_user': 999999},
+        )
+        data = json.loads(response.content)
+        assert data['error'] == 'invalid user'
+
 
 # =========================================================================
 # set_user view (admin only)
@@ -314,6 +342,24 @@ class TestSetIpWebView:
         data = json.loads(response.content)
         assert data['success'] is False  # nochg sets only message, not success
         mock_get.assert_not_called()
+
+    def test_anonymous_redirected_to_login(self, client):
+        response = client.get('/en/ip/update/whatever.ddns.example.com/1.2.3.4')
+        assert response.status_code in (301, 302)
+        assert 'login' in response['Location']
+
+    def test_invalid_ip_rejected(self, user_client, regular_user):
+        SubDomain.objects.create(name='myhost', user=regular_user)
+        response = user_client.get('/en/ip/update/myhost.ddns.example.com/not-an-ip')
+        data = json.loads(response.content)
+        assert data['success'] is False
+        assert 'invalid ip' in data['message']
+
+    def test_unknown_subdomain_does_not_500(self, user_client):
+        response = user_client.get('/en/ip/update/nonexistent.ddns.example.com/1.2.3.4')
+        data = json.loads(response.content)
+        assert data['success'] is False
+        assert 'unknown subdomain' in data['message']
 
 
 # =========================================================================

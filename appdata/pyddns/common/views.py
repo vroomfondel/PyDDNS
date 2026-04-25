@@ -9,7 +9,7 @@ from django.template  import RequestContext
 import json
 
 #from servers.models import Activity_log
-from common.utils import getForwardedFor
+from common.utils import get_client_ip
 from common.models import Activity_log
 from datetime import timedelta
 from django.utils import timezone
@@ -27,7 +27,7 @@ def dologin(request):
 	}
 	username=request.POST['username']
 	if request.session.test_cookie_worked():
-		cant_fails=Activity_log.objects.filter(action='DOLOGIN', xforward=getForwardedFor(request), date__gt=(timezone.now()-timedelta(minutes=10)), result__startswith='False').count()
+		cant_fails=Activity_log.objects.filter(action='DOLOGIN', xforward=get_client_ip(request), date__gt=(timezone.now()-timedelta(minutes=10)), result__startswith='False').count()
 		if cant_fails>=5:
 			myjson['errors']['reason']=u'Ha superado la cantidad máxima de intentos.'
 		else:
@@ -47,7 +47,7 @@ def dologin(request):
 				myjson['errors']['reason'] = 'Usuario y/o clave invalida.'
 	else:
 		myjson['errors']['reason'] = 'Por favor, habilite las Cookies en su navegador.'
-	Activity_log(action='DOLOGIN', xforward=getForwardedFor(request), user_affected=username, result="%s - %s"%(myjson['success'], myjson['errors']['reason'])).save()
+	Activity_log(action='DOLOGIN', xforward=get_client_ip(request), user_affected=username, result="%s - %s"%(myjson['success'], myjson['errors']['reason'])).save()
 
 	return HttpResponse(json.dumps(myjson))
 

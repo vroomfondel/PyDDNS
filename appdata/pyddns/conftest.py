@@ -1,6 +1,11 @@
 """Test environment defaults and shared fixtures."""
 import os
 
+# Force development settings for tests, regardless of what the container's
+# environment defines (production triggers SECURE_SSL_REDIRECT, HSTS, etc.,
+# which break Django's plain-HTTP test client).
+os.environ['DJANGO_SETTINGS_MODULE'] = 'pyddns.settings.development'
+
 os.environ.setdefault('DJANGO_SECRET_KEY', 'test-secret-key-not-for-production')
 os.environ.setdefault('DJANGO_DEBUG', '1')
 os.environ.setdefault('DJANGO_ALLOWED_HOSTS', 'testserver,localhost')

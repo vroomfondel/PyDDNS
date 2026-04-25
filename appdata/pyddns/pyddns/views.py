@@ -21,9 +21,11 @@ from django.conf import settings
 from django.utils import timezone
 from pyddns.models import SubDomain
 from django.db.models import Q
-from common.utils import getForwardedFor
+from common.utils import get_client_ip
 from django.contrib.auth.decorators import user_passes_test
 
+import ipaddress
+import re
 import socket
 import dns.resolver
 import logging
@@ -158,36 +160,42 @@ def add_user(request,id_user=None):
             pass
     return render(request,"add_user.html",{'user':user})
 
+SUBDOMAIN_RE = re.compile(r'^[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$')
+
+
+@login_required
 def add_subdomain(request):
     myjson = {
         'error': "",
         'success': False,
     }
 
-
     if "subdomain" in request.POST.keys():
-        subdomain=request.POST['subdomain']
-        id_user=request.POST['id_user']
+        subdomain = request.POST['subdomain']
+        id_user = request.POST['id_user']
 
-        user=User.objects.get(id=id_user)
+        if not SUBDOMAIN_RE.match(subdomain):
+            myjson['error'] = "invalid subdomain"
+            return HttpResponse(json.dumps(myjson))
+
         try:
-            subdomain=SubDomain.objects.get(name=subdomain)
-            myjson['error']= "exist"
-        except SubDomain.DoesNotExist:
-            admin=False
-            if request.user.is_superuser:
-                admin=True
-            user_login=request.user
+            user = User.objects.get(id=id_user)
+        except (User.DoesNotExist, ValueError):
+            myjson['error'] = "invalid user"
+            return HttpResponse(json.dumps(myjson))
 
-            if admin or user_login==user:
-                subdomain=SubDomain(
-                                        user=user,
-                                        name=subdomain
-                                    )
-                subdomain.save()
-                myjson['success']= True
+        try:
+            subdomain = SubDomain.objects.get(name=subdomain)
+            myjson['error'] = "exist"
+        except SubDomain.DoesNotExist:
+            admin = request.user.is_superuser
+            user_login = request.user
+
+            if admin or user_login == user:
+                SubDomain(user=user, name=subdomain).save()
+                myjson['success'] = True
             else:
-                myjson['error']= "Not permission"
+                myjson['error'] = "Not permission"
     return HttpResponse(json.dumps(myjson))
 
 
@@ -228,7 +236,7 @@ def set_user(request):
             user.is_superuser=is_admin
             user.save()
             myjson['success']= True
-        Activity_log(action='EDIT USER', xforward=getForwardedFor(request), user_affected=request.user, result="Edit User --> name: %s"%user).save()
+        Activity_log(action='EDIT USER', xforward=get_client_ip(request), user_affected=request.user, result="Edit User --> name: %s"%user).save()
 
 
     elif "id_user" in request.POST.keys():
@@ -252,7 +260,7 @@ def set_user(request):
             user.set_password(password)
         user.save()
         myjson['success']= True
-        Activity_log(action='SET USER', xforward=getForwardedFor(request), user_affected=request.user, result="Add User --> name: %s"%user).save()
+        Activity_log(action='SET USER', xforward=get_client_ip(request), user_affected=request.user, result="Add User --> name: %s"%user).save()
     else:
         myjson['error']= "No se pasaron los datos por post"
 
@@ -271,7 +279,7 @@ def delet_user(request):
         user= User.objects.get(id=request.POST['id_user'])
         user.delete()
         myjson['success']= True
-        Activity_log(action='DELET USER', xforward=getForwardedFor(request), user_affected=request.user, result="Delet User --> name: %s"%user).save()
+        Activity_log(action='DELET USER', xforward=get_client_ip(request), user_affected=request.user, result="Delet User --> name: %s"%user).save()
     else:
         myjson['error']= "No se pasaron los datos por post"
     return HttpResponse(json.dumps(myjson))
@@ -292,7 +300,7 @@ def delet_domain(request):
         if request.user.is_superuser or request.user==domain_user:
             domain.delete()
             myjson['success']= True
-            Activity_log(action='DELET DOMAIN', xforward=getForwardedFor(request), user_affected=domain_user, result="Delet domain --> name: %s"%domain_name).save()
+            Activity_log(action='DELET DOMAIN', xforward=get_client_ip(request), user_affected=domain_user, result="Delet domain --> name: %s"%domain_name).save()
         else:
             myjson['error']= "permission"
     else:
@@ -301,25 +309,37 @@ def delet_domain(request):
 
 
 
-def set_ip_web(request,domain,ip):
+@login_required
+def set_ip_web(request, domain, ip):
     myjson = {
         'message': '',
         'success': False,
     }
 
-    admin=False
-    user=request.user
-    if user.is_superuser:
-        admin=True
-
-    #print "Dominio"
-    #print domain
-    subdomain=domain.split(".")[0]
-    subdomain_obj=SubDomain.objects.get(name=subdomain)
     try:
-        check_valid_subdomain=SubDomain.objects.get(user=user,name=subdomain)
+        ipaddress.ip_address(ip)
+    except ValueError:
+        myjson['message'] = 'invalid ip'
+        return HttpResponse(json.dumps(myjson))
+
+    subdomain = domain.split(".")[0]
+    if not SUBDOMAIN_RE.match(subdomain):
+        myjson['message'] = 'invalid subdomain'
+        return HttpResponse(json.dumps(myjson))
+
+    user = request.user
+    admin = user.is_superuser
+
+    try:
+        subdomain_obj = SubDomain.objects.get(name=subdomain)
     except SubDomain.DoesNotExist:
-        check_valid_subdomain=False
+        myjson['message'] = 'unknown subdomain'
+        return HttpResponse(json.dumps(myjson))
+
+    try:
+        check_valid_subdomain = SubDomain.objects.get(user=user, name=subdomain)
+    except SubDomain.DoesNotExist:
+        check_valid_subdomain = False
 
     if check_valid_subdomain or admin:
 
@@ -359,35 +379,29 @@ def set_ip_web(request,domain,ip):
 
 
 
-def set_ip(request,domain,ip):
-
-
-    #FOR TEST - DIG
-    # ----------------------
+def set_ip(request, domain, ip):
     resolver = dns.resolver.Resolver()
-    resolver.nameservers=[socket.gethostbyname('ddns')]
+    resolver.nameservers = [socket.gethostbyname('ddns')]
     try:
         ip_dig = resolver.resolve(domain, "A")[0]
-    except:
-        ip_dig=None
+    except Exception:
+        ip_dig = None
 
     if str(ip_dig) != str(ip):
-        message=""
-        subdomain=domain.split(".")[0]
-        #print 'http://%s:%s/update?secret=%s&domain=%s&addr=%s'%(settings.DNS_HOST,settings.DNS_API_PORT,settings.DNS_SHARED_SECRET,subdomain,ip)
-        r = requests.get('http://%s:%s/update?secret=%s&domain=%s&addr=%s'%(settings.DNS_HOST,settings.DNS_API_PORT,settings.DNS_SHARED_SECRET,subdomain,ip))
-        #print r.json()
-        #print r.json()['Success']
+        subdomain = domain.split(".")[0]
+        r = requests.get(
+            'http://%s:%s/update' % (settings.DNS_HOST, settings.DNS_API_PORT),
+            params={
+                'secret': settings.DNS_SHARED_SECRET,
+                'domain': subdomain,
+                'addr': ip,
+            },
+            timeout=10,
+        )
         if r.json()['Success']:
-            return_code = "good"
-            message = "The updatewas successful and the hostname is now updated"
-        else:
-            return_code = "dnserr"
-            message = "The APP not sinc bind"
-        #print return_code
-        return return_code, message
-    else:
-        return "nochg", "It already exists"
+            return "good", "The update was successful and the hostname is now updated"
+        return "dnserr", "The APP not sinc bind"
+    return "nochg", "It already exists"
 
 
 
@@ -429,12 +443,13 @@ def updateip(request):
             if 'HTTP_AUTHORIZATION' in request.META:
                 auth = request.META['HTTP_AUTHORIZATION'].split()
                 if len(auth) == 2:
-                    logger.info(auth)
-                    logger.info(auth[0].lower())
-                    logger.info(auth[1])
-
                     if auth[0].lower() == "basic":
-                        username, passwd = base64.b64decode(auth[1]).decode("utf-8", "ignore").split(':')
+                        try:
+                            username, passwd = base64.b64decode(auth[1]).decode("utf-8", "ignore").split(':', 1)
+                        except (ValueError, base64.binascii.Error):
+                            username, passwd = "", ""
+                        if settings.DEBUG:
+                            logger.debug("dyndns2 auth attempt user=%r", username)
                         user = authenticate(username=username, password=passwd)
                         if user is not None and user.is_active:
 
