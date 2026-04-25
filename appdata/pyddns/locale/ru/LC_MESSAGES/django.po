@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:56+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Панель"
@@ -57,8 +67,127 @@ msgstr "Вход..."
 msgid "Sign in"
 msgstr "Войти"
 
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"
+
 msgid "self-hosted on your homelab"
 msgstr "self-hosted на вашем домашнем сервере"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "Пароль обновлён"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr "Ваш пароль успешно изменён. Теперь вы можете войти с новыми данными."
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "Установить новый пароль"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr ""
+"Выберите надёжный пароль — минимум 8 символов с буквами, цифрами и "
+"символами."
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "Новый пароль"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "Подтвердите новый пароль"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "Установить пароль"
+
+msgid "Link expired or invalid"
+msgstr "Ссылка истекла или недействительна"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr ""
+"Эта ссылка для сброса пароля больше не действительна. Запросите новую."
+
+msgid "Request a new link"
+msgstr "Запросить новую ссылку"
+
+msgid "Check your inbox"
+msgstr "Проверьте почту"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr ""
+"Если для этого email есть учётная запись, мы отправили инструкции по сбросу "
+"пароля. Проверьте входящие (и папку спам)."
+
+msgid "Back to sign in"
+msgstr "Вернуться ко входу"
+
+msgid "Reset your PyDDNS password"
+msgstr "Сброс пароля PyDDNS"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "Сбросить пароль"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr ""
+"Привет, %(user)s, кто-то запросил сброс пароля для вашей учётной записи "
+"PyDDNS. Нажмите кнопку ниже, чтобы выбрать новый пароль."
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr "Если кнопка не работает, скопируйте эту ссылку в браузер:"
+
+msgid "This link will expire in a few hours for security."
+msgstr "Эта ссылка истечёт через несколько часов в целях безопасности."
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr ""
+"Если вы не запрашивали это, можете спокойно проигнорировать письмо — пароль "
+"не изменится."
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "Self-hosted Динамический DNS"
+
+#, python-format
+msgid "Hi %(user)s,"
+msgstr "Привет, %(user)s,"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr ""
+"Вы получили это письмо, потому что кто-то запросил сброс пароля для вашей "
+"учётной записи PyDDNS."
+
+msgid "Click the link below to choose a new password:"
+msgstr "Нажмите на ссылку ниже, чтобы выбрать новый пароль:"
+
+msgid "Thanks,"
+msgstr "Спасибо,"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "Сброс пароля"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr "Введите свой email и мы отправим ссылку для установки нового пароля."
+
+msgid "Email address"
+msgstr "Адрес электронной почты"
+
+msgid "Send reset link"
+msgstr "Отправить ссылку"
 
 msgid "Access denied"
 msgstr "Доступ запрещён"
@@ -356,6 +485,11 @@ msgstr "Показать домены"
 
 msgid "Never"
 msgstr "Никогда"
+
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "Войти"
 
 msgid "Edit"
 msgstr "Редакт."

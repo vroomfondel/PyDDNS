@@ -55,6 +55,7 @@ Point a delegated subdomain at your server, create user accounts, and let users 
 - 🔑 **Token-authenticated REST API** (optional, opt-in) — full CRUD over users, subdomains, activity log, with per-token revocation
 - 👥 **Multi-user, multi-domain** — admin panel, per-user subdomains, role-based permissions, soft-delete prevention for the current user
 - 🎭 **Admin impersonation** — superusers can sign in as any active account (with a sticky banner and full audit trail) for support and debugging without needing the user's password
+- 📧 **Password reset by email** (toggleable) — built-in self-service flow with localized email templates. Operators that prefer admin-controlled credentials can disable it with a single env var
 - 🎨 **Modern dark UI** — responsive Django templates + Alpine.js, no SPA build pipeline. Amber accent palette, Inter for UI, JetBrains Mono for technical data
 - 🌍 **8 languages out of the box** — 🇺🇸 English · 🇪🇸 Spanish · 🇧🇷 Portuguese (Brazilian) · 🇫🇷 French · 🇩🇪 German · 🇷🇺 Russian · 🇯🇵 Japanese · 🇨🇳 Chinese (Simplified). Browser auto-detection, in-app picker, or operator-locked mode
 - 🔐 **Production-grade security** — Argon2id password hashing (PBKDF2 fallback), HSTS, secure cookies, CSP-friendly, hardened headers, env-driven secrets, brute-force throttle (per-IP and per-user), input validation
@@ -141,6 +142,11 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
 | `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist for `/nic/update` | ➖ |
 | `ENABLE_REST_API` | Set to `1` to expose Token-authenticated `/api/` endpoints (off by default) | ➖ |
+| `EMAIL_HOST` / `_PORT` / `_HOST_USER` / `_HOST_PASSWORD` | SMTP credentials. Empty `EMAIL_HOST` = log emails to stderr instead of sending (zero-config in dev) | ➖ |
+| `EMAIL_USE_TLS` / `EMAIL_USE_SSL` | Enable STARTTLS or SSL on the SMTP socket (defaults: TLS on) | ➖ |
+| `EMAIL_FROM` | `From:` header used by outgoing mail (default: `PyDDNS <noreply@<DNS_DOMAIN>>`) | ➖ |
+| `SITE_URL` | Absolute base URL used by email templates for clickable links | ➖ |
+| `ALLOW_PASSWORD_RESET` | `1` (default) = users can reset their own passwords via email. `0` = admin-only: reset URLs return 404 and the "Forgot your password?" link is hidden | ➖ |
 | `COMPOSE_PROFILES` | Set to `migration` to run the Postgres 9.6 → 15 upgrade flow | ➖ |
 
 ### Development mode
@@ -233,6 +239,31 @@ curl -X POST https://ddns.example.com/api/auth/token/revoke/ \
 - `GET POST /api/users/` and `GET PUT DELETE /api/users/{id}/` (admin only)
 
 The classic `/nic/update` (`dyndns2`) endpoint stays available regardless — `ddclient` and friends keep working.
+
+---
+
+## 📧 Email & password reset
+
+PyDDNS ships with a self-service password-reset flow built on Django's signed tokens. Behaviour is controlled by two env vars:
+
+- **`EMAIL_HOST`** — leave empty to log outgoing emails to stderr (handy in dev). Set to your SMTP host (Mailgun, SendGrid, your own postfix, etc.) to actually deliver. Set the related `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_FROM` and `SITE_URL` accordingly.
+- **`ALLOW_PASSWORD_RESET`** — `1` by default. Set to `0` for admin-controlled credentials: the reset URLs disappear (404) and the "Forgot your password?" link is hidden. Only superusers can change passwords via the Users admin in that mode.
+
+Email templates (HTML + plain text) are localized in all 8 supported languages — a request from `/fr/` lands in French, `/ja/` in Japanese, etc.
+
+```ini
+# Example for Mailgun
+EMAIL_HOST=smtp.mailgun.org
+EMAIL_PORT=587
+EMAIL_HOST_USER=postmaster@mg.example.com
+EMAIL_HOST_PASSWORD=key-...
+EMAIL_USE_TLS=1
+EMAIL_FROM=PyDDNS <noreply@example.com>
+SITE_URL=https://ddns.example.com
+ALLOW_PASSWORD_RESET=1
+```
+
+> **Note**: changes to `.env` require `docker compose up -d --force-recreate python` to take effect — `restart` only reloads code.
 
 ---
 

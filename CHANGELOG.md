@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Password reset by email** — self-service flow with localized emails
+  (HTML + plain text in all 8 supported locales). Plugs into Django's
+  signed-token mechanism. SMTP via standard `EMAIL_HOST` etc., or zero-config
+  console backend in dev.
+- **`ALLOW_PASSWORD_RESET` toggle** — operators that prefer admin-controlled
+  credentials can disable the entire flow with a single env var. URLs return
+  404 and the "Forgot your password?" link disappears from login.
 - **Modernized UI** — full template rewrite from the legacy Bootstrap layout
   to a responsive dark theme with amber accents, Inter for UI text and
   JetBrains Mono for technical data (FQDNs, IPs, return codes). Powered by

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:56+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Painel"
@@ -58,8 +68,128 @@ msgstr "Entrando..."
 msgid "Sign in"
 msgstr "Entrar"
 
+msgid "Forgot your password?"
+msgstr "Esqueceu sua senha?"
+
 msgid "self-hosted on your homelab"
 msgstr "auto-hospedado no seu homelab"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "Senha atualizada"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr ""
+"Sua senha foi alterada com sucesso. Você já pode entrar com as novas "
+"credenciais."
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "Definir uma nova senha"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr ""
+"Escolha uma senha forte — pelo menos 8 caracteres, misturando letras, "
+"números e símbolos."
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "Nova senha"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "Confirmar nova senha"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "Definir senha"
+
+msgid "Link expired or invalid"
+msgstr "Link inválido ou expirado"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr "Este link não é mais válido. Solicite um novo."
+
+msgid "Request a new link"
+msgstr "Solicitar novo link"
+
+msgid "Check your inbox"
+msgstr "Verifique seu inbox"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr ""
+"Se existir uma conta com esse email, enviamos instruções para redefinir a "
+"senha. Verifique seu inbox (e a pasta de spam)."
+
+msgid "Back to sign in"
+msgstr "Voltar para entrar"
+
+msgid "Reset your PyDDNS password"
+msgstr "Redefina sua senha do PyDDNS"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "Redefinir sua senha"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr ""
+"Olá %(user)s, alguém solicitou a redefinição da senha da sua conta PyDDNS. "
+"Clique no botão abaixo para escolher uma nova senha."
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr "Se o botão não funcionar, copie e cole esta URL no seu navegador:"
+
+msgid "This link will expire in a few hours for security."
+msgstr "Este link expira em algumas horas por segurança."
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr ""
+"Se você não solicitou isso, pode ignorar este email — sua senha não será "
+"alterada."
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "DNS Dinâmico auto-hospedado"
+
+#, python-format
+msgid "Hi %(user)s,"
+msgstr "Olá %(user)s,"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr ""
+"Você está recebendo este email porque alguém solicitou a redefinição da "
+"senha da sua conta PyDDNS."
+
+msgid "Click the link below to choose a new password:"
+msgstr "Clique no link abaixo para escolher uma nova senha:"
+
+msgid "Thanks,"
+msgstr "Obrigado,"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "Redefinir senha"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr "Insira seu email e enviaremos um link para criar uma nova senha."
+
+msgid "Email address"
+msgstr "Endereço de email"
+
+msgid "Send reset link"
+msgstr "Enviar link"
 
 msgid "Access denied"
 msgstr "Acesso negado"
@@ -359,6 +489,11 @@ msgstr "Ver domínios"
 
 msgid "Never"
 msgstr "Nunca"
+
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "Entrar"
 
 msgid "Edit"
 msgstr "Editar"

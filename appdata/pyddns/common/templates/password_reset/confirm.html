@@ -1,0 +1,72 @@
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Set a new password" %} — PyDDNS{% endblock %}
+
+{% block body %}
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand" style="margin-bottom: 14px;"><div class="brand-text"><b>Py</b>DDNS</div></div>
+
+    {% if validlink %}
+      <h1>{% trans "Set a new password" %}</h1>
+      <p class="lead">{% trans "Choose a strong password — at least 8 characters, mixing letters, numbers and symbols." %}</p>
+
+      <form class="row" method="post" x-data="{ show: false }">
+        {% csrf_token %}
+
+        <div class="field">
+          <label for="id_new_password1">{% trans "New password" %}</label>
+          <div class="input-row">
+            <input id="id_new_password1" name="new_password1" :type="show ? 'text' : 'password'" class="input" autocomplete="new-password" required autofocus>
+            <button type="button" class="input-row-btn" @click="show = !show" style="background: var(--surface-2); color: var(--text-muted); border-left: 1px solid var(--line-soft);">
+              <svg class="icon" x-show="!show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="icon" x-show="show" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-6 0-10-7-10-7a18.5 18.5 0 0 1 4.22-4.85"/>
+                <path d="M9.9 4.24A10 10 0 0 1 12 4c6 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="id_new_password2">{% trans "Confirm new password" %}</label>
+          <input id="id_new_password2" name="new_password2" :type="show ? 'text' : 'password'" class="input" autocomplete="new-password" required>
+        </div>
+
+        {% if form.errors %}
+          <div role="alert" style="background: oklch(from var(--bad) l c h / 0.12); border: 1px solid oklch(from var(--bad) l c h / 0.3); color: var(--bad); padding: 10px 12px; border-radius: var(--r-ctl); font-size: 13px;">
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}{{ error }}<br>{% endfor %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="justify-content: center; padding: 11px 14px;">
+          {% trans "Set password" %}
+        </button>
+      </form>
+    {% else %}
+      <div style="text-align: center;">
+        <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+          <div class="em-icon" style="width: 56px; height: 56px; color: var(--bad); border-color: oklch(from var(--bad) l c h / 0.3); background: oklch(from var(--bad) l c h / 0.1);">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+        </div>
+        <h1 style="margin: 0 0 6px;">{% trans "Link expired or invalid" %}</h1>
+        <p class="lead" style="margin-bottom: 22px;">{% trans "This password reset link is no longer valid. Please request a new one." %}</p>
+        <a href="{% url 'common:password_reset' %}" class="btn btn-primary" style="display: inline-flex;">
+          {% trans "Request a new link" %}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% include "_footer.html" %}
+</div>
+{% endblock %}

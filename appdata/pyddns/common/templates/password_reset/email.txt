@@ -1,0 +1,14 @@
+{% load i18n %}{% blocktrans %}Hi {{ user }},{% endblocktrans %}
+
+{% blocktrans %}You're receiving this email because someone requested a password reset for your PyDDNS account.{% endblocktrans %}
+
+{% trans "Click the link below to choose a new password:" %}
+
+{{ protocol }}://{{ domain }}{% url 'common:password_reset_confirm' uidb64=uid token=token %}
+
+{% trans "If you didn't request this, you can safely ignore this email — your password won't change." %}
+
+{% trans "This link will expire in a few hours for security." %}
+
+{% trans "Thanks," %}
+PyDDNS

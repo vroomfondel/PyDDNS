@@ -1,0 +1,59 @@
+{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% trans "Reset your PyDDNS password" %}</title>
+</head>
+<body style="margin:0; padding:0; background:#1a1d24; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color:#e8e9ed;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background:#1a1d24; padding: 32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" style="max-width:560px; background:#23262e; border:1px solid #2c2f37; border-radius:16px;">
+          <tr>
+            <td style="padding: 28px 32px 8px;">
+              <div style="font-size:18px; font-weight:700; color:#e8e9ed; letter-spacing:-0.01em;">
+                <span style="color:#e8b75a;">Py</span>DDNS
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 32px 0;">
+              <h1 style="margin:0 0 8px; font-size:22px; font-weight:600; letter-spacing:-0.01em; color:#fff;">
+                {% trans "Reset your password" %}
+              </h1>
+              <p style="margin:0 0 16px; color:#bdbfc6; font-size:15px; line-height:1.5;">
+                {% blocktrans %}Hi {{ user }}, someone requested a password reset for your PyDDNS account. Click the button below to choose a new password.{% endblocktrans %}
+              </p>
+              <p style="margin:24px 0; text-align:center;">
+                <a href="{{ protocol }}://{{ domain }}{% url 'common:password_reset_confirm' uidb64=uid token=token %}"
+                   style="display:inline-block; background:#e8b75a; color:#3a2a06; text-decoration:none; font-weight:600; padding:12px 24px; border-radius:10px; font-size:14px;">
+                  {% trans "Set a new password" %}
+                </a>
+              </p>
+              <p style="margin:0 0 16px; color:#8a8d96; font-size:13px; line-height:1.5;">
+                {% trans "If the button doesn't work, copy and paste this URL into your browser:" %}
+                <br>
+                <span style="color:#bdbfc6; font-family: 'JetBrains Mono', Menlo, Consolas, monospace; word-break:break-all;">{{ protocol }}://{{ domain }}{% url 'common:password_reset_confirm' uidb64=uid token=token %}</span>
+              </p>
+              <p style="margin:0 0 4px; color:#8a8d96; font-size:13px; line-height:1.5;">
+                {% trans "This link will expire in a few hours for security." %}
+              </p>
+              <p style="margin:0; color:#8a8d96; font-size:13px; line-height:1.5;">
+                {% trans "If you didn't request this, you can safely ignore this email — your password won't change." %}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 24px 32px 28px; border-top:1px solid #2c2f37; margin-top:24px;">
+              <p style="margin:16px 0 0; color:#6f717a; font-size:12px; line-height:1.5;">
+                PyDDNS · {% trans "Self-hosted Dynamic DNS" %} · <a href="https://github.com/olimpo88/PyDDNS" style="color:#bdbfc6; text-decoration:none;">github.com/olimpo88/PyDDNS</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

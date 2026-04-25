@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:56+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
@@ -59,8 +69,133 @@ msgstr "Connexion..."
 msgid "Sign in"
 msgstr "Se connecter"
 
+msgid "Forgot your password?"
+msgstr "Mot de passe oublié ?"
+
 msgid "self-hosted on your homelab"
 msgstr "auto-hébergé sur ton homelab"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "Mot de passe mis à jour"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr ""
+"Ton mot de passe a été changé avec succès. Tu peux maintenant te connecter "
+"avec les nouveaux identifiants."
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "Définir un nouveau mot de passe"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr ""
+"Choisis un mot de passe fort — au moins 8 caractères, mélangeant lettres, "
+"chiffres et symboles."
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "Confirmer le nouveau mot de passe"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "Définir le mot de passe"
+
+msgid "Link expired or invalid"
+msgstr "Lien expiré ou invalide"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr "Ce lien de réinitialisation n'est plus valide. Demande-en un nouveau."
+
+msgid "Request a new link"
+msgstr "Demander un nouveau lien"
+
+msgid "Check your inbox"
+msgstr "Vérifie ta boîte de réception"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr ""
+"Si un compte existe pour cette adresse email, nous avons envoyé les "
+"instructions pour réinitialiser le mot de passe. Vérifie ta boîte (et le "
+"dossier spam)."
+
+msgid "Back to sign in"
+msgstr "Retour à la connexion"
+
+msgid "Reset your PyDDNS password"
+msgstr "Réinitialise ton mot de passe PyDDNS"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "Réinitialiser ton mot de passe"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr ""
+"Salut %(user)s, quelqu'un a demandé une réinitialisation de mot de passe "
+"pour ton compte PyDDNS. Clique sur le bouton ci-dessous pour choisir un "
+"nouveau mot de passe."
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr ""
+"Si le bouton ne fonctionne pas, copie-colle cette URL dans ton navigateur :"
+
+msgid "This link will expire in a few hours for security."
+msgstr "Ce lien expirera dans quelques heures pour des raisons de sécurité."
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr ""
+"Si tu n'es pas à l'origine de cette demande, ignore simplement cet email — "
+"ton mot de passe ne changera pas."
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "DNS dynamique auto-hébergé"
+
+#, python-format
+msgid "Hi %(user)s,"
+msgstr "Salut %(user)s,"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr ""
+"Tu reçois cet email parce que quelqu'un a demandé une réinitialisation de "
+"mot de passe pour ton compte PyDDNS."
+
+msgid "Click the link below to choose a new password:"
+msgstr "Clique sur le lien ci-dessous pour choisir un nouveau mot de passe :"
+
+msgid "Thanks,"
+msgstr "Merci,"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr ""
+"Saisis ton email et nous t'enverrons un lien pour définir un nouveau mot de "
+"passe."
+
+msgid "Email address"
+msgstr "Adresse email"
+
+msgid "Send reset link"
+msgstr "Envoyer le lien"
 
 msgid "Access denied"
 msgstr "Accès refusé"
@@ -364,6 +499,11 @@ msgstr "Voir les domaines"
 
 msgid "Never"
 msgstr "Jamais"
+
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "Se connecter"
 
 msgid "Edit"
 msgstr "Modifier"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:52+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
 msgid "Dashboard"
 msgstr "仪表板"
 
 msgid "Users"
 msgstr "用户"
 
-#| msgid "My domains"
 msgid "All domains"
 msgstr "所有域名"
 
@@ -46,11 +55,9 @@ msgstr "用户名"
 msgid "Password"
 msgstr "密码"
 
-#| msgid "Password"
 msgid "Hide password"
 msgstr "隐藏密码"
 
-#| msgid "Password"
 msgid "Show password"
 msgstr "显示密码"
 
@@ -60,13 +67,121 @@ msgstr "登录中..."
 msgid "Sign in"
 msgstr "登录"
 
+msgid "Forgot your password?"
+msgstr "忘记密码?"
+
 msgid "self-hosted on your homelab"
 msgstr "自托管于您的家庭实验室"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "密码已更新"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr "您的密码已成功更改。现在您可以使用新凭据登录。"
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "设置新密码"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr "选择强密码 — 至少 8 个字符,混合字母、数字和符号。"
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "新密码"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "确认新密码"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "设置密码"
+
+msgid "Link expired or invalid"
+msgstr "链接已过期或无效"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr "此密码重置链接不再有效。请请求一个新链接。"
+
+msgid "Request a new link"
+msgstr "请求新链接"
+
+msgid "Check your inbox"
+msgstr "请查看收件箱"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr "如果该电子邮件地址存在账户,我们已发送密码重置说明。请查看收件箱(以及垃圾邮件文件夹)。"
+
+msgid "Back to sign in"
+msgstr "返回登录"
+
+msgid "Reset your PyDDNS password"
+msgstr "重置您的 PyDDNS 密码"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "重置您的密码"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr "您好 %(user)s,有人请求重置您 PyDDNS 账户的密码。点击下面的按钮选择新密码。"
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr "如果按钮不起作用,请将此 URL 复制并粘贴到您的浏览器中:"
+
+msgid "This link will expire in a few hours for security."
+msgstr "出于安全考虑,此链接将在几小时后过期。"
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr "如果您未发起此请求,可以放心地忽略此电子邮件 — 您的密码不会更改。"
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "自托管动态 DNS"
+
+#, python-format
+#| msgid "Admin users"
+msgid "Hi %(user)s,"
+msgstr "您好 %(user)s,"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr "您收到此电子邮件是因为有人请求重置您 PyDDNS 账户的密码。"
+
+msgid "Click the link below to choose a new password:"
+msgstr "点击下面的链接选择新密码:"
+
+msgid "Thanks,"
+msgstr "谢谢,"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "重置密码"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr "输入您的电子邮件,我们将发送链接来设置新密码。"
+
+msgid "Email address"
+msgstr "电子邮件地址"
+
+msgid "Send reset link"
+msgstr "发送链接"
 
 msgid "Access denied"
 msgstr "访问被拒绝"
 
-#| msgid "You do not have permission to see this page"
 msgid "You do not have permission to see this page."
 msgstr "您没有权限查看此页面。"
 
@@ -82,7 +197,16 @@ msgstr "英语"
 msgid "Japanese"
 msgstr "日语"
 
+msgid "Brazilian Portuguese"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
 msgid "German"
+msgstr ""
+
+msgid "Russian"
 msgstr ""
 
 msgid "Simplified Chinese"
@@ -94,7 +218,6 @@ msgstr "编辑用户"
 msgid "Add user"
 msgstr "添加用户"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Username must be at least 2 characters"
 msgstr "用户名至少需要 2 个字符"
 
@@ -104,15 +227,12 @@ msgstr "名是必填的"
 msgid "A valid email is required"
 msgstr "需要有效的电子邮件"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Password must be at least 8 characters"
 msgstr "密码至少需要 8 个字符"
 
-#| msgid "Username"
 msgid "User saved"
 msgstr "用户已保存"
 
-#| msgid " already exists"
 msgid "Username already exists"
 msgstr "用户名已存在"
 
@@ -125,7 +245,6 @@ msgstr "更新资料、密码或管理员权限。"
 msgid "Create a new account that can manage its own subdomains."
 msgstr "创建一个可以管理自己子域名的新账户。"
 
-#| msgid "Last name"
 msgid "First name"
 msgstr "名"
 
@@ -156,47 +275,39 @@ msgstr "保存"
 msgid "Copied to clipboard"
 msgstr "已复制到剪贴板"
 
-#| msgid "Subdomain name "
 msgid "Subdomain added"
 msgstr "子域名已添加"
 
 msgid "Detecting IP..."
 msgstr "正在检测 IP..."
 
-#| msgid "Last update"
 msgid "IP updated"
 msgstr "IP 已更新"
 
-#| msgid "Subdomain name "
 msgid "Subdomain removed"
 msgstr "子域名已删除"
 
-#| msgid "Welcome"
 msgid "Welcome back"
 msgstr "欢迎回来"
 
-#| msgid "Dashboard of the user "
 msgid "Dashboard of"
 msgstr "用户仪表板:"
 
 msgid "Your dynamic DNS records on"
 msgstr "您在以下位置的动态 DNS 记录:"
 
-#| msgid "Subdomain name "
 msgid "Subdomain"
 msgstr "子域名"
 
 msgid "Add"
 msgstr "添加"
 
-#| msgid "Your current IP is"
 msgid "Your current public IP"
 msgstr "您当前的公网 IP"
 
 msgid "Auto-detected"
 msgstr "自动检测"
 
-#| msgid "Subdomain name "
 msgid "Subdomains"
 msgstr "子域名"
 
@@ -227,7 +338,6 @@ msgstr "指向您当前 IP 的子域名"
 msgid "synced"
 msgstr "已同步"
 
-#| msgid "Last update"
 msgid "gap = no update"
 msgstr "间隔 = 无更新"
 
@@ -243,7 +353,6 @@ msgstr "同步"
 msgid "Delete"
 msgstr "删除"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains yet"
 msgstr "暂无子域名"
 
@@ -289,11 +398,9 @@ msgstr "请将 'your-password' 替换为您登录 PyDDNS 使用的密码。"
 msgid "Admin"
 msgstr "管理员"
 
-#| msgid "Superuser"
 msgid "Superuser shortcuts."
 msgstr "超级用户快捷方式。"
 
-#| msgid "Search subdomain"
 msgid "Delete subdomain?"
 msgstr "删除子域名?"
 
@@ -313,7 +420,6 @@ msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
 msgstr[0] "%(counter)s 个子域名,位于 <span class=\"mono\">%(domain)s</span>"
 msgstr[1] "%(counter)s 个子域名,位于 <span class=\"mono\">%(domain)s</span>"
 
-#| msgid "Search user"
 msgid "Search"
 msgstr "搜索"
 
@@ -332,7 +438,6 @@ msgstr "上次更新"
 msgid "active"
 msgstr "活动"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains found"
 msgstr "未找到子域名"
 
@@ -342,7 +447,6 @@ msgstr "尝试其他搜索词。"
 msgid "Subdomains will appear here when users create them."
 msgstr "用户创建子域名后将显示在这里。"
 
-#| msgid "Username"
 msgid "User removed"
 msgstr "用户已删除"
 
@@ -355,26 +459,26 @@ msgstr "权限"
 msgid "Domains"
 msgstr "域名"
 
-#| msgid "Last name"
 msgid "Last sync"
 msgstr "上次同步"
 
-#| msgid "Admin"
 msgid "admin"
 msgstr "管理员"
 
-#| msgid "Add user"
 msgid "user"
 msgstr "用户"
 
-#| msgid "My domains"
 msgid "View domains"
 msgstr "查看域名"
 
 msgid "Never"
 msgstr "从未"
 
-#| msgid "Edit user"
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "登录"
+
 msgid "Edit"
 msgstr "编辑"
 
@@ -488,9 +592,6 @@ msgstr "及其所有子域名。此操作无法撤销。"
 
 #~ msgid "Contact email"
 #~ msgstr "联系电子邮箱"
-
-#~ msgid "Admin users"
-#~ msgstr "管理用户"
 
 #~ msgid "Last Name"
 #~ msgstr "姓"

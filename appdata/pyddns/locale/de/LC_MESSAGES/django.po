@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:52+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: 2021-05-29 20:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,13 +18,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.3\n"
 
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
 msgid "Dashboard"
 msgstr "Dashboard"
 
 msgid "Users"
 msgstr "Benutzer"
 
-#| msgid "My domains"
 msgid "All domains"
 msgstr "Alle Domains"
 
@@ -48,11 +57,9 @@ msgstr "Benutzername"
 msgid "Password"
 msgstr "Passwort"
 
-#| msgid "Password"
 msgid "Hide password"
 msgstr "Passwort verbergen"
 
-#| msgid "Password"
 msgid "Show password"
 msgstr "Passwort anzeigen"
 
@@ -62,13 +69,137 @@ msgstr "Anmeldung läuft..."
 msgid "Sign in"
 msgstr "Anmelden"
 
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
 msgid "self-hosted on your homelab"
 msgstr "selbst gehostet in deinem Homelab"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "Passwort aktualisiert"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr ""
+"Dein Passwort wurde erfolgreich geändert. Du kannst dich jetzt mit den neuen"
+" Zugangsdaten anmelden."
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "Neues Passwort festlegen"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr ""
+"Wähle ein starkes Passwort — mindestens 8 Zeichen mit Buchstaben, Zahlen und"
+" Symbolen."
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "Neues Passwort"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "Neues Passwort bestätigen"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "Passwort setzen"
+
+msgid "Link expired or invalid"
+msgstr "Link abgelaufen oder ungültig"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr "Dieser Link ist nicht mehr gültig. Fordere einen neuen an."
+
+msgid "Request a new link"
+msgstr "Neuen Link anfordern"
+
+msgid "Check your inbox"
+msgstr "Schau in dein Postfach"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr ""
+"Falls für diese E-Mail-Adresse ein Konto existiert, haben wir dir "
+"Anweisungen zum Zurücksetzen geschickt. Schau in dein Postfach (und in den "
+"Spam-Ordner)."
+
+msgid "Back to sign in"
+msgstr "Zurück zur Anmeldung"
+
+msgid "Reset your PyDDNS password"
+msgstr "Setze dein PyDDNS-Passwort zurück"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "Setze dein Passwort zurück"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr ""
+"Hallo %(user)s, jemand hat ein Zurücksetzen des Passworts für dein PyDDNS-"
+"Konto angefordert. Klick unten, um ein neues Passwort zu wählen."
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr ""
+"Falls der Button nicht funktioniert, kopiere diese URL in deinen Browser:"
+
+msgid "This link will expire in a few hours for security."
+msgstr "Dieser Link läuft aus Sicherheitsgründen in wenigen Stunden ab."
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr ""
+"Falls du das nicht angefordert hast, kannst du diese E-Mail ignorieren — "
+"dein Passwort bleibt gleich."
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "Self-hosted Dynamic DNS"
+
+#, python-format
+#| msgid "Admin users"
+msgid "Hi %(user)s,"
+msgstr "Hallo %(user)s,"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr ""
+"Du erhältst diese E-Mail, weil jemand für dein PyDDNS-Konto ein Zurücksetzen"
+" des Passworts angefordert hat."
+
+msgid "Click the link below to choose a new password:"
+msgstr "Klicke auf den Link unten, um ein neues Passwort zu wählen:"
+
+msgid "Thanks,"
+msgstr "Danke,"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "Passwort zurücksetzen"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr ""
+"Gib deine E-Mail ein und wir senden dir einen Link zum Setzen eines neuen "
+"Passworts."
+
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "Send reset link"
+msgstr "Link senden"
 
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#| msgid "You do not have permission to see this page"
 msgid "You do not have permission to see this page."
 msgstr "Du hast keine Berechtigung, diese Seite zu sehen."
 
@@ -84,7 +215,16 @@ msgstr "Englisch"
 msgid "Japanese"
 msgstr "Japanisch"
 
+msgid "Brazilian Portuguese"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
 msgid "German"
+msgstr ""
+
+msgid "Russian"
 msgstr ""
 
 msgid "Simplified Chinese"
@@ -96,7 +236,6 @@ msgstr "Benutzer bearbeiten"
 msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Username must be at least 2 characters"
 msgstr "Der Benutzername muss mindestens 2 Zeichen lang sein"
 
@@ -106,15 +245,12 @@ msgstr "Vorname ist erforderlich"
 msgid "A valid email is required"
 msgstr "Eine gültige E-Mail ist erforderlich"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Password must be at least 8 characters"
 msgstr "Das Passwort muss mindestens 8 Zeichen lang sein"
 
-#| msgid "Username"
 msgid "User saved"
 msgstr "Benutzer gespeichert"
 
-#| msgid " already exists"
 msgid "Username already exists"
 msgstr "Benutzername existiert bereits"
 
@@ -128,7 +264,6 @@ msgid "Create a new account that can manage its own subdomains."
 msgstr ""
 "Erstelle ein neues Konto, das seine eigenen Subdomains verwalten kann."
 
-#| msgid "Last name"
 msgid "First name"
 msgstr "Vorname"
 
@@ -159,47 +294,39 @@ msgstr "Speichern"
 msgid "Copied to clipboard"
 msgstr "In die Zwischenablage kopiert"
 
-#| msgid "Subdomain name "
 msgid "Subdomain added"
 msgstr "Subdomain hinzugefügt"
 
 msgid "Detecting IP..."
 msgstr "IP wird erkannt..."
 
-#| msgid "Last update"
 msgid "IP updated"
 msgstr "IP aktualisiert"
 
-#| msgid "Subdomain name "
 msgid "Subdomain removed"
 msgstr "Subdomain entfernt"
 
-#| msgid "Welcome"
 msgid "Welcome back"
 msgstr "Willkommen zurück"
 
-#| msgid "Dashboard of the user "
 msgid "Dashboard of"
 msgstr "Dashboard von"
 
 msgid "Your dynamic DNS records on"
 msgstr "Deine dynamischen DNS-Einträge auf"
 
-#| msgid "Subdomain name "
 msgid "Subdomain"
 msgstr "Subdomain"
 
 msgid "Add"
 msgstr "Hinzufügen"
 
-#| msgid "Your current IP is"
 msgid "Your current public IP"
 msgstr "Deine aktuelle öffentliche IP"
 
 msgid "Auto-detected"
 msgstr "Automatisch erkannt"
 
-#| msgid "Subdomain name "
 msgid "Subdomains"
 msgstr "Subdomains"
 
@@ -230,7 +357,6 @@ msgstr "Subdomains, die auf deine aktuelle IP zeigen"
 msgid "synced"
 msgstr "synchronisiert"
 
-#| msgid "Last update"
 msgid "gap = no update"
 msgstr "Lücke = kein Update"
 
@@ -246,7 +372,6 @@ msgstr "Synchronisieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains yet"
 msgstr "Noch keine Subdomains"
 
@@ -296,11 +421,9 @@ msgstr ""
 msgid "Admin"
 msgstr "Admin"
 
-#| msgid "Superuser"
 msgid "Superuser shortcuts."
 msgstr "Superuser-Verknüpfungen."
 
-#| msgid "Search subdomain"
 msgid "Delete subdomain?"
 msgstr "Subdomain löschen?"
 
@@ -320,7 +443,6 @@ msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
 msgstr[0] "%(counter)s Subdomain in <span class=\"mono\">%(domain)s</span>"
 msgstr[1] "%(counter)s Subdomains in <span class=\"mono\">%(domain)s</span>"
 
-#| msgid "Search user"
 msgid "Search"
 msgstr "Suchen"
 
@@ -339,7 +461,6 @@ msgstr "Letztes Update"
 msgid "active"
 msgstr "aktiv"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains found"
 msgstr "Keine Subdomains gefunden"
 
@@ -349,7 +470,6 @@ msgstr "Versuch einen anderen Suchbegriff."
 msgid "Subdomains will appear here when users create them."
 msgstr "Subdomains erscheinen hier, sobald Benutzer welche erstellen."
 
-#| msgid "Username"
 msgid "User removed"
 msgstr "Benutzer entfernt"
 
@@ -362,26 +482,26 @@ msgstr "Berechtigungen"
 msgid "Domains"
 msgstr "Domains"
 
-#| msgid "Last name"
 msgid "Last sync"
 msgstr "Letzter Sync"
 
-#| msgid "Admin"
 msgid "admin"
 msgstr "Admin"
 
-#| msgid "Add user"
 msgid "user"
 msgstr "Benutzer"
 
-#| msgid "My domains"
 msgid "View domains"
 msgstr "Domains anzeigen"
 
 msgid "Never"
 msgstr "Nie"
 
-#| msgid "Edit user"
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "Anmelden"
+
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -495,9 +615,6 @@ msgstr "und alle Subdomains. Das kann nicht rückgängig gemacht werden."
 
 #~ msgid "Contact email"
 #~ msgstr "Kontakt-eMail"
-
-#~ msgid "Admin users"
-#~ msgstr "Admin-Benutzer"
 
 #~ msgid "Last Name"
 #~ msgstr "Nachname"

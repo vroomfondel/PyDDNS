@@ -142,6 +142,33 @@ DNS_ALLOW_AGENT = os.environ.get('DNS_ALLOW_AGENT')
 DNS_DOMAIN = os.environ.get('DNS_DOMAIN')
 OWN_ADMIN = os.environ.get('OWN_ADMIN')
 
+# ── Email ─────────────────────────────────────────────────────────────────
+# When EMAIL_HOST is set, real SMTP is used; otherwise emails are written
+# to the container stderr (console backend), which is convenient for dev
+# and harmless in production deployments that don't need notifications.
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '').strip()
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '1').lower() in ('1', 'true', 'yes')
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', '0').lower() in ('1', 'true', 'yes')
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_FROM', f'PyDDNS <noreply@{DNS_DOMAIN or "localhost"}>')
+
+if EMAIL_HOST:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# When False, the self-service password-reset flow (URLs + login link)
+# is hidden and only admins can change passwords via the Users page.
+ALLOW_PASSWORD_RESET = os.environ.get('ALLOW_PASSWORD_RESET', '1').lower() in ('1', 'true', 'yes')
+
+# Used by password-reset emails to build absolute links. Falls back to
+# DNS_DOMAIN; tweakable per-deployment if you serve the UI from a different
+# hostname than the DDNS zone.
+SITE_URL = os.environ.get('SITE_URL', f'https://{DNS_DOMAIN or "localhost"}').rstrip('/')
+
 
 from django.utils.translation import gettext_lazy as _
 

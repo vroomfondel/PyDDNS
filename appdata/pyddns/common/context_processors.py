@@ -21,4 +21,5 @@ def site_context(request):
         'LANGUAGE_LOCKED': getattr(settings, 'LANGUAGE_LOCKED', False),
         'IS_IMPERSONATING': bool(impersonator),
         'IMPERSONATOR': impersonator,
+        'ALLOW_PASSWORD_RESET': getattr(settings, 'ALLOW_PASSWORD_RESET', True),
     }

@@ -1,0 +1,25 @@
+{% extends "_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Password updated" %} — PyDDNS{% endblock %}
+
+{% block body %}
+<div class="login-wrap">
+  <div class="login-card" style="text-align: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+      <div class="em-icon" style="width: 56px; height: 56px; color: var(--good); border-color: oklch(from var(--good) l c h / 0.4); background: oklch(from var(--good) l c h / 0.1);">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+    </div>
+    <h1 style="margin: 0 0 6px;">{% trans "Password updated" %}</h1>
+    <p class="lead" style="margin-bottom: 22px;">{% trans "Your password has been changed successfully. You can now sign in with the new credentials." %}</p>
+    <a href="{% url 'common:login' %}" class="btn btn-primary" style="display: inline-flex;">
+      {% trans "Sign in" %} →
+    </a>
+  </div>
+
+  {% include "_footer.html" %}
+</div>
+{% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 10:52+0000\n"
+"POT-Creation-Date: 2026-04-25 12:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#, python-format
+msgid "Acting as <b>%(target)s</b> · You are <b>%(admin)s</b>"
+msgstr ""
+
+msgid "Return to admin"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
 msgid "Dashboard"
 msgstr "ダッシュボード"
 
 msgid "Users"
 msgstr "ユーザー"
 
-#| msgid "My domains"
 msgid "All domains"
 msgstr "すべてのドメイン"
 
@@ -46,11 +55,9 @@ msgstr "ユーザー名"
 msgid "Password"
 msgstr "パスワード"
 
-#| msgid "Password"
 msgid "Hide password"
 msgstr "パスワードを非表示"
 
-#| msgid "Password"
 msgid "Show password"
 msgstr "パスワードを表示"
 
@@ -60,13 +67,123 @@ msgstr "サインイン中..."
 msgid "Sign in"
 msgstr "サインイン"
 
+msgid "Forgot your password?"
+msgstr "パスワードを忘れましたか?"
+
 msgid "self-hosted on your homelab"
 msgstr "ホームラボでセルフホスト"
+
+#| msgid "IP updated"
+msgid "Password updated"
+msgstr "パスワードを更新しました"
+
+msgid ""
+"Your password has been changed successfully. You can now sign in with the "
+"new credentials."
+msgstr "パスワードが正常に変更されました。新しい認証情報でサインインできます。"
+
+#| msgid "Show password"
+msgid "Set a new password"
+msgstr "新しいパスワードを設定"
+
+msgid ""
+"Choose a strong password — at least 8 characters, mixing letters, numbers "
+"and symbols."
+msgstr "強いパスワードを選択してください — 文字、数字、記号を含む8文字以上。"
+
+#| msgid "Show password"
+msgid "New password"
+msgstr "新しいパスワード"
+
+#| msgid "Show password"
+msgid "Confirm new password"
+msgstr "新しいパスワードの確認"
+
+#| msgid "Hide password"
+msgid "Set password"
+msgstr "パスワードを設定"
+
+msgid "Link expired or invalid"
+msgstr "リンクが無効または期限切れ"
+
+msgid "This password reset link is no longer valid. Please request a new one."
+msgstr "このパスワードリセットリンクは無効です。新しいリンクをリクエストしてください。"
+
+msgid "Request a new link"
+msgstr "新しいリンクをリクエスト"
+
+msgid "Check your inbox"
+msgstr "受信トレイをご確認ください"
+
+msgid ""
+"If an account exists for that email address, we've sent instructions to "
+"reset your password. Please check your inbox (and your spam folder)."
+msgstr ""
+"そのメールアドレスのアカウントが存在する場合、パスワードリセットの手順をお送りしました。受信トレイ(および迷惑メールフォルダ)をご確認ください。"
+
+msgid "Back to sign in"
+msgstr "サインインに戻る"
+
+msgid "Reset your PyDDNS password"
+msgstr "PyDDNSのパスワードをリセット"
+
+#| msgid "Hide password"
+msgid "Reset your password"
+msgstr "パスワードをリセット"
+
+#, python-format
+msgid ""
+"Hi %(user)s, someone requested a password reset for your PyDDNS account. "
+"Click the button below to choose a new password."
+msgstr ""
+"%(user)s さん、PyDDNSアカウントのパスワードリセットがリクエストされました。下のボタンをクリックして新しいパスワードを選択してください。"
+
+msgid "If the button doesn't work, copy and paste this URL into your browser:"
+msgstr "ボタンが動作しない場合は、このURLをブラウザにコピーして貼り付けてください:"
+
+msgid "This link will expire in a few hours for security."
+msgstr "このリンクはセキュリティのため数時間で期限切れになります。"
+
+msgid ""
+"If you didn't request this, you can safely ignore this email — your password"
+" won't change."
+msgstr "リクエストした覚えがない場合は、このメールを無視しても問題ありません — パスワードは変更されません。"
+
+msgid "Self-hosted Dynamic DNS"
+msgstr "セルフホスト型ダイナミックDNS"
+
+#, python-format
+#| msgid "Admin users"
+msgid "Hi %(user)s,"
+msgstr "%(user)s さん、"
+
+msgid ""
+"You're receiving this email because someone requested a password reset for "
+"your PyDDNS account."
+msgstr "PyDDNSアカウントのパスワードリセットがリクエストされたため、このメールをお送りしています。"
+
+msgid "Click the link below to choose a new password:"
+msgstr "下のリンクをクリックして新しいパスワードを選択してください:"
+
+msgid "Thanks,"
+msgstr "よろしくお願いします、"
+
+#| msgid "Hide password"
+msgid "Reset password"
+msgstr "パスワードリセット"
+
+msgid "Enter your email and we'll send a link to set a new password."
+msgstr "メールアドレスを入力すると、新しいパスワードを設定するリンクをお送りします。"
+
+msgid "Email address"
+msgstr "メールアドレス"
+
+msgid "Send reset link"
+msgstr "リンクを送信"
 
 msgid "Access denied"
 msgstr "アクセス拒否"
 
-#| msgid "You do not have permission to delete the subdomain"
 msgid "You do not have permission to see this page."
 msgstr "このページを表示する権限がありません。"
 
@@ -82,7 +199,16 @@ msgstr "英語"
 msgid "Japanese"
 msgstr "日本語"
 
+msgid "Brazilian Portuguese"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
 msgid "German"
+msgstr ""
+
+msgid "Russian"
 msgstr ""
 
 msgid "Simplified Chinese"
@@ -94,7 +220,6 @@ msgstr "ユーザーを編集"
 msgid "Add user"
 msgstr "ユーザーを追加"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Username must be at least 2 characters"
 msgstr "ユーザー名は2文字以上である必要があります"
 
@@ -104,15 +229,12 @@ msgstr "名は必須です"
 msgid "A valid email is required"
 msgstr "有効なメールアドレスが必要です"
 
-#| msgid "Please enter a password of at least 8 characters"
 msgid "Password must be at least 8 characters"
 msgstr "パスワードは8文字以上である必要があります"
 
-#| msgid "Username"
 msgid "User saved"
 msgstr "ユーザーを保存しました"
 
-#| msgid " already exists"
 msgid "Username already exists"
 msgstr "このユーザー名は既に存在します"
 
@@ -125,7 +247,6 @@ msgstr "プロフィール、パスワード、または管理者権限を更新
 msgid "Create a new account that can manage its own subdomains."
 msgstr "自分のサブドメインを管理できる新しいアカウントを作成します。"
 
-#| msgid "Last name"
 msgid "First name"
 msgstr "名"
 
@@ -156,47 +277,39 @@ msgstr "保存"
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
-#| msgid "Subdomain name "
 msgid "Subdomain added"
 msgstr "サブドメインを追加しました"
 
 msgid "Detecting IP..."
 msgstr "IPを検出中..."
 
-#| msgid "Last update"
 msgid "IP updated"
 msgstr "IPを更新しました"
 
-#| msgid "Subdomain name "
 msgid "Subdomain removed"
 msgstr "サブドメインを削除しました"
 
-#| msgid "Welcome"
 msgid "Welcome back"
 msgstr "おかえりなさい"
 
-#| msgid "Dashboard of the user "
 msgid "Dashboard of"
 msgstr "ユーザーのダッシュボード:"
 
 msgid "Your dynamic DNS records on"
 msgstr "ダイナミックDNSレコード("
 
-#| msgid "Subdomain name "
 msgid "Subdomain"
 msgstr "サブドメイン"
 
 msgid "Add"
 msgstr "追加"
 
-#| msgid "Your current IP is"
 msgid "Your current public IP"
 msgstr "現在のパブリックIP"
 
 msgid "Auto-detected"
 msgstr "自動検出"
 
-#| msgid "Subdomain name "
 msgid "Subdomains"
 msgstr "サブドメイン"
 
@@ -227,7 +340,6 @@ msgstr "現在のIPを指すサブドメイン"
 msgid "synced"
 msgstr "同期済み"
 
-#| msgid "Last update"
 msgid "gap = no update"
 msgstr "ギャップ = 更新なし"
 
@@ -243,7 +355,6 @@ msgstr "同期"
 msgid "Delete"
 msgstr "削除"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains yet"
 msgstr "サブドメインはまだありません"
 
@@ -289,11 +400,9 @@ msgstr "'your-password'をPyDDNSにサインインするパスワードに置き
 msgid "Admin"
 msgstr "管理者"
 
-#| msgid "Superuser"
 msgid "Superuser shortcuts."
 msgstr "スーパーユーザーのショートカット。"
 
-#| msgid "Search subdomain"
 msgid "Delete subdomain?"
 msgstr "サブドメインを削除しますか?"
 
@@ -313,7 +422,6 @@ msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
 msgstr[0] "%(counter)sサブドメイン (<span class=\"mono\">%(domain)s</span>)"
 msgstr[1] "%(counter)sサブドメイン (<span class=\"mono\">%(domain)s</span>)"
 
-#| msgid "Search user"
 msgid "Search"
 msgstr "検索"
 
@@ -332,7 +440,6 @@ msgstr "最終更新"
 msgid "active"
 msgstr "アクティブ"
 
-#| msgid "Admin subdomains"
 msgid "No subdomains found"
 msgstr "サブドメインが見つかりません"
 
@@ -342,7 +449,6 @@ msgstr "別の検索キーワードを試してください。"
 msgid "Subdomains will appear here when users create them."
 msgstr "ユーザーがサブドメインを作成するとここに表示されます。"
 
-#| msgid "Username"
 msgid "User removed"
 msgstr "ユーザーを削除しました"
 
@@ -355,26 +461,26 @@ msgstr "権限"
 msgid "Domains"
 msgstr "ドメイン"
 
-#| msgid "Last name"
 msgid "Last sync"
 msgstr "最終同期"
 
-#| msgid "Admin"
 msgid "admin"
 msgstr "管理者"
 
-#| msgid "Add user"
 msgid "user"
 msgstr "ユーザー"
 
-#| msgid "My domains"
 msgid "View domains"
 msgstr "ドメインを表示"
 
 msgid "Never"
 msgstr "なし"
 
-#| msgid "Edit user"
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign in as"
+msgstr "サインイン"
+
 msgid "Edit"
 msgstr "編集"
 
@@ -486,9 +592,6 @@ msgstr "とそのすべてのサブドメインが削除されます。この操
 
 #~ msgid "Contact email"
 #~ msgstr "連絡メールアドレス"
-
-#~ msgid "Admin users"
-#~ msgstr "ユーザー管理"
 
 #~ msgid "Last Name"
 #~ msgstr "名字"
