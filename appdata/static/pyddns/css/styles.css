@@ -573,7 +573,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .login-card .lead { color: var(--text-muted); margin: 0 0 22px; font-size: 14px; }
 .login-card .row { display: flex; flex-direction: column; gap: 14px; }
 
-/* Lang toggle */
+/* Lang toggle (legacy, kept for any consumer still using <form class="lang">) */
 .lang {
   display: inline-flex; background: var(--surface-2);
   border: 1px solid var(--line-soft); border-radius: var(--r-pill);
@@ -585,6 +585,51 @@ input, select, textarea { font-family: inherit; color: inherit; }
   font-size: 12px; font-weight: 600; border-radius: var(--r-pill);
 }
 .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* Lang picker (dropdown) */
+.lang-picker { position: relative; display: inline-block; }
+.lang-trigger {
+  appearance: none; background: var(--surface-2); border: 1px solid var(--line-soft);
+  color: var(--text-muted);
+  padding: 6px 10px; border-radius: var(--r-pill);
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600;
+}
+.lang-trigger:hover { color: var(--text); border-color: var(--line); }
+.lang-trigger[aria-expanded="true"] { color: var(--text); border-color: var(--accent); }
+
+.lang-menu {
+  position: absolute; right: 0; top: calc(100% + 6px);
+  min-width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: 0 12px 32px oklch(0 0 0 / 0.35);
+  padding: 6px;
+  z-index: 30;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.lang-item {
+  appearance: none; border: 0; background: transparent; color: var(--text-muted);
+  display: grid; grid-template-columns: 28px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px;
+  text-align: left; font-size: 13px; font-weight: 500;
+  width: 100%;
+}
+.lang-item:hover { background: var(--surface-2); color: var(--text); }
+.lang-item[aria-selected="true"] { color: var(--accent); }
+.lang-item[aria-selected="true"]:hover { background: var(--accent-soft); }
+.lang-item .lang-code {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--text-dim); letter-spacing: 0.04em;
+}
+.lang-item[aria-selected="true"] .lang-code { color: var(--accent); }
+.lang-item .lang-check { width: 14px; height: 14px; color: var(--accent); }
+
+@media (max-width: 600px) {
+  .lang-menu { right: 0; min-width: 200px; }
+}
 
 /* Section grid */
 .grid-2 { display: grid; gap: 16px; grid-template-columns: 2fr 1fr; }

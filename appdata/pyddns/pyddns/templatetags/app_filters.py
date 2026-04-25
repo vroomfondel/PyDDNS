@@ -97,6 +97,23 @@ def last_user_sync(user):
         return None
 
 
+@register.simple_tag(takes_context=True)
+def path_without_lang(context):
+    """Return the request path with any leading language prefix stripped.
+
+    Used by the language picker as the `next` field so Django's set_language
+    view redirects to a prefix-less URL; LocaleMiddleware then re-applies the
+    just-chosen language. (Django's translate_url cannot rewrite the prefix
+    on its own when the source URL's language differs from the active one.)
+    """
+    from django.utils.translation.trans_real import get_language_from_path
+    path = context['request'].path
+    lang = get_language_from_path(path)
+    if lang:
+        return path[len(lang) + 1:] or '/'
+    return path
+
+
 @register.filter(name='code_class')
 def code_class(code):
     """Map dyndns2 return codes to a CSS class for the activity log pills."""

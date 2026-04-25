@@ -118,7 +118,17 @@ AUTHENTICATION_BACKENDS = (
 
 
 # Internationalization
-LANGUAGE_CODE = os.environ.get('DJANGO_LANGUAGE_CODE', 'es-es')
+#
+# DJANGO_LANGUAGE_CODE controls the i18n mode:
+#   - empty / unset → international mode: LocaleMiddleware auto-detects from
+#     Accept-Language and the user can switch via the language picker. EN
+#     is the fallback when nothing matches.
+#   - non-empty (e.g. "es", "fr", "pt-br") → locked mode: every page is
+#     served in that language. The picker is hidden. Other locale URLs
+#     (/de/..., /ja/...) return 404.
+_LOCKED = (os.environ.get('DJANGO_LANGUAGE_CODE') or '').strip().lower()
+LANGUAGE_LOCKED = bool(_LOCKED)
+LANGUAGE_CODE = _LOCKED if LANGUAGE_LOCKED else 'en'
 TIME_ZONE = os.environ.get('DJANGO_TIME_ZONE', 'UTC')
 USE_I18N = True
 USE_TZ = True
@@ -134,13 +144,34 @@ OWN_ADMIN = os.environ.get('OWN_ADMIN')
 
 
 from django.utils.translation import gettext_lazy as _
-LANGUAGES = (
+
+_ALL_LANGUAGES = (
     ('es', _('Spanish')),
     ('en', _('English')),
-    ('ja', _('Japanese')),
+    ('pt-br', _('Brazilian Portuguese')),
+    ('fr', _('French')),
     ('de', _('German')),
+    ('ru', _('Russian')),
+    ('ja', _('Japanese')),
     ('zh-hans', _('Simplified Chinese')),
 )
+
+if LANGUAGE_LOCKED:
+    # Accept exact match first ('es' or 'pt-br'); fall back to the base
+    # language part so 'es-es', 'pt-BR', 'fr-FR' all resolve sensibly.
+    _matched = [(c, n) for c, n in _ALL_LANGUAGES if c == LANGUAGE_CODE]
+    if not _matched:
+        _base = LANGUAGE_CODE.split('-')[0]
+        _matched = [(c, n) for c, n in _ALL_LANGUAGES if c == _base]
+    if not _matched:
+        raise RuntimeError(
+            f'DJANGO_LANGUAGE_CODE={LANGUAGE_CODE!r} is not a supported locale. '
+            f'Supported: {[c for c, _n in _ALL_LANGUAGES]}'
+        )
+    LANGUAGE_CODE = _matched[0][0]  # canonicalize to the entry's own code
+    LANGUAGES = tuple(_matched)
+else:
+    LANGUAGES = _ALL_LANGUAGES
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),

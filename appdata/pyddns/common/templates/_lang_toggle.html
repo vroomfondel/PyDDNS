@@ -1,14 +1,39 @@
-{% load i18n %}
+{% load i18n %}{% load app_filters %}
+{% if not LANGUAGE_LOCKED %}
 {% get_available_languages as LANGUAGES %}
 {% get_current_language as CURRENT_LANG %}
-<form action="{% url 'set_language' %}" method="post" class="lang" role="group" aria-label="Language" style="margin: 0;">
-  {% csrf_token %}
-  <input name="next" type="hidden" value="{{ request.path }}">
-  {% for lang_code, lang_name in LANGUAGES %}
-    {% with code_short=lang_code|slice:':2'|upper %}
-      <button name="language" value="{{ lang_code }}" type="submit"
-              title="{{ lang_name }}"
-              aria-pressed="{% if CURRENT_LANG|slice:':2' == lang_code|slice:':2' %}true{% else %}false{% endif %}">{{ code_short }}</button>
-    {% endwith %}
-  {% endfor %}
-</form>
+{% path_without_lang as NEXT_PATH %}
+<div class="lang-picker" x-data="{ open: false }" @keydown.escape="open = false" @click.away="open = false">
+  <button type="button" class="lang-trigger" @click="open = !open"
+          :aria-expanded="open" aria-haspopup="listbox" title="{% trans 'Language' %}">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+    </svg>
+    <span>{{ CURRENT_LANG|slice:':2'|upper }}</span>
+    <svg class="icon" style="width: 12px; height: 12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </button>
+
+  <form action="{% url 'set_language' %}" method="post" class="lang-menu" role="listbox"
+        x-show="open" x-cloak x-transition.opacity.duration.120ms>
+    {% csrf_token %}
+    <input name="next" type="hidden" value="{{ NEXT_PATH }}">
+    {% for lang_code, lang_name in LANGUAGES %}
+      {% with code_short=lang_code|slice:':2'|upper %}
+      <button type="submit" name="language" value="{{ lang_code }}" class="lang-item"
+              role="option"
+              {% if CURRENT_LANG|slice:':2' == lang_code|slice:':2' %}aria-selected="true"{% endif %}>
+        <span class="lang-code">{{ code_short }}</span>
+        <span class="lang-name">{{ lang_name }}</span>
+        {% if CURRENT_LANG|slice:':2' == lang_code|slice:':2' %}
+          <svg class="icon lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        {% endif %}
+      </button>
+      {% endwith %}
+    {% endfor %}
+  </form>
+</div>
+{% endif %}

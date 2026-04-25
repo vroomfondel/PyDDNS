@@ -1,0 +1,384 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-25 10:56+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Users"
+msgstr ""
+
+msgid "All domains"
+msgstr "Tous les domaines"
+
+msgid "Sign out"
+msgstr "Se déconnecter"
+
+msgid "Sign in to PyDDNS"
+msgstr "Se connecter à PyDDNS"
+
+msgid "Network error"
+msgstr "Erreur réseau"
+
+msgid "Welcome back. Sign in to manage your dynamic DNS records."
+msgstr ""
+"Content de te revoir. Connecte-toi pour gérer tes enregistrements DNS "
+"dynamiques."
+
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
+
+msgid "Show password"
+msgstr "Afficher le mot de passe"
+
+msgid "Signing in..."
+msgstr "Connexion..."
+
+msgid "Sign in"
+msgstr "Se connecter"
+
+msgid "self-hosted on your homelab"
+msgstr "auto-hébergé sur ton homelab"
+
+msgid "Access denied"
+msgstr "Accès refusé"
+
+msgid "You do not have permission to see this page."
+msgstr "Tu n'as pas la permission de voir cette page."
+
+msgid "Back"
+msgstr "Retour"
+
+msgid "Spanish"
+msgstr ""
+
+msgid "English"
+msgstr ""
+
+msgid "Japanese"
+msgstr ""
+
+msgid "Brazilian Portuguese"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "German"
+msgstr ""
+
+msgid "Russian"
+msgstr ""
+
+msgid "Simplified Chinese"
+msgstr ""
+
+msgid "Edit user"
+msgstr "Modifier l'utilisateur"
+
+msgid "Add user"
+msgstr "Ajouter un utilisateur"
+
+msgid "Username must be at least 2 characters"
+msgstr "Le nom d'utilisateur doit comporter au moins 2 caractères"
+
+msgid "First name is required"
+msgstr "Le prénom est obligatoire"
+
+msgid "A valid email is required"
+msgstr "Un email valide est obligatoire"
+
+msgid "Password must be at least 8 characters"
+msgstr "Le mot de passe doit comporter au moins 8 caractères"
+
+msgid "User saved"
+msgstr "Utilisateur enregistré"
+
+msgid "Username already exists"
+msgstr "Le nom d'utilisateur existe déjà"
+
+msgid "Failed"
+msgstr "Échecs"
+
+msgid "Update profile, password, or admin permission."
+msgstr "Mettre à jour le profil, le mot de passe ou les permissions admin."
+
+msgid "Create a new account that can manage its own subdomains."
+msgstr "Crée un nouveau compte capable de gérer ses propres sous-domaines."
+
+msgid "First name"
+msgstr "Prénom"
+
+msgid "Last name"
+msgstr "Nom"
+
+msgid "Email"
+msgstr ""
+
+msgid "(leave blank to keep current)"
+msgstr "(laisse vide pour conserver l'actuel)"
+
+msgid "Administrator"
+msgstr "Administrateur"
+
+msgid "Permissions: full access to users and all subdomains."
+msgstr ""
+"Permissions : accès complet aux utilisateurs et à tous les sous-domaines."
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Saving..."
+msgstr "Enregistrement..."
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Copied to clipboard"
+msgstr "Copié dans le presse-papiers"
+
+msgid "Subdomain added"
+msgstr "Sous-domaine ajouté"
+
+msgid "Detecting IP..."
+msgstr "Détection de l'IP..."
+
+msgid "IP updated"
+msgstr "IP mise à jour"
+
+msgid "Subdomain removed"
+msgstr "Sous-domaine supprimé"
+
+msgid "Welcome back"
+msgstr "Content de te revoir"
+
+msgid "Dashboard of"
+msgstr "Tableau de bord de"
+
+msgid "Your dynamic DNS records on"
+msgstr "Tes enregistrements DNS dynamiques sur"
+
+msgid "Subdomain"
+msgstr "Sous-domaine"
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Your current public IP"
+msgstr "Ton IP publique actuelle"
+
+msgid "Auto-detected"
+msgstr "Détectée automatiquement"
+
+msgid "Subdomains"
+msgstr "Sous-domaines"
+
+msgid "in your account"
+msgstr "dans ton compte"
+
+msgid "Syncs (24h)"
+msgstr "Syncs (24h)"
+
+#, python-format
+msgid "across %(counter)s host"
+msgid_plural "across %(counter)s hosts"
+msgstr[0] "sur %(counter)s hôte"
+msgstr[1] "sur %(counter)s hôtes"
+
+msgid "check agent"
+msgstr "vérifier l'agent"
+
+msgid "all good"
+msgstr "tout va bien"
+
+msgid "My domains"
+msgstr "Mes domaines"
+
+msgid "Subdomains pointing at your current IP"
+msgstr "Sous-domaines pointant vers ton IP actuelle"
+
+msgid "synced"
+msgstr "synchronisé"
+
+msgid "gap = no update"
+msgstr "écart = pas de mise à jour"
+
+msgid "Copy"
+msgstr "Copier"
+
+msgid "ago"
+msgstr "il y a"
+
+msgid "Sync"
+msgstr "Sync"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "No subdomains yet"
+msgstr "Aucun sous-domaine pour l'instant"
+
+msgid "Add your first subdomain above to start syncing your IP."
+msgstr ""
+"Ajoute ton premier sous-domaine ci-dessus pour commencer à synchroniser ton "
+"IP."
+
+msgid "Recent activity"
+msgstr "Activité récente"
+
+msgid "Last sync attempts across your account"
+msgstr "Dernières tentatives de synchronisation de ton compte"
+
+msgid "All"
+msgstr "Tout"
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Page"
+msgstr "Page"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "No activity to show"
+msgstr "Aucune activité à afficher"
+
+msgid "Sync attempts will appear here once your client checks in."
+msgstr ""
+"Les tentatives de synchronisation apparaîtront ici dès que ton client se "
+"connectera."
+
+msgid "Quickstart with ddclient"
+msgstr "Démarrage rapide avec ddclient"
+
+msgid "Drop this into ~/.ddclient.conf and run ddclient -force"
+msgstr "Colle ceci dans ~/.ddclient.conf puis exécute ddclient -force"
+
+msgid "Force update for one subdomain"
+msgstr "Forcer la mise à jour d'un sous-domaine"
+
+msgid "Replace 'your-password' with the password you use to sign into PyDDNS."
+msgstr ""
+"Remplace 'your-password' par le mot de passe que tu utilises pour te "
+"connecter à PyDDNS."
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Superuser shortcuts."
+msgstr "Raccourcis super-utilisateur."
+
+msgid "Delete subdomain?"
+msgstr "Supprimer le sous-domaine ?"
+
+msgid "This will permanently remove"
+msgstr "Ceci supprimera définitivement"
+
+msgid "from BIND. This can't be undone."
+msgstr "de BIND. Cette action est irréversible."
+
+#, python-format
+msgid "Search results for \"%(buscar)s\""
+msgstr ""
+
+#, python-format
+msgid "%(counter)s subdomain in <span class=\"mono\">%(domain)s</span>"
+msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
+msgstr[0] "%(counter)s sous-domaine dans <span class=\"mono\">%(domain)s</span>"
+msgstr[1] "%(counter)s sous-domaines dans <span class=\"mono\">%(domain)s</span>"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Domain"
+msgstr "Domaine"
+
+msgid "Owner"
+msgstr "Propriétaire"
+
+msgid "IP"
+msgstr ""
+
+msgid "Last update"
+msgstr "Dernière mise à jour"
+
+msgid "active"
+msgstr "actif"
+
+msgid "No subdomains found"
+msgstr "Aucun sous-domaine trouvé"
+
+msgid "Try a different search term."
+msgstr "Essaie un autre terme de recherche."
+
+msgid "Subdomains will appear here when users create them."
+msgstr ""
+"Les sous-domaines apparaîtront ici lorsque les utilisateurs en créeront."
+
+msgid "User removed"
+msgstr "Utilisateur supprimé"
+
+msgid "All users in the system"
+msgstr "Tous les utilisateurs du système"
+
+msgid "Permissions"
+msgstr "Permissions"
+
+msgid "Domains"
+msgstr "Domaines"
+
+msgid "Last sync"
+msgstr "Dernière sync"
+
+msgid "admin"
+msgstr "admin"
+
+msgid "user"
+msgstr "utilisateur"
+
+msgid "View domains"
+msgstr "Voir les domaines"
+
+msgid "Never"
+msgstr "Jamais"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "No users found"
+msgstr "Aucun utilisateur trouvé"
+
+msgid "Create your first user to get started."
+msgstr "Crée ton premier utilisateur pour commencer."
+
+msgid "Delete user?"
+msgstr "Supprimer l'utilisateur ?"
+
+msgid "This will remove"
+msgstr "Ceci supprimera"
+
+msgid "and all their subdomains. This can't be undone."
+msgstr "et tous ses sous-domaines. Cette action est irréversible."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 17:47+0000\n"
+"POT-Creation-Date: 2026-04-25 10:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,316 +18,502 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: common/templates/login.html:99 pyddns/templates/subdomains.html:62
-#: pyddns/templates/users.html:63
-msgid "User"
-msgstr "Usuario"
+msgid "Dashboard"
+msgstr "Panel"
 
-#: common/templates/login.html:100 pyddns/templates/add_user.html:35
-msgid "Password"
-msgstr "Contraseña"
-
-#: common/templates/login.html:102
-msgid "Login"
-msgstr "Ingresar"
-
-#: common/templates/permission_denied.html:30
-msgid "ACCESS DENIED"
-msgstr "ACCESO DENEGADO"
-
-#: common/templates/permission_denied.html:31
-msgid "You do not have permission to see this page"
-msgstr "Usted no tiene permiso para ver esta página"
-
-#: common/templates/permission_denied.html:32
-msgid "Go to back"
-msgstr "Volver"
-
-#: pyddns/settings.py:177
-msgid "Spanish"
-msgstr "Español"
-
-#: pyddns/settings.py:178
-msgid "English"
-msgstr "Ingles"
-
-#: pyddns/settings.py:179
-msgid "Japanese"
-msgstr "japonés"
-
-#: pyddns/templates/add_user.html:12
-msgid "Edit user"
-msgstr "Editar usuario"
-
-#: pyddns/templates/add_user.html:14 pyddns/templates/users.html:50
-msgid "Add user"
-msgstr "Agregar usuario"
-
-#: pyddns/templates/add_user.html:19
-#, fuzzy
-#| msgid "User"
-msgid "Username"
-msgstr "Nombre de usuario"
-
-#: pyddns/templates/add_user.html:23 pyddns/templates/users.html:65
-msgid "Name"
-msgstr "Nombre"
-
-#: pyddns/templates/add_user.html:27
-msgid "Last name"
-msgstr "Apellido"
-
-#: pyddns/templates/add_user.html:31 pyddns/templates/users.html:64
-msgid "Email"
-msgstr "Email"
-
-#: pyddns/templates/add_user.html:39
-msgid "Is admin?"
-msgstr "¿Es administrador?"
-
-#: pyddns/templates/add_user.html:46
-msgid "Save"
-msgstr "Guardar"
-
-#: pyddns/templates/add_user.html:56
-msgid "you must enter a username"
-msgstr "Dede ingresar un nombre de usuario"
-
-#: pyddns/templates/add_user.html:59
-msgid "you must enter a name"
-msgstr "Dede ingresar un nombre"
-
-#: pyddns/templates/add_user.html:62
-msgid "you must enter a last name"
-msgstr "Dede ingresar un apellido"
-
-#: pyddns/templates/add_user.html:65
-msgid "you must enter a email"
-msgstr "Dede ingresar un email"
-
-#: pyddns/templates/add_user.html:69
-msgid "Please enter a password of at least 8 characters"
-msgstr "Por favor, introduzca una contraseña de al menos 8 caracteres"
-
-#: pyddns/templates/add_user.html:111
-msgid "The username "
-msgstr "El nombre de usuario "
-
-#: pyddns/templates/add_user.html:111
-msgid " already exists"
-msgstr " ya existe"
-
-#: pyddns/templates/dash.html:46 pyddns/templates/subdomains.html:39
-#: pyddns/templates/users.html:39
 msgid "Users"
 msgstr "Usuarios"
 
-#: pyddns/templates/dash.html:47 pyddns/templates/subdomains.html:40
-#: pyddns/templates/users.html:40 pyddns/templates/users.html:68
-msgid "Domains"
-msgstr "Dominios"
+#| msgid "My domains"
+msgid "All domains"
+msgstr "Todos los dominios"
 
-#: pyddns/templates/dash.html:49 pyddns/templates/subdomains.html:41
-#: pyddns/templates/users.html:41
-msgid "Logout"
-msgstr "Salir"
+msgid "Sign out"
+msgstr "Cerrar sesión"
 
-#: pyddns/templates/dash.html:56
-msgid "Welcome"
-msgstr "Bienvenido"
+msgid "Sign in to PyDDNS"
+msgstr "Ingresar a PyDDNS"
 
-#: pyddns/templates/dash.html:58
-msgid "Dashboard of the user "
-msgstr "Dashboard del usuario "
+msgid "Network error"
+msgstr "Error de red"
 
-#: pyddns/templates/dash.html:65
-msgid "Subdomain name "
-msgstr "Nombre del subdominio "
+msgid "Welcome back. Sign in to manage your dynamic DNS records."
+msgstr "Bienvenido. Iniciá sesión para administrar tus registros DNS."
 
-#: pyddns/templates/dash.html:76
-msgid "Your current IP is"
-msgstr "Su IP actual es"
+#| msgid "User"
+msgid "Username"
+msgstr "Usuario"
 
-#: pyddns/templates/dash.html:80
+msgid "Password"
+msgstr "Contraseña"
+
+#| msgid "Password"
+msgid "Hide password"
+msgstr "Ocultar contraseña"
+
+#| msgid "Password"
+msgid "Show password"
+msgstr "Mostrar contraseña"
+
+msgid "Signing in..."
+msgstr "Iniciando sesión..."
+
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+msgid "self-hosted on your homelab"
+msgstr "self-hosted en tu homelab"
+
+msgid "Access denied"
+msgstr "Acceso denegado"
+
+#| msgid "You do not have permission to see this page"
+msgid "You do not have permission to see this page."
+msgstr "No tenés permiso para ver esta página."
+
+msgid "Back"
+msgstr "Volver"
+
+msgid "Spanish"
+msgstr "Español"
+
+msgid "English"
+msgstr "Ingles"
+
+msgid "Japanese"
+msgstr "japonés"
+
+msgid "German"
+msgstr ""
+
+msgid "Simplified Chinese"
+msgstr ""
+
+msgid "Edit user"
+msgstr "Editar usuario"
+
+msgid "Add user"
+msgstr "Agregar usuario"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Username must be at least 2 characters"
+msgstr "El usuario debe tener al menos 2 caracteres"
+
+msgid "First name is required"
+msgstr "El nombre es obligatorio"
+
+msgid "A valid email is required"
+msgstr "Se requiere un email válido"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Password must be at least 8 characters"
+msgstr "La contraseña debe tener al menos 8 caracteres"
+
+#| msgid "User"
+msgid "User saved"
+msgstr "Usuario guardado"
+
+#| msgid " already exists"
+msgid "Username already exists"
+msgstr "El usuario ya existe"
+
+msgid "Failed"
+msgstr "Fallido"
+
+msgid "Update profile, password, or admin permission."
+msgstr "Actualizá perfil, contraseña o permisos."
+
+msgid "Create a new account that can manage its own subdomains."
+msgstr "Creá una cuenta nueva que pueda administrar sus propios subdominios."
+
+#| msgid "Last name"
+msgid "First name"
+msgstr "Nombre"
+
+msgid "Last name"
+msgstr "Apellido"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "(leave blank to keep current)"
+msgstr "(dejar vacío para mantener)"
+
+msgid "Administrator"
+msgstr "Administrador"
+
+msgid "Permissions: full access to users and all subdomains."
+msgstr "Permisos: acceso total a usuarios y todos los subdominios."
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Saving..."
+msgstr "Guardando..."
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Copied to clipboard"
+msgstr "Copiado al portapapeles"
+
+#| msgid "Subdomain name "
+msgid "Subdomain added"
+msgstr "Subdominio agregado"
+
+msgid "Detecting IP..."
+msgstr "Detectando IP..."
+
+#| msgid "Last update"
+msgid "IP updated"
+msgstr "IP actualizada"
+
+#| msgid "Subdomain name "
+msgid "Subdomain removed"
+msgstr "Subdominio eliminado"
+
+#| msgid "Welcome"
+msgid "Welcome back"
+msgstr "Hola de nuevo"
+
+#| msgid "Dashboard of the user "
+msgid "Dashboard of"
+msgstr "Panel de"
+
+msgid "Your dynamic DNS records on"
+msgstr "Tus registros DNS dinámicos en"
+
+#| msgid "Subdomain name "
+msgid "Subdomain"
+msgstr "Subdominio"
+
+msgid "Add"
+msgstr "Añadir"
+
+#| msgid "Your current IP is"
+msgid "Your current public IP"
+msgstr "Tu IP pública actual"
+
+msgid "Auto-detected"
+msgstr "Detectada automáticamente"
+
+#| msgid "Subdomain name "
+msgid "Subdomains"
+msgstr "Subdominios"
+
+msgid "in your account"
+msgstr "en tu cuenta"
+
+msgid "Syncs (24h)"
+msgstr "Syncs (24h)"
+
+#, python-format
+msgid "across %(counter)s host"
+msgid_plural "across %(counter)s hosts"
+msgstr[0] "en %(counter)s host"
+msgstr[1] "en %(counter)s hosts"
+
+msgid "check agent"
+msgstr "revisar agente"
+
+msgid "all good"
+msgstr "todo bien"
+
 msgid "My domains"
 msgstr "Mis dominios"
 
-#: pyddns/templates/dash.html:82
-msgid "Last update"
-msgstr "Última actualización"
+msgid "Subdomains pointing at your current IP"
+msgstr "Subdominios que apuntan a tu IP actual"
 
-#: pyddns/templates/dash.html:83 pyddns/templates/subdomains.html:64
-msgid "Action"
-msgstr "Acción"
+msgid "synced"
+msgstr "sincronizado"
 
-#: pyddns/templates/dash.html:87
+#| msgid "Last update"
+msgid "gap = no update"
+msgstr "gap = sin actualización"
+
 msgid "Copy"
 msgstr "Copiar"
 
-#: pyddns/templates/dash.html:91
-msgid "Update to"
-msgstr "Actualizar a"
+msgid "ago"
+msgstr "atrás"
 
-#: pyddns/templates/dash.html:100
-msgid "My last records"
-msgstr "Mis últimos registros"
+msgid "Sync"
+msgstr "Sincronizar"
 
-#: pyddns/templates/dash.html:108
-msgid "Date"
-msgstr "Fecha"
+msgid "Delete"
+msgstr "Eliminar"
 
-#: pyddns/templates/dash.html:111
-msgid "Code"
-msgstr "Código"
+#| msgid "Admin subdomains"
+msgid "No subdomains yet"
+msgstr "Aún no hay subdominios"
 
-#: pyddns/templates/dash.html:114
-msgid "Message"
-msgstr "Mensaje"
+msgid "Add your first subdomain above to start syncing your IP."
+msgstr "Agregá tu primer subdominio arriba para empezar."
 
-#: pyddns/templates/dash.html:117 pyddns/templates/subdomains.html:61
-msgid "Domain"
-msgstr "Dominio"
+msgid "Recent activity"
+msgstr "Actividad reciente"
 
-#: pyddns/templates/dash.html:123
-msgid "Agent"
-msgstr "Agente"
+msgid "Last sync attempts across your account"
+msgstr "Últimos intentos de sincronización de tu cuenta"
 
-#: pyddns/templates/dash.html:144 pyddns/templates/subdomains.html:78
-#: pyddns/templates/users.html:97
+msgid "All"
+msgstr "Todos"
+
 msgid "Previous"
 msgstr "Anterior"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
 msgid "Page"
 msgstr "Página"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
-msgid "of"
-msgstr "de"
-
-#: pyddns/templates/dash.html:152 pyddns/templates/subdomains.html:86
-#: pyddns/templates/users.html:105
 msgid "Next"
 msgstr "Siguiente"
 
-#: pyddns/templates/dash.html:164 pyddns/templates/subdomains.html:98
-#: pyddns/templates/users.html:117
-msgid "The updatewas successful and the hostname is now updated"
+msgid "No activity to show"
+msgstr "Sin actividad"
+
+msgid "Sync attempts will appear here once your client checks in."
+msgstr "Los intentos de sync aparecerán acá cuando tu cliente envíe."
+
+msgid "Quickstart with ddclient"
+msgstr "Quickstart con ddclient"
+
+msgid "Drop this into ~/.ddclient.conf and run ddclient -force"
+msgstr "Pegá esto en ~/.ddclient.conf y ejecutá ddclient -force"
+
+msgid "Force update for one subdomain"
+msgstr "Forzar actualización para un subdominio"
+
+msgid "Replace 'your-password' with the password you use to sign into PyDDNS."
 msgstr ""
-"La actualización fue exitosa y el nombre de host ahora está actualizado"
+"Reemplazá 'your-password' con la contraseña con la que ingresás a PyDDNS."
 
-#: pyddns/templates/dash.html:165 pyddns/templates/subdomains.html:99
-#: pyddns/templates/users.html:118
-msgid "The APP not sinc bind"
-msgstr ""
-"La aplicación no pudo sincronizar el servicio BIND (contacte con su "
-"administrador)"
-
-#: pyddns/templates/dash.html:166 pyddns/templates/subdomains.html:100
-#: pyddns/templates/users.html:119
-msgid "The hostname specified does not exist in this user account"
-msgstr "El nombre de host especificado no existe en esta cuenta de usuario"
-
-#: pyddns/templates/dash.html:167 pyddns/templates/subdomains.html:101
-#: pyddns/templates/users.html:120
-msgid "The username and password pair do not match a real user"
-msgstr ""
-"El par de nombre de usuario y contraseña no coinciden con un usuario real"
-
-#: pyddns/templates/dash.html:168 pyddns/templates/dash.html:169
-#: pyddns/templates/subdomains.html:102 pyddns/templates/subdomains.html:103
-#: pyddns/templates/users.html:121 pyddns/templates/users.html:122
-msgid "Incorrect authentication format"
-msgstr "Formato de autenticación incorrecto"
-
-#: pyddns/templates/dash.html:170 pyddns/templates/subdomains.html:104
-#: pyddns/templates/users.html:123
-msgid "Missing header HTTP_AUTHORIZATION"
-msgstr "Falta el encabezado HTTP_AUTHORIZATION"
-
-#: pyddns/templates/dash.html:171 pyddns/templates/subdomains.html:105
-#: pyddns/templates/users.html:124
-msgid "Missing header HTTP_USER_AGENT"
-msgstr "Falta el encabezado HTTP_USER_AGENT"
-
-#: pyddns/templates/dash.html:172 pyddns/templates/subdomains.html:106
-#: pyddns/templates/users.html:125
-msgid "You have exceeded the maximum number of attempts"
-msgstr "Has superado el número máximo de intentos."
-
-#: pyddns/templates/dash.html:238
-msgid "The subdomain already exists"
-msgstr "EL subdominio ya existe"
-
-#: pyddns/templates/dash.html:252
-#, fuzzy
-#| msgid "You do not have permission to delete the subdomain"
-msgid "You certainly want to delete the domain"
-msgstr "Usted no tiene permisos para eliminar el subdominio"
-
-#: pyddns/templates/dash.html:267
-msgid "You do not have permission to delete the subdomain"
-msgstr "Usted no tiene permisos para eliminar el subdominio"
-
-#: pyddns/templates/subdomains.html:48
-msgid "Admin subdomains"
-msgstr "Administrar subdominios"
-
-#: pyddns/templates/subdomains.html:51
-msgid "Search subdomain"
-msgstr "Buscar subdominio"
-
-#: pyddns/templates/subdomains.html:63
-msgid "Contact email"
-msgstr "Email de contacto"
-
-#: pyddns/templates/subdomains.html:71
 msgid "Admin"
-msgstr "Administrar"
+msgstr "Admin"
 
-#: pyddns/templates/users.html:48
-msgid "Admin users"
-msgstr "Administrar usuarios"
+#| msgid "Superuser"
+msgid "Superuser shortcuts."
+msgstr "Atajos de superusuario."
 
-#: pyddns/templates/users.html:53
-msgid "Search user"
-msgstr "Buscar usuarios"
+#| msgid "Search subdomain"
+msgid "Delete subdomain?"
+msgstr "¿Eliminar subdominio?"
 
-#: pyddns/templates/users.html:66
-msgid "Last Name"
-msgstr "Apellido"
+msgid "This will permanently remove"
+msgstr "Esto borrará permanentemente"
 
-#: pyddns/templates/users.html:67
-msgid "Superuser"
-msgstr "Super usuario"
+msgid "from BIND. This can't be undone."
+msgstr "de BIND. No se puede deshacer."
 
-#: pyddns/templates/users.html:69
+#, python-format
+msgid "Search results for \"%(buscar)s\""
+msgstr ""
+
+#, python-format
+msgid "%(counter)s subdomain in <span class=\"mono\">%(domain)s</span>"
+msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
+msgstr[0] "%(counter)s subdominio en <span class=\"mono\">%(domain)s</span>"
+msgstr[1] "%(counter)s subdominios en <span class=\"mono\">%(domain)s</span>"
+
+#| msgid "Search user"
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Domain"
+msgstr "Dominio"
+
+msgid "Owner"
+msgstr "Propietario"
+
+msgid "IP"
+msgstr ""
+
+msgid "Last update"
+msgstr "Última actualización"
+
+msgid "active"
+msgstr "activo"
+
+#| msgid "Admin subdomains"
+msgid "No subdomains found"
+msgstr "No se encontraron subdominios"
+
+msgid "Try a different search term."
+msgstr "Probá otro término de búsqueda."
+
+msgid "Subdomains will appear here when users create them."
+msgstr "Los subdominios aparecerán acá cuando los usuarios los creen."
+
+#| msgid "User"
+msgid "User removed"
+msgstr "Usuario eliminado"
+
+msgid "All users in the system"
+msgstr "Todos los usuarios del sistema"
+
+msgid "Permissions"
+msgstr "Permisos"
+
+msgid "Domains"
+msgstr "Dominios"
+
+#| msgid "Last name"
+msgid "Last sync"
+msgstr "Último sync"
+
+#| msgid "Admin"
+msgid "admin"
+msgstr "admin"
+
+#| msgid "Add user"
+msgid "user"
+msgstr "usuario"
+
+#| msgid "My domains"
+msgid "View domains"
+msgstr "Ver dominios"
+
+msgid "Never"
+msgstr "Nunca"
+
+#| msgid "Edit user"
+msgid "Edit"
+msgstr "Editar"
+
+msgid "No users found"
+msgstr "No se encontraron usuarios"
+
+msgid "Create your first user to get started."
+msgstr "Creá tu primer usuario para empezar."
+
+msgid "Delete user?"
+msgstr "¿Eliminar usuario?"
+
+msgid "This will remove"
+msgstr "Esto va a eliminar"
+
+msgid "and all their subdomains. This can't be undone."
+msgstr "y todos sus subdominios. No se puede deshacer."
+
+#~ msgid "User"
+#~ msgstr "Usuario"
+
+#~ msgid "Login"
+#~ msgstr "Ingresar"
+
+#~ msgid "ACCESS DENIED"
+#~ msgstr "ACCESO DENEGADO"
+
+#~ msgid "Go to back"
+#~ msgstr "Volver"
+
+#~ msgid "Name"
+#~ msgstr "Nombre"
+
+#~ msgid "Is admin?"
+#~ msgstr "¿Es administrador?"
+
+#~ msgid "you must enter a username"
+#~ msgstr "Dede ingresar un nombre de usuario"
+
+#~ msgid "you must enter a name"
+#~ msgstr "Dede ingresar un nombre"
+
+#~ msgid "you must enter a last name"
+#~ msgstr "Dede ingresar un apellido"
+
+#~ msgid "you must enter a email"
+#~ msgstr "Dede ingresar un email"
+
+#~ msgid "The username "
+#~ msgstr "El nombre de usuario "
+
+#~ msgid "Logout"
+#~ msgstr "Salir"
+
+#~ msgid "Action"
+#~ msgstr "Acción"
+
+#~ msgid "Update to"
+#~ msgstr "Actualizar a"
+
+#~ msgid "My last records"
+#~ msgstr "Mis últimos registros"
+
+#~ msgid "Date"
+#~ msgstr "Fecha"
+
+#~ msgid "Code"
+#~ msgstr "Código"
+
+#~ msgid "Message"
+#~ msgstr "Mensaje"
+
+#~ msgid "Agent"
+#~ msgstr "Agente"
+
+#~ msgid "of"
+#~ msgstr "de"
+
+#~ msgid "The updatewas successful and the hostname is now updated"
+#~ msgstr ""
+#~ "La actualización fue exitosa y el nombre de host ahora está actualizado"
+
+#~ msgid "The APP not sinc bind"
+#~ msgstr ""
+#~ "La aplicación no pudo sincronizar el servicio BIND (contacte con su "
+#~ "administrador)"
+
+#~ msgid "The hostname specified does not exist in this user account"
+#~ msgstr "El nombre de host especificado no existe en esta cuenta de usuario"
+
+#~ msgid "The username and password pair do not match a real user"
+#~ msgstr ""
+#~ "El par de nombre de usuario y contraseña no coinciden con un usuario real"
+
+#~ msgid "Incorrect authentication format"
+#~ msgstr "Formato de autenticación incorrecto"
+
+#~ msgid "Missing header HTTP_AUTHORIZATION"
+#~ msgstr "Falta el encabezado HTTP_AUTHORIZATION"
+
+#~ msgid "Missing header HTTP_USER_AGENT"
+#~ msgstr "Falta el encabezado HTTP_USER_AGENT"
+
+#~ msgid "You have exceeded the maximum number of attempts"
+#~ msgstr "Has superado el número máximo de intentos."
+
+#~ msgid "The subdomain already exists"
+#~ msgstr "EL subdominio ya existe"
+
 #, fuzzy
-#| msgid "Action"
-msgid "Actions"
-msgstr "Acciones"
+#~ msgid "You certainly want to delete the domain"
+#~ msgstr "Usted no tiene permisos para eliminar el subdominio"
 
-#: pyddns/templates/users.html:162
-msgid "You certainly want to delete the user"
-msgstr "Seguro que desea borrar al usuario"
+#~ msgid "You do not have permission to delete the subdomain"
+#~ msgstr "Usted no tiene permisos para eliminar el subdominio"
+
+#~ msgid "Contact email"
+#~ msgstr "Email de contacto"
+
+#~ msgid "Admin users"
+#~ msgstr "Administrar usuarios"
+
+#~ msgid "Last Name"
+#~ msgstr "Apellido"
 
 #, fuzzy
-#~| msgid "Subdomain name "
-#~ msgid "Subdomains"
-#~ msgstr "Nombre del subdominio "
+#~ msgid "Actions"
+#~ msgstr "Acciones"
 
-#~ msgid "Administrator"
-#~ msgstr "Administrador"
+#~ msgid "You certainly want to delete the user"
+#~ msgstr "Seguro que desea borrar al usuario"
 
 #, fuzzy
-#~| msgid "Administrator"
 #~ msgid "Administration"
 #~ msgstr "Administrador"
 
 #, fuzzy
-#~| msgid "The updatewas successful and the hostname is now updated"
 #~ msgid "The updatewas successful, and the hostname is now updated"
 #~ msgstr ""
 #~ "La actualización fue exitosa y el nombre de host ahora está actualizado"

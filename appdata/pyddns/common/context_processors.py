@@ -7,4 +7,5 @@ def site_context(request):
     return {
         'DNS_DOMAIN': getattr(settings, 'DNS_DOMAIN', None) or '',
         'OWN_ADMIN': getattr(settings, 'OWN_ADMIN', '0') == '1',
+        'LANGUAGE_LOCKED': getattr(settings, 'LANGUAGE_LOCKED', False),
     }

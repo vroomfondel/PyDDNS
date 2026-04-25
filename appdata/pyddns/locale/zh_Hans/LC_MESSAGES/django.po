@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-22 07:12+0000\n"
+"POT-Creation-Date: 2026-04-25 10:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,287 +18,485 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: common/templates/login.html:99 pyddns/templates/subdomains.html:62
-#: pyddns/templates/users.html:63
-msgid "User"
-msgstr "用户"
+msgid "Dashboard"
+msgstr "仪表板"
 
-#: common/templates/login.html:100 pyddns/templates/add_user.html:35
-msgid "Password"
-msgstr "密码"
-
-#: common/templates/login.html:102
-msgid "Login"
-msgstr "登录"
-
-#: common/templates/permission_denied.html:30
-msgid "ACCESS DENIED"
-msgstr "拒绝访问"
-
-#: common/templates/permission_denied.html:31
-msgid "You do not have permission to see this page"
-msgstr "您无权查看此页面"
-
-#: common/templates/permission_denied.html:32
-msgid "Go to back"
-msgstr "回到上一步"
-
-#: pyddns/settings.py:177
-msgid "Spanish"
-msgstr "西班牙语"
-
-#: pyddns/settings.py:178
-msgid "English"
-msgstr "英语"
-
-#: pyddns/settings.py:179
-msgid "Japanese"
-msgstr "日语"
-
-#: pyddns/templates/add_user.html:12
-msgid "Edit user"
-msgstr "修改用户"
-
-#: pyddns/templates/add_user.html:14 pyddns/templates/users.html:50
-msgid "Add user"
-msgstr "添加用户"
-
-#: pyddns/templates/add_user.html:19
-msgid "Username"
-msgstr "用户名称"
-
-#: pyddns/templates/add_user.html:23 pyddns/templates/users.html:65
-msgid "Name"
-msgstr "名字"
-
-#: pyddns/templates/add_user.html:27
-msgid "Last name"
-msgstr "姓"
-
-#: pyddns/templates/add_user.html:31 pyddns/templates/users.html:64
-msgid "Email"
-msgstr "电子邮箱"
-
-#: pyddns/templates/add_user.html:39
-msgid "Is admin?"
-msgstr "是否为管理员？"
-
-#: pyddns/templates/add_user.html:46
-msgid "Save"
-msgstr "保存"
-
-#: pyddns/templates/add_user.html:56
-msgid "you must enter a username"
-msgstr "您必须输入用户名"
-
-#: pyddns/templates/add_user.html:59
-msgid "you must enter a name"
-msgstr "您必须输入名字"
-
-#: pyddns/templates/add_user.html:62
-msgid "you must enter a last name"
-msgstr "您必须输入姓"
-
-#: pyddns/templates/add_user.html:65
-msgid "you must enter a email"
-msgstr "您必须输入电子邮箱"
-
-#: pyddns/templates/add_user.html:69
-msgid "Please enter a password of at least 8 characters"
-msgstr "请输入至少8个字符的密码"
-
-#: pyddns/templates/add_user.html:111
-msgid "The username "
-msgstr "该用户名"
-
-#: pyddns/templates/add_user.html:111
-msgid " already exists"
-msgstr "已经存在"
-
-#: pyddns/templates/dash.html:46 pyddns/templates/subdomains.html:39
-#: pyddns/templates/users.html:39
 msgid "Users"
 msgstr "用户"
 
-#: pyddns/templates/dash.html:47 pyddns/templates/subdomains.html:40
-#: pyddns/templates/users.html:40 pyddns/templates/users.html:68
-msgid "Domains"
-msgstr "域"
+#| msgid "My domains"
+msgid "All domains"
+msgstr "所有域名"
 
-#: pyddns/templates/dash.html:49 pyddns/templates/subdomains.html:41
-#: pyddns/templates/users.html:41
-msgid "Logout"
-msgstr "登出"
+msgid "Sign out"
+msgstr "退出登录"
 
-#: pyddns/templates/dash.html:56
-msgid "Welcome"
-msgstr "欢迎"
+msgid "Sign in to PyDDNS"
+msgstr "登录 PyDDNS"
 
-#: pyddns/templates/dash.html:58
-msgid "Dashboard of the user "
-msgstr "用户表盘"
+msgid "Network error"
+msgstr "网络错误"
 
-#: pyddns/templates/dash.html:65
-msgid "Subdomain name "
+msgid "Welcome back. Sign in to manage your dynamic DNS records."
+msgstr "欢迎回来。登录以管理您的动态 DNS 记录。"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Password"
+msgstr "密码"
+
+#| msgid "Password"
+msgid "Hide password"
+msgstr "隐藏密码"
+
+#| msgid "Password"
+msgid "Show password"
+msgstr "显示密码"
+
+msgid "Signing in..."
+msgstr "登录中..."
+
+msgid "Sign in"
+msgstr "登录"
+
+msgid "self-hosted on your homelab"
+msgstr "自托管于您的家庭实验室"
+
+msgid "Access denied"
+msgstr "访问被拒绝"
+
+#| msgid "You do not have permission to see this page"
+msgid "You do not have permission to see this page."
+msgstr "您没有权限查看此页面。"
+
+msgid "Back"
+msgstr "返回"
+
+msgid "Spanish"
+msgstr "西班牙语"
+
+msgid "English"
+msgstr "英语"
+
+msgid "Japanese"
+msgstr "日语"
+
+msgid "German"
+msgstr ""
+
+msgid "Simplified Chinese"
+msgstr ""
+
+msgid "Edit user"
+msgstr "编辑用户"
+
+msgid "Add user"
+msgstr "添加用户"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Username must be at least 2 characters"
+msgstr "用户名至少需要 2 个字符"
+
+msgid "First name is required"
+msgstr "名是必填的"
+
+msgid "A valid email is required"
+msgstr "需要有效的电子邮件"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Password must be at least 8 characters"
+msgstr "密码至少需要 8 个字符"
+
+#| msgid "Username"
+msgid "User saved"
+msgstr "用户已保存"
+
+#| msgid " already exists"
+msgid "Username already exists"
+msgstr "用户名已存在"
+
+msgid "Failed"
+msgstr "失败"
+
+msgid "Update profile, password, or admin permission."
+msgstr "更新资料、密码或管理员权限。"
+
+msgid "Create a new account that can manage its own subdomains."
+msgstr "创建一个可以管理自己子域名的新账户。"
+
+#| msgid "Last name"
+msgid "First name"
+msgstr "名"
+
+msgid "Last name"
+msgstr "姓"
+
+msgid "Email"
+msgstr "电子邮箱"
+
+msgid "(leave blank to keep current)"
+msgstr "(留空以保持当前)"
+
+msgid "Administrator"
+msgstr "管理员"
+
+msgid "Permissions: full access to users and all subdomains."
+msgstr "权限:完全访问所有用户和子域名。"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Copied to clipboard"
+msgstr "已复制到剪贴板"
+
+#| msgid "Subdomain name "
+msgid "Subdomain added"
+msgstr "子域名已添加"
+
+msgid "Detecting IP..."
+msgstr "正在检测 IP..."
+
+#| msgid "Last update"
+msgid "IP updated"
+msgstr "IP 已更新"
+
+#| msgid "Subdomain name "
+msgid "Subdomain removed"
+msgstr "子域名已删除"
+
+#| msgid "Welcome"
+msgid "Welcome back"
+msgstr "欢迎回来"
+
+#| msgid "Dashboard of the user "
+msgid "Dashboard of"
+msgstr "用户仪表板:"
+
+msgid "Your dynamic DNS records on"
+msgstr "您在以下位置的动态 DNS 记录:"
+
+#| msgid "Subdomain name "
+msgid "Subdomain"
 msgstr "子域名"
 
-#: pyddns/templates/dash.html:76
-msgid "Your current IP is"
-msgstr "您当前的IP是"
+msgid "Add"
+msgstr "添加"
 
-#: pyddns/templates/dash.html:80
+#| msgid "Your current IP is"
+msgid "Your current public IP"
+msgstr "您当前的公网 IP"
+
+msgid "Auto-detected"
+msgstr "自动检测"
+
+#| msgid "Subdomain name "
+msgid "Subdomains"
+msgstr "子域名"
+
+msgid "in your account"
+msgstr "在您的账户中"
+
+msgid "Syncs (24h)"
+msgstr "同步 (24小时)"
+
+#, python-format
+msgid "across %(counter)s host"
+msgid_plural "across %(counter)s hosts"
+msgstr[0] "跨 %(counter)s 个主机"
+msgstr[1] "跨 %(counter)s 个主机"
+
+msgid "check agent"
+msgstr "检查代理"
+
+msgid "all good"
+msgstr "一切正常"
+
 msgid "My domains"
-msgstr "我的域"
+msgstr "我的域名"
 
-#: pyddns/templates/dash.html:82
-msgid "Last update"
-msgstr "最后更新"
+msgid "Subdomains pointing at your current IP"
+msgstr "指向您当前 IP 的子域名"
 
-#: pyddns/templates/dash.html:83 pyddns/templates/subdomains.html:64
-msgid "Action"
-msgstr "操作"
+msgid "synced"
+msgstr "已同步"
 
-#: pyddns/templates/dash.html:87
+#| msgid "Last update"
+msgid "gap = no update"
+msgstr "间隔 = 无更新"
+
 msgid "Copy"
 msgstr "复制"
 
-#: pyddns/templates/dash.html:91
-msgid "Update to"
-msgstr "更新到"
+msgid "ago"
+msgstr "前"
 
-#: pyddns/templates/dash.html:100
-msgid "My last records"
-msgstr "我的最后记录"
+msgid "Sync"
+msgstr "同步"
 
-#: pyddns/templates/dash.html:108
-msgid "Date"
-msgstr "日期"
+msgid "Delete"
+msgstr "删除"
 
-#: pyddns/templates/dash.html:111
-msgid "Code"
-msgstr "代码"
+#| msgid "Admin subdomains"
+msgid "No subdomains yet"
+msgstr "暂无子域名"
 
-#: pyddns/templates/dash.html:114
-msgid "Message"
-msgstr "信息"
+msgid "Add your first subdomain above to start syncing your IP."
+msgstr "在上方添加您的第一个子域名,开始同步您的 IP。"
 
-#: pyddns/templates/dash.html:117 pyddns/templates/subdomains.html:61
-msgid "Domain"
-msgstr "网域"
+msgid "Recent activity"
+msgstr "最近活动"
 
-#: pyddns/templates/dash.html:123
-msgid "Agent"
-msgstr "代理人"
+msgid "Last sync attempts across your account"
+msgstr "您账户的最近同步尝试"
 
-#: pyddns/templates/dash.html:144 pyddns/templates/subdomains.html:78
-#: pyddns/templates/users.html:97
+msgid "All"
+msgstr "全部"
+
 msgid "Previous"
-msgstr "之前的"
+msgstr "上一页"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
 msgid "Page"
-msgstr "网页"
+msgstr "页"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
-msgid "of"
-msgstr "的"
-
-#: pyddns/templates/dash.html:152 pyddns/templates/subdomains.html:86
-#: pyddns/templates/users.html:105
 msgid "Next"
-msgstr "下一步"
+msgstr "下一页"
 
-#: pyddns/templates/dash.html:164 pyddns/templates/subdomains.html:98
-#: pyddns/templates/users.html:117
-msgid "The updatewas successful and the hostname is now updated"
-msgstr "更新成功，主机名现已更新"
+msgid "No activity to show"
+msgstr "暂无活动"
 
-#: pyddns/templates/dash.html:165 pyddns/templates/subdomains.html:99
-#: pyddns/templates/users.html:118
-msgid "The APP not sinc bind"
-msgstr "APP同步绑定失败"
+msgid "Sync attempts will appear here once your client checks in."
+msgstr "客户端签到后,同步尝试将显示在这里。"
 
-#: pyddns/templates/dash.html:166 pyddns/templates/subdomains.html:100
-#: pyddns/templates/users.html:119
-msgid "The hostname specified does not exist in this user account"
-msgstr "指定的主机名在该用户帐户中不存在"
+msgid "Quickstart with ddclient"
+msgstr "ddclient 快速开始"
 
-#: pyddns/templates/dash.html:167 pyddns/templates/subdomains.html:101
-#: pyddns/templates/users.html:120
-msgid "The username and password pair do not match a real user"
-msgstr "用户名和密码对与真实用户不匹配"
+msgid "Drop this into ~/.ddclient.conf and run ddclient -force"
+msgstr "将以下内容放入 ~/.ddclient.conf,然后运行 ddclient -force"
 
-#: pyddns/templates/dash.html:168 pyddns/templates/dash.html:169
-#: pyddns/templates/subdomains.html:102 pyddns/templates/subdomains.html:103
-#: pyddns/templates/users.html:121 pyddns/templates/users.html:122
-msgid "Incorrect authentication format"
-msgstr "验证格式不正确"
+msgid "Force update for one subdomain"
+msgstr "强制更新单个子域名"
 
-#: pyddns/templates/dash.html:170 pyddns/templates/subdomains.html:104
-#: pyddns/templates/users.html:123
-msgid "Missing header HTTP_AUTHORIZATION"
-msgstr "标题HTTP_权限遗失"
+msgid "Replace 'your-password' with the password you use to sign into PyDDNS."
+msgstr "请将 'your-password' 替换为您登录 PyDDNS 使用的密码。"
 
-#: pyddns/templates/dash.html:171 pyddns/templates/subdomains.html:105
-#: pyddns/templates/users.html:124
-msgid "Missing header HTTP_USER_AGENT"
-msgstr "标题HTTP_用户_代理遗失"
-
-#: pyddns/templates/dash.html:172 pyddns/templates/subdomains.html:106
-#: pyddns/templates/users.html:125
-msgid "You have exceeded the maximum number of attempts"
-msgstr "您已超出最大尝试次数"
-
-#: pyddns/templates/dash.html:238
-msgid "The subdomain already exists"
-msgstr "子域已存在"
-
-#: pyddns/templates/dash.html:252
-msgid "You certainly want to delete the domain"
-msgstr "确定删除该域"
-
-#: pyddns/templates/dash.html:267
-msgid "You do not have permission to delete the subdomain"
-msgstr "您没有删除子域的权限"
-
-#: pyddns/templates/subdomains.html:48
-msgid "Admin subdomains"
-msgstr "管理员子域"
-
-#: pyddns/templates/subdomains.html:51
-msgid "Search subdomain"
-msgstr "搜索子域"
-
-#: pyddns/templates/subdomains.html:63
-msgid "Contact email"
-msgstr "联系电子邮箱"
-
-#: pyddns/templates/subdomains.html:71
 msgid "Admin"
-msgstr "管理"
+msgstr "管理员"
 
-#: pyddns/templates/users.html:48
-msgid "Admin users"
-msgstr "管理用户"
+#| msgid "Superuser"
+msgid "Superuser shortcuts."
+msgstr "超级用户快捷方式。"
 
-#: pyddns/templates/users.html:53
-msgid "Search user"
-msgstr "搜索用户"
+#| msgid "Search subdomain"
+msgid "Delete subdomain?"
+msgstr "删除子域名?"
 
-#: pyddns/templates/users.html:66
-msgid "Last Name"
-msgstr "姓"
+msgid "This will permanently remove"
+msgstr "这将永久删除"
 
-#: pyddns/templates/users.html:67
-msgid "Superuser"
-msgstr "超级用户"
+msgid "from BIND. This can't be undone."
+msgstr "(从 BIND)。此操作无法撤销。"
 
-#: pyddns/templates/users.html:69
-msgid "Actions"
-msgstr "操作"
+#, python-format
+msgid "Search results for \"%(buscar)s\""
+msgstr ""
 
-#: pyddns/templates/users.html:162
-msgid "You certainly want to delete the user"
-msgstr "确定删除该用户"
+#, python-format
+msgid "%(counter)s subdomain in <span class=\"mono\">%(domain)s</span>"
+msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
+msgstr[0] "%(counter)s 个子域名,位于 <span class=\"mono\">%(domain)s</span>"
+msgstr[1] "%(counter)s 个子域名,位于 <span class=\"mono\">%(domain)s</span>"
+
+#| msgid "Search user"
+msgid "Search"
+msgstr "搜索"
+
+msgid "Domain"
+msgstr "域名"
+
+msgid "Owner"
+msgstr "所有者"
+
+msgid "IP"
+msgstr ""
+
+msgid "Last update"
+msgstr "上次更新"
+
+msgid "active"
+msgstr "活动"
+
+#| msgid "Admin subdomains"
+msgid "No subdomains found"
+msgstr "未找到子域名"
+
+msgid "Try a different search term."
+msgstr "尝试其他搜索词。"
+
+msgid "Subdomains will appear here when users create them."
+msgstr "用户创建子域名后将显示在这里。"
+
+#| msgid "Username"
+msgid "User removed"
+msgstr "用户已删除"
+
+msgid "All users in the system"
+msgstr "系统中的所有用户"
+
+msgid "Permissions"
+msgstr "权限"
+
+msgid "Domains"
+msgstr "域名"
+
+#| msgid "Last name"
+msgid "Last sync"
+msgstr "上次同步"
+
+#| msgid "Admin"
+msgid "admin"
+msgstr "管理员"
+
+#| msgid "Add user"
+msgid "user"
+msgstr "用户"
+
+#| msgid "My domains"
+msgid "View domains"
+msgstr "查看域名"
+
+msgid "Never"
+msgstr "从未"
+
+#| msgid "Edit user"
+msgid "Edit"
+msgstr "编辑"
+
+msgid "No users found"
+msgstr "未找到用户"
+
+msgid "Create your first user to get started."
+msgstr "创建您的第一个用户以开始。"
+
+msgid "Delete user?"
+msgstr "删除用户?"
+
+msgid "This will remove"
+msgstr "这将删除"
+
+msgid "and all their subdomains. This can't be undone."
+msgstr "及其所有子域名。此操作无法撤销。"
+
+#~ msgid "User"
+#~ msgstr "用户"
+
+#~ msgid "Login"
+#~ msgstr "登录"
+
+#~ msgid "ACCESS DENIED"
+#~ msgstr "拒绝访问"
+
+#~ msgid "Go to back"
+#~ msgstr "回到上一步"
+
+#~ msgid "Name"
+#~ msgstr "名字"
+
+#~ msgid "Is admin?"
+#~ msgstr "是否为管理员？"
+
+#~ msgid "you must enter a username"
+#~ msgstr "您必须输入用户名"
+
+#~ msgid "you must enter a name"
+#~ msgstr "您必须输入名字"
+
+#~ msgid "you must enter a last name"
+#~ msgstr "您必须输入姓"
+
+#~ msgid "you must enter a email"
+#~ msgstr "您必须输入电子邮箱"
+
+#~ msgid "The username "
+#~ msgstr "该用户名"
+
+#~ msgid "Logout"
+#~ msgstr "登出"
+
+#~ msgid "Action"
+#~ msgstr "操作"
+
+#~ msgid "Update to"
+#~ msgstr "更新到"
+
+#~ msgid "My last records"
+#~ msgstr "我的最后记录"
+
+#~ msgid "Date"
+#~ msgstr "日期"
+
+#~ msgid "Code"
+#~ msgstr "代码"
+
+#~ msgid "Message"
+#~ msgstr "信息"
+
+#~ msgid "Agent"
+#~ msgstr "代理人"
+
+#~ msgid "of"
+#~ msgstr "的"
+
+#~ msgid "The updatewas successful and the hostname is now updated"
+#~ msgstr "更新成功，主机名现已更新"
+
+#~ msgid "The APP not sinc bind"
+#~ msgstr "APP同步绑定失败"
+
+#~ msgid "The hostname specified does not exist in this user account"
+#~ msgstr "指定的主机名在该用户帐户中不存在"
+
+#~ msgid "The username and password pair do not match a real user"
+#~ msgstr "用户名和密码对与真实用户不匹配"
+
+#~ msgid "Incorrect authentication format"
+#~ msgstr "验证格式不正确"
+
+#~ msgid "Missing header HTTP_AUTHORIZATION"
+#~ msgstr "标题HTTP_权限遗失"
+
+#~ msgid "Missing header HTTP_USER_AGENT"
+#~ msgstr "标题HTTP_用户_代理遗失"
+
+#~ msgid "You have exceeded the maximum number of attempts"
+#~ msgstr "您已超出最大尝试次数"
+
+#~ msgid "The subdomain already exists"
+#~ msgstr "子域已存在"
+
+#~ msgid "You certainly want to delete the domain"
+#~ msgstr "确定删除该域"
+
+#~ msgid "You do not have permission to delete the subdomain"
+#~ msgstr "您没有删除子域的权限"
+
+#~ msgid "Contact email"
+#~ msgstr "联系电子邮箱"
+
+#~ msgid "Admin users"
+#~ msgstr "管理用户"
+
+#~ msgid "Last Name"
+#~ msgstr "姓"
+
+#~ msgid "Actions"
+#~ msgstr "操作"
+
+#~ msgid "You certainly want to delete the user"
+#~ msgstr "确定删除该用户"

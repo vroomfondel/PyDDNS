@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 17:45+0000\n"
+"POT-Creation-Date: 2026-04-25 10:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,291 +18,484 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: common/templates/login.html:99 pyddns/templates/subdomains.html:62
-#: pyddns/templates/users.html:63
-msgid "User"
-msgstr "ユーザー"
+msgid "Dashboard"
+msgstr "ダッシュボード"
 
-#: common/templates/login.html:100 pyddns/templates/add_user.html:35
-msgid "Password"
-msgstr "パスワード"
-
-#: common/templates/login.html:102
-msgid "Login"
-msgstr "ログイン"
-
-#: common/templates/permission_denied.html:30
-msgid "ACCESS DENIED"
-msgstr "アクセス拒否されました"
-
-#: common/templates/permission_denied.html:31
-msgid "You do not have permission to see this page"
-msgstr ""
-
-#: common/templates/permission_denied.html:32
-msgid "Go to back"
-msgstr "戻る"
-
-#: pyddns/settings.py:177
-msgid "Spanish"
-msgstr "スペイン語"
-
-#: pyddns/settings.py:178
-msgid "English"
-msgstr "英語"
-
-#: pyddns/settings.py:179
-msgid "Japanese"
-msgstr "日本語"
-
-#: pyddns/templates/add_user.html:12
-msgid "Edit user"
-msgstr "ユーザー編集"
-
-#: pyddns/templates/add_user.html:14 pyddns/templates/users.html:50
-msgid "Add user"
-msgstr "ユーザー追加"
-
-#: pyddns/templates/add_user.html:19
-msgid "Username"
-msgstr "ユーザー名"
-
-#: pyddns/templates/add_user.html:23 pyddns/templates/users.html:65
-msgid "Name"
-msgstr "名前"
-
-#: pyddns/templates/add_user.html:27
-msgid "Last name"
-msgstr "名字"
-
-#: pyddns/templates/add_user.html:31 pyddns/templates/users.html:64
-msgid "Email"
-msgstr "メールアドレス"
-
-#: pyddns/templates/add_user.html:39
-msgid "Is admin?"
-msgstr "管理者"
-
-#: pyddns/templates/add_user.html:46
-msgid "Save"
-msgstr "保存"
-
-#: pyddns/templates/add_user.html:56
-msgid "you must enter a username"
-msgstr "ユーザー名を入力する必要があります"
-
-#: pyddns/templates/add_user.html:59
-msgid "you must enter a name"
-msgstr "名前を入力する必要があります"
-
-#: pyddns/templates/add_user.html:62
-msgid "you must enter a last name"
-msgstr "姓を入力する必要があります"
-
-#: pyddns/templates/add_user.html:65
-msgid "you must enter a email"
-msgstr "メールアドレスを入力する必要があります"
-
-#: pyddns/templates/add_user.html:69
-msgid "Please enter a password of at least 8 characters"
-msgstr "パスワード（8文字以上）を入力する必要があります"
-
-#: pyddns/templates/add_user.html:111
-msgid "The username "
-msgstr "ユーザー名"
-
-#: pyddns/templates/add_user.html:111
-msgid " already exists"
-msgstr " すでに存在します"
-
-#: pyddns/templates/dash.html:46 pyddns/templates/subdomains.html:39
-#: pyddns/templates/users.html:39
 msgid "Users"
 msgstr "ユーザー"
 
-#: pyddns/templates/dash.html:47 pyddns/templates/subdomains.html:40
-#: pyddns/templates/users.html:40 pyddns/templates/users.html:68
-msgid "Domains"
-msgstr "ドメイン"
+#| msgid "My domains"
+msgid "All domains"
+msgstr "すべてのドメイン"
 
-#: pyddns/templates/dash.html:49 pyddns/templates/subdomains.html:41
-#: pyddns/templates/users.html:41
-msgid "Logout"
-msgstr "ログアウト"
+msgid "Sign out"
+msgstr "サインアウト"
 
-#: pyddns/templates/dash.html:56
-msgid "Welcome"
-msgstr "ようこそ"
+msgid "Sign in to PyDDNS"
+msgstr "PyDDNSにサインイン"
 
-#: pyddns/templates/dash.html:58
-msgid "Dashboard of the user "
-msgstr "ユーザーダッシュボード"
+msgid "Network error"
+msgstr "ネットワークエラー"
 
-#: pyddns/templates/dash.html:65
-msgid "Subdomain name "
-msgstr "サブドメイン名 "
+msgid "Welcome back. Sign in to manage your dynamic DNS records."
+msgstr "おかえりなさい。サインインしてダイナミックDNSレコードを管理してください。"
 
-#: pyddns/templates/dash.html:76
-msgid "Your current IP is"
-msgstr "現在のIPアドレス"
+msgid "Username"
+msgstr "ユーザー名"
 
-#: pyddns/templates/dash.html:80
+msgid "Password"
+msgstr "パスワード"
+
+#| msgid "Password"
+msgid "Hide password"
+msgstr "パスワードを非表示"
+
+#| msgid "Password"
+msgid "Show password"
+msgstr "パスワードを表示"
+
+msgid "Signing in..."
+msgstr "サインイン中..."
+
+msgid "Sign in"
+msgstr "サインイン"
+
+msgid "self-hosted on your homelab"
+msgstr "ホームラボでセルフホスト"
+
+msgid "Access denied"
+msgstr "アクセス拒否"
+
+#| msgid "You do not have permission to delete the subdomain"
+msgid "You do not have permission to see this page."
+msgstr "このページを表示する権限がありません。"
+
+msgid "Back"
+msgstr "戻る"
+
+msgid "Spanish"
+msgstr "スペイン語"
+
+msgid "English"
+msgstr "英語"
+
+msgid "Japanese"
+msgstr "日本語"
+
+msgid "German"
+msgstr ""
+
+msgid "Simplified Chinese"
+msgstr ""
+
+msgid "Edit user"
+msgstr "ユーザーを編集"
+
+msgid "Add user"
+msgstr "ユーザーを追加"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Username must be at least 2 characters"
+msgstr "ユーザー名は2文字以上である必要があります"
+
+msgid "First name is required"
+msgstr "名は必須です"
+
+msgid "A valid email is required"
+msgstr "有効なメールアドレスが必要です"
+
+#| msgid "Please enter a password of at least 8 characters"
+msgid "Password must be at least 8 characters"
+msgstr "パスワードは8文字以上である必要があります"
+
+#| msgid "Username"
+msgid "User saved"
+msgstr "ユーザーを保存しました"
+
+#| msgid " already exists"
+msgid "Username already exists"
+msgstr "このユーザー名は既に存在します"
+
+msgid "Failed"
+msgstr "失敗"
+
+msgid "Update profile, password, or admin permission."
+msgstr "プロフィール、パスワード、または管理者権限を更新します。"
+
+msgid "Create a new account that can manage its own subdomains."
+msgstr "自分のサブドメインを管理できる新しいアカウントを作成します。"
+
+#| msgid "Last name"
+msgid "First name"
+msgstr "名"
+
+msgid "Last name"
+msgstr "姓"
+
+msgid "Email"
+msgstr "メールアドレス"
+
+msgid "(leave blank to keep current)"
+msgstr "(現在の値を保持する場合は空白)"
+
+msgid "Administrator"
+msgstr "管理者"
+
+msgid "Permissions: full access to users and all subdomains."
+msgstr "権限: ユーザーとすべてのサブドメインへのフルアクセス。"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Copied to clipboard"
+msgstr "クリップボードにコピーしました"
+
+#| msgid "Subdomain name "
+msgid "Subdomain added"
+msgstr "サブドメインを追加しました"
+
+msgid "Detecting IP..."
+msgstr "IPを検出中..."
+
+#| msgid "Last update"
+msgid "IP updated"
+msgstr "IPを更新しました"
+
+#| msgid "Subdomain name "
+msgid "Subdomain removed"
+msgstr "サブドメインを削除しました"
+
+#| msgid "Welcome"
+msgid "Welcome back"
+msgstr "おかえりなさい"
+
+#| msgid "Dashboard of the user "
+msgid "Dashboard of"
+msgstr "ユーザーのダッシュボード:"
+
+msgid "Your dynamic DNS records on"
+msgstr "ダイナミックDNSレコード("
+
+#| msgid "Subdomain name "
+msgid "Subdomain"
+msgstr "サブドメイン"
+
+msgid "Add"
+msgstr "追加"
+
+#| msgid "Your current IP is"
+msgid "Your current public IP"
+msgstr "現在のパブリックIP"
+
+msgid "Auto-detected"
+msgstr "自動検出"
+
+#| msgid "Subdomain name "
+msgid "Subdomains"
+msgstr "サブドメイン"
+
+msgid "in your account"
+msgstr "アカウント内"
+
+msgid "Syncs (24h)"
+msgstr "同期 (24h)"
+
+#, python-format
+msgid "across %(counter)s host"
+msgid_plural "across %(counter)s hosts"
+msgstr[0] "%(counter)sホスト全体"
+msgstr[1] "%(counter)sホスト全体"
+
+msgid "check agent"
+msgstr "エージェントを確認"
+
+msgid "all good"
+msgstr "すべて正常"
+
 msgid "My domains"
-msgstr "ドメイン一覧"
+msgstr "自分のドメイン"
 
-#: pyddns/templates/dash.html:82
-msgid "Last update"
-msgstr "最終更新"
+msgid "Subdomains pointing at your current IP"
+msgstr "現在のIPを指すサブドメイン"
 
-#: pyddns/templates/dash.html:83 pyddns/templates/subdomains.html:64
-msgid "Action"
-msgstr "アクション"
+msgid "synced"
+msgstr "同期済み"
 
-#: pyddns/templates/dash.html:87
+#| msgid "Last update"
+msgid "gap = no update"
+msgstr "ギャップ = 更新なし"
+
 msgid "Copy"
 msgstr "コピー"
 
-#: pyddns/templates/dash.html:91
-msgid "Update to"
-msgstr "更新"
+msgid "ago"
+msgstr "前"
 
-#: pyddns/templates/dash.html:100
-msgid "My last records"
-msgstr "更新履歴"
+msgid "Sync"
+msgstr "同期"
 
-#: pyddns/templates/dash.html:108
-msgid "Date"
-msgstr "日付"
+msgid "Delete"
+msgstr "削除"
 
-#: pyddns/templates/dash.html:111
-msgid "Code"
-msgstr "ステータス"
+#| msgid "Admin subdomains"
+msgid "No subdomains yet"
+msgstr "サブドメインはまだありません"
 
-#: pyddns/templates/dash.html:114
-msgid "Message"
-msgstr "メッセージ"
+msgid "Add your first subdomain above to start syncing your IP."
+msgstr "上で最初のサブドメインを追加して、IPの同期を開始してください。"
 
-#: pyddns/templates/dash.html:117 pyddns/templates/subdomains.html:61
-msgid "Domain"
-msgstr "ドメイン"
+msgid "Recent activity"
+msgstr "最近のアクティビティ"
 
-#: pyddns/templates/dash.html:123
-msgid "Agent"
-msgstr "エージェント"
+msgid "Last sync attempts across your account"
+msgstr "アカウント全体の最近の同期試行"
 
-#: pyddns/templates/dash.html:144 pyddns/templates/subdomains.html:78
-#: pyddns/templates/users.html:97
+msgid "All"
+msgstr "すべて"
+
 msgid "Previous"
 msgstr "前へ"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
 msgid "Page"
 msgstr "ページ"
 
-#: pyddns/templates/dash.html:148 pyddns/templates/subdomains.html:82
-#: pyddns/templates/users.html:101
-msgid "of"
-msgstr "/"
-
-#: pyddns/templates/dash.html:152 pyddns/templates/subdomains.html:86
-#: pyddns/templates/users.html:105
 msgid "Next"
 msgstr "次へ"
 
-#: pyddns/templates/dash.html:164 pyddns/templates/subdomains.html:98
-#: pyddns/templates/users.html:117
-msgid "The updatewas successful and the hostname is now updated"
-msgstr "更新成功しました。ホスト名が更新されました。"
+msgid "No activity to show"
+msgstr "表示するアクティビティはありません"
 
-#: pyddns/templates/dash.html:165 pyddns/templates/subdomains.html:99
-#: pyddns/templates/users.html:118
-msgid "The APP not sinc bind"
-msgstr "バインドを同期できません"
+msgid "Sync attempts will appear here once your client checks in."
+msgstr "クライアントがチェックインすると同期試行がここに表示されます。"
 
-#: pyddns/templates/dash.html:166 pyddns/templates/subdomains.html:100
-#: pyddns/templates/users.html:119
-msgid "The hostname specified does not exist in this user account"
-msgstr "このユーザーアカウントに指定されたホスト名が存在しません"
+msgid "Quickstart with ddclient"
+msgstr "ddclientクイックスタート"
 
-#: pyddns/templates/dash.html:167 pyddns/templates/subdomains.html:101
-#: pyddns/templates/users.html:120
-msgid "The username and password pair do not match a real user"
-msgstr "ユーザー名とパスワードのペアが実ユーザーと一致しません"
+msgid "Drop this into ~/.ddclient.conf and run ddclient -force"
+msgstr "~/.ddclient.confに貼り付けて、ddclient -forceを実行してください"
 
-#: pyddns/templates/dash.html:168 pyddns/templates/dash.html:169
-#: pyddns/templates/subdomains.html:102 pyddns/templates/subdomains.html:103
-#: pyddns/templates/users.html:121 pyddns/templates/users.html:122
-msgid "Incorrect authentication format"
-msgstr "認証形式が正しくありません"
+msgid "Force update for one subdomain"
+msgstr "1つのサブドメインを強制更新"
 
-#: pyddns/templates/dash.html:170 pyddns/templates/subdomains.html:104
-#: pyddns/templates/users.html:123
-msgid "Missing header HTTP_AUTHORIZATION"
-msgstr "HTTP_AUTHORIZATIONヘッダーがありません"
+msgid "Replace 'your-password' with the password you use to sign into PyDDNS."
+msgstr "'your-password'をPyDDNSにサインインするパスワードに置き換えてください。"
 
-#: pyddns/templates/dash.html:171 pyddns/templates/subdomains.html:105
-#: pyddns/templates/users.html:124
-msgid "Missing header HTTP_USER_AGENT"
-msgstr "HTTP_USER_AGENTヘッダーがありません"
-
-#: pyddns/templates/dash.html:172 pyddns/templates/subdomains.html:106
-#: pyddns/templates/users.html:125
-msgid "You have exceeded the maximum number of attempts"
-msgstr "最大試行回数を超えました"
-
-#: pyddns/templates/dash.html:238
-msgid "The subdomain already exists"
-msgstr "すでにサブドメインは存在します"
-
-#: pyddns/templates/dash.html:252
-#, fuzzy
-#| msgid "You do not have permission to delete the subdomain"
-msgid "You certainly want to delete the domain"
-msgstr "このドメインを削除しますか？"
-
-#: pyddns/templates/dash.html:267
-msgid "You do not have permission to delete the subdomain"
-msgstr "サブドメイン削除権限がありません"
-
-#: pyddns/templates/subdomains.html:48
-msgid "Admin subdomains"
-msgstr "サブドメイン管理"
-
-#: pyddns/templates/subdomains.html:51
-msgid "Search subdomain"
-msgstr "サブドメイン検索"
-
-#: pyddns/templates/subdomains.html:63
-msgid "Contact email"
-msgstr "連絡メールアドレス"
-
-#: pyddns/templates/subdomains.html:71
 msgid "Admin"
 msgstr "管理者"
 
-#: pyddns/templates/users.html:48
-msgid "Admin users"
-msgstr "ユーザー管理"
+#| msgid "Superuser"
+msgid "Superuser shortcuts."
+msgstr "スーパーユーザーのショートカット。"
 
-#: pyddns/templates/users.html:53
-msgid "Search user"
-msgstr "ユーザー検索"
+#| msgid "Search subdomain"
+msgid "Delete subdomain?"
+msgstr "サブドメインを削除しますか?"
 
-#: pyddns/templates/users.html:66
-msgid "Last Name"
-msgstr "名字"
+msgid "This will permanently remove"
+msgstr "次のサブドメインがBINDから完全に削除されます:"
 
-#: pyddns/templates/users.html:67
-msgid "Superuser"
+msgid "from BIND. This can't be undone."
+msgstr "この操作は取り消せません。"
+
+#, python-format
+msgid "Search results for \"%(buscar)s\""
+msgstr ""
+
+#, python-format
+msgid "%(counter)s subdomain in <span class=\"mono\">%(domain)s</span>"
+msgid_plural "%(counter)s subdomains in <span class=\"mono\">%(domain)s</span>"
+msgstr[0] "%(counter)sサブドメイン (<span class=\"mono\">%(domain)s</span>)"
+msgstr[1] "%(counter)sサブドメイン (<span class=\"mono\">%(domain)s</span>)"
+
+#| msgid "Search user"
+msgid "Search"
+msgstr "検索"
+
+msgid "Domain"
+msgstr "ドメイン"
+
+msgid "Owner"
+msgstr "所有者"
+
+msgid "IP"
+msgstr ""
+
+msgid "Last update"
+msgstr "最終更新"
+
+msgid "active"
+msgstr "アクティブ"
+
+#| msgid "Admin subdomains"
+msgid "No subdomains found"
+msgstr "サブドメインが見つかりません"
+
+msgid "Try a different search term."
+msgstr "別の検索キーワードを試してください。"
+
+msgid "Subdomains will appear here when users create them."
+msgstr "ユーザーがサブドメインを作成するとここに表示されます。"
+
+#| msgid "Username"
+msgid "User removed"
+msgstr "ユーザーを削除しました"
+
+msgid "All users in the system"
+msgstr "システムのすべてのユーザー"
+
+msgid "Permissions"
+msgstr "権限"
+
+msgid "Domains"
+msgstr "ドメイン"
+
+#| msgid "Last name"
+msgid "Last sync"
+msgstr "最終同期"
+
+#| msgid "Admin"
+msgid "admin"
 msgstr "管理者"
 
-#: pyddns/templates/users.html:69
-msgid "Actions"
-msgstr "アクション"
+#| msgid "Add user"
+msgid "user"
+msgstr "ユーザー"
 
-#: pyddns/templates/users.html:162
+#| msgid "My domains"
+msgid "View domains"
+msgstr "ドメインを表示"
+
+msgid "Never"
+msgstr "なし"
+
+#| msgid "Edit user"
+msgid "Edit"
+msgstr "編集"
+
+msgid "No users found"
+msgstr "ユーザーが見つかりません"
+
+msgid "Create your first user to get started."
+msgstr "最初のユーザーを作成して開始してください。"
+
+msgid "Delete user?"
+msgstr "ユーザーを削除しますか?"
+
+msgid "This will remove"
+msgstr "次のユーザー:"
+
+msgid "and all their subdomains. This can't be undone."
+msgstr "とそのすべてのサブドメインが削除されます。この操作は取り消せません。"
+
+#~ msgid "User"
+#~ msgstr "ユーザー"
+
+#~ msgid "Login"
+#~ msgstr "ログイン"
+
+#~ msgid "ACCESS DENIED"
+#~ msgstr "アクセス拒否されました"
+
+#~ msgid "Go to back"
+#~ msgstr "戻る"
+
+#~ msgid "Name"
+#~ msgstr "名前"
+
+#~ msgid "Is admin?"
+#~ msgstr "管理者"
+
+#~ msgid "you must enter a username"
+#~ msgstr "ユーザー名を入力する必要があります"
+
+#~ msgid "you must enter a name"
+#~ msgstr "名前を入力する必要があります"
+
+#~ msgid "you must enter a last name"
+#~ msgstr "姓を入力する必要があります"
+
+#~ msgid "you must enter a email"
+#~ msgstr "メールアドレスを入力する必要があります"
+
+#~ msgid "The username "
+#~ msgstr "ユーザー名"
+
+#~ msgid "Logout"
+#~ msgstr "ログアウト"
+
+#~ msgid "Action"
+#~ msgstr "アクション"
+
+#~ msgid "Update to"
+#~ msgstr "更新"
+
+#~ msgid "My last records"
+#~ msgstr "更新履歴"
+
+#~ msgid "Date"
+#~ msgstr "日付"
+
+#~ msgid "Code"
+#~ msgstr "ステータス"
+
+#~ msgid "Message"
+#~ msgstr "メッセージ"
+
+#~ msgid "Agent"
+#~ msgstr "エージェント"
+
+#~ msgid "of"
+#~ msgstr "/"
+
+#~ msgid "The updatewas successful and the hostname is now updated"
+#~ msgstr "更新成功しました。ホスト名が更新されました。"
+
+#~ msgid "The APP not sinc bind"
+#~ msgstr "バインドを同期できません"
+
+#~ msgid "The hostname specified does not exist in this user account"
+#~ msgstr "このユーザーアカウントに指定されたホスト名が存在しません"
+
+#~ msgid "The username and password pair do not match a real user"
+#~ msgstr "ユーザー名とパスワードのペアが実ユーザーと一致しません"
+
+#~ msgid "Incorrect authentication format"
+#~ msgstr "認証形式が正しくありません"
+
+#~ msgid "Missing header HTTP_AUTHORIZATION"
+#~ msgstr "HTTP_AUTHORIZATIONヘッダーがありません"
+
+#~ msgid "Missing header HTTP_USER_AGENT"
+#~ msgstr "HTTP_USER_AGENTヘッダーがありません"
+
+#~ msgid "You have exceeded the maximum number of attempts"
+#~ msgstr "最大試行回数を超えました"
+
+#~ msgid "The subdomain already exists"
+#~ msgstr "すでにサブドメインは存在します"
+
 #, fuzzy
-#| msgid "You do not have permission to delete the subdomain"
-msgid "You certainly want to delete the user"
-msgstr "このユーザーを削除しますか？"
+#~ msgid "You certainly want to delete the domain"
+#~ msgstr "このドメインを削除しますか？"
+
+#~ msgid "Contact email"
+#~ msgstr "連絡メールアドレス"
+
+#~ msgid "Admin users"
+#~ msgstr "ユーザー管理"
+
+#~ msgid "Last Name"
+#~ msgstr "名字"
+
+#~ msgid "Actions"
+#~ msgstr "アクション"
+
+#, fuzzy
+#~ msgid "You certainly want to delete the user"
+#~ msgstr "このユーザーを削除しますか？"
