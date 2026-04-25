@@ -19,7 +19,10 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 days
-CSRF_COOKIE_HTTPONLY = True
+# Note: CSRF_COOKIE_HTTPONLY left at False (Django default) on purpose —
+# our AJAX views read the csrftoken cookie from JS to attach it to POSTs.
+# Django docs explicitly note that HttpOnly does not improve CSRF protection
+# (an attacker who can read the cookie is already same-origin).
 
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
