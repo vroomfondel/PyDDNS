@@ -119,7 +119,7 @@ def users(request, buscar=None):
         users=users.filter( Q(first_name__icontains=buscar) | Q(last_name__icontains=buscar) | Q(username__icontains=buscar) )
     else:
         buscar=""
-    paginator = Paginator(users, 6) # Show 25 contacts per page
+    paginator = Paginator(users, 10)
     page = request.GET.get('page')
     try:
         list_users = paginator.page(page)
@@ -144,7 +144,7 @@ def domains(request, buscar=None):
 
     domain=settings.DNS_DOMAIN
 
-    paginator = Paginator(subdomains, 6) # Show 25 contacts per page
+    paginator = Paginator(subdomains, 10)
     page = request.GET.get('page')
     try:
         list_subdomains = paginator.page(page)

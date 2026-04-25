@@ -470,6 +470,8 @@ input, select, textarea { font-family: inherit; color: inherit; }
   line-height: 1.6;
   overflow-x: auto;
   white-space: pre;
+  min-width: 0;
+  max-width: 100%;
 }
 .code-block .copy {
   position: absolute; top: 8px; right: 8px;
@@ -633,6 +635,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
 
 /* Section grid */
 .grid-2 { display: grid; gap: 16px; grid-template-columns: 2fr 1fr; }
+.grid-2 > * { min-width: 0; }   /* prevent intrinsic content (long FQDNs in code-block) from blowing the columns */
 @media (max-width: 1000px) { .grid-2 { grid-template-columns: 1fr; } }
 
 /* Empty state */
