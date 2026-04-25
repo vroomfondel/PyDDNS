@@ -2,6 +2,7 @@
 import os
 
 from django.contrib import admin
+from django.conf import settings
 from django.urls import include, re_path
 from django.conf.urls.i18n import i18n_patterns
 
@@ -12,6 +13,9 @@ from pyddns.views import *
 urlpatterns = [
     re_path(r'^nic/update', updateip),
 ]
+
+if getattr(settings, 'ENABLE_REST_API', False):
+    urlpatterns.append(re_path(r'^api/', include('api.urls')))
 
 urlpatterns += i18n_patterns(
     re_path(r'^main/(?P<id_user>.*)', main),

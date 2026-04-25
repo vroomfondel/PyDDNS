@@ -111,6 +111,7 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user | ✅ |
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
 | `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist | ➖ |
+| `ENABLE_REST_API` | Set to `1` to expose Token-authenticated `/api/` endpoints (off by default) | ➖ |
 | `COMPOSE_PROFILES` | Set to `migration` to run Postgres 9.6 → 15 upgrade | ➖ |
 
 ### Development mode
@@ -166,6 +167,43 @@ For production, drop your CA-issued `https.crt` and `https.key` into `data/certs
 
 To remove HTTPS entirely, delete the `listen 8443 ssl;` server block from `config/nginx/mydjango.conf`.
 </details>
+
+---
+
+## 🔌 REST API (optional)
+
+Set `ENABLE_REST_API=1` in `.env` to expose a Token-authenticated JSON API under `/api/`. Useful for custom integrations, mobile apps, automation, or replacing `dyndns2` with a more modern protocol.
+
+```bash
+# 1. Obtain a token
+curl -X POST https://ddns.example.com/api/auth/token/ \
+  -d "username=youruser&password=yourpass"
+# {"token": "abc123..."}
+
+# 2. List your subdomains
+curl https://ddns.example.com/api/subdomains/ \
+  -H "Authorization: Token abc123..."
+
+# 3. Update a subdomain's IP
+curl -X POST https://ddns.example.com/api/subdomains/1/update_ip/ \
+  -H "Authorization: Token abc123..." \
+  -H "Content-Type: application/json" \
+  -d '{"ip": "203.0.113.42"}'
+
+# 4. Revoke the token (logout)
+curl -X POST https://ddns.example.com/api/auth/token/revoke/ \
+  -H "Authorization: Token abc123..."
+```
+
+**Endpoints:**
+- `POST /api/auth/token/` · `POST /api/auth/token/revoke/`
+- `GET /api/me/`
+- `GET POST /api/subdomains/` · `GET PUT DELETE /api/subdomains/{id}/`
+- `POST /api/subdomains/{id}/update_ip/`
+- `GET /api/activity/` (own log; admin sees all)
+- `GET POST /api/users/` and `GET PUT DELETE /api/users/{id}/` (admin only)
+
+The classic `/nic/update` (`dyndns2`) endpoint stays available regardless — `ddclient` and friends keep working.
 
 ---
 

@@ -21,6 +21,8 @@ ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').s
 LOGIN_URL = '/common/login/'
 
 
+ENABLE_REST_API = os.environ.get('ENABLE_REST_API', '0').lower() in ('1', 'true', 'yes')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,6 +33,25 @@ INSTALLED_APPS = [
     'common',
     'pyddns',
 ]
+
+if ENABLE_REST_API:
+    INSTALLED_APPS += [
+        'rest_framework',
+        'rest_framework.authtoken',
+        'api',
+    ]
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework.authentication.TokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
+        ],
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
+        ],
+        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'PAGE_SIZE': 20,
+    }
 
 MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',

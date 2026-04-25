@@ -32,6 +32,7 @@ jobs:
       DB_NAME: pyddns
       DB_USER: pyddns
       DB_PASSWORD: pyddns
+      ENABLE_REST_API: "1"
 
     steps:
       - uses: actions/checkout@v4

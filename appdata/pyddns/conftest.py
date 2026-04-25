@@ -9,6 +9,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'pyddns.settings.development'
 os.environ.setdefault('DJANGO_SECRET_KEY', 'test-secret-key-not-for-production')
 os.environ.setdefault('DJANGO_DEBUG', '1')
 os.environ.setdefault('DJANGO_ALLOWED_HOSTS', 'testserver,localhost')
+os.environ['ENABLE_REST_API'] = '1'  # API tests require it on
 os.environ.setdefault('OWN_ADMIN', '1')
 os.environ.setdefault('DNS_DOMAIN', 'ddns.example.com')
 os.environ.setdefault('DNS_HOST', 'ddns')
