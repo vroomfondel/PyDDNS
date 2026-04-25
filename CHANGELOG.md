@@ -7,6 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Modernized UI** — full template rewrite from the legacy Bootstrap layout
+  to a responsive dark theme with amber accents, Inter for UI text and
+  JetBrains Mono for technical data (FQDNs, IPs, return codes). Powered by
+  Alpine.js for interactivity (toasts, modals, dropdowns) — no SPA build
+  pipeline.
+- **Admin impersonation** — superusers can "Sign in as" any active user from
+  the Users admin. A sticky banner shows who you are and who you're acting
+  as, with a one-click "Return to admin". Both start and stop are logged to
+  `Activity_log` (`IMPERSONATE_START` / `IMPERSONATE_STOP`).
+- **Language picker dropdown** — globe icon, eight locales listed by full
+  name with the current selection highlighted. Replaces the inline button
+  row that didn't scale beyond a couple of languages.
+- **3 additional locales** — `pt-br`, `fr`, `ru` (now 8 total alongside
+  `en`/`es`/`de`/`ja`/`zh-hans`).
+- **Operator-controlled language lock** — `DJANGO_LANGUAGE_CODE` empty
+  enables international mode (browser auto-detect + in-app picker); set
+  to a language code to lock the deployment to that language and hide the
+  picker. Regional variants (`es-es`, `pt-BR`, `fr-FR`) canonicalize.
+- **24h activity sparklines** per subdomain on the dashboard, derived from
+  successful `SYNC` entries bucketed by hour.
+- **Dashboard stats** — public IP card, subdomain count, syncs in last
+  24h, failed in last 24h.
+- **Quickstart card** with `ddclient.conf` and `curl` tabs, syntax-highlighted
+  and copyable, generated from the user's own subdomains.
+- **Demo data seed script** for screenshots / first-run experience.
+- **Documentation** — README rewritten with screenshots, expanded
+  configuration reference, troubleshooting entries for CSRF/proxy,
+  language picker visibility, and Postgres data directory mismatch.
+
+### Changed
+
+- `MIDDLEWARE` now includes `SecurityMiddleware` first (was missing,
+  silently disabling all `SECURE_*` settings).
+- `LANGUAGE_CODE` defaults to `en` in international mode (was `es-es`).
+- `set_language` flow now posts a path-without-locale-prefix as `next`
+  so Django's `LocaleMiddleware` re-applies the new language reliably
+  (workaround for `translate_url` not rewriting the prefix when the active
+  language differs from the source URL).
+- Pagination on Users and All-domains admin tables is now 10/page
+  (was 6).
+
+### Fixed
+
+- **Critical**: `CSRF_COOKIE_HTTPONLY = True` (introduced during 3.0
+  hardening) broke every AJAX POST in the dashboard because the JS
+  helper reads `csrftoken` from `document.cookie`. Reverted to the
+  Django default; HttpOnly does not improve CSRF protection per
+  Django's own docs.
+- URL regex `^main/(?P<id_user>.*)` matched the empty string and
+  shadowed the named `^main/` pattern, breaking `reverse('main')` and
+  any code calling `resolve('/main/')`. Same for `users/` and
+  `domains/`. Tightened to `.+`.
+- `dologin` returned `redirect: '/common/main/'` (a non-existent URL).
+  Now returns `/main/`.
+- `Argon2PasswordHasher` was set as the default password hasher in
+  production but `argon2-cffi` was not always baked into the image.
+  Settings now probe the import at startup and fall back to PBKDF2
+  silently when the dep isn't available — the app no longer 500s on
+  successful login from a stale image.
+- `production.py` did not declare `CSRF_TRUSTED_ORIGINS`, breaking all
+  POSTs over HTTPS behind the nginx proxy on Django 5+. Now derived
+  automatically from `DJANGO_ALLOWED_HOSTS`.
+
 ## [3.0.0] — 2026-04-25
 
 Major modernization release. Stack upgraded end-to-end, security hardened,

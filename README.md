@@ -1,10 +1,8 @@
 <div align="center">
 
-<img src="https://i.imgur.com/kOrgTBW.png" alt="PyDDNS" width="320" />
+# PyDDNS
 
-# PyDDNS — Self-Hosted Dynamic DNS Server
-
-**Run your own `dyndns2`-compatible DNS service. No vendor lock-in, no monthly fees, no rate limits.**
+**Self-hosted Dynamic DNS server. Run your own `dyndns2`-compatible service — no vendor lock-in, no rate limits, no monthly fees.**
 
 [![Tests](https://github.com/olimpo88/PyDDNS/actions/workflows/test.yml/badge.svg)](https://github.com/olimpo88/PyDDNS/actions/workflows/test.yml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
@@ -13,7 +11,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com)
 
-[Quick Start](#-quick-start) · [Features](#-features) · [Use Cases](#-use-cases) · [Roadmap](#-roadmap) · [Contributing](#-contributing)
+[Quick Start](#-quick-start) · [Features](#-features) · [Screenshots](#-screenshots) · [REST API](#-rest-api-optional) · [Roadmap](#-roadmap) · [Contributing](#-contributing)
 
 </div>
 
@@ -23,25 +21,49 @@
 
 Public Dynamic DNS providers come with caveats: rate limits, paid tiers, branded subdomains, and data you don't own. **PyDDNS** is the self-hosted, production-ready alternative — a complete DDNS solution wrapped in a clean web UI and one-command Docker deployment.
 
-Point a delegated subdomain at your server, create user accounts, and let users update their public IP from any standard `dyndns2` client — router firmware, `ddclient`, `inadyn`, mobile apps. DNS lives in your own BIND zone, activity is fully logged, and access is gated per-user.
+Point a delegated subdomain at your server, create user accounts, and let users update their public IP from any standard `dyndns2` client — router firmware, `ddclient`, `inadyn`, mobile apps. DNS lives in your own BIND zone, activity is fully audited, access is gated per-user, and a Token-authenticated REST API is one env-var away.
 
-> 📺 **See it in action:** [demo video](https://www.youtube.com/watch?v=ALN9901EoyA)
+---
 
-![PyDDNS web interface](https://i.imgur.com/6HTwrfn.png)
+## 🖼 Screenshots
+
+<div align="center">
+
+<img src="docs/img/screenshots/dashboard.jpg" alt="Dashboard" width="800" />
+
+*Dashboard — public IP, owned subdomains with 24h uptime sparklines, recent activity log with filters, and a ddclient/curl quickstart.*
+
+<br/>
+
+<img src="docs/img/screenshots/login.jpg" alt="Login" width="420" />
+
+*Login — language picker exposed when no operator-level lock is set.*
+
+<br/>
+
+<img src="docs/img/screenshots/users.jpg" alt="Users admin" width="800" />
+
+*Users — admin overview with per-user domain count and last-sync time.*
+
+</div>
 
 ---
 
 ## ✨ Features
 
-- 🔌 **`dyndns2` protocol compatible** — drop-in replacement for No-IP, DynDNS, Duck DNS, with any existing client
-- 👥 **Multi-user, multi-domain** — admin panel, per-user subdomains, role-based permissions
-- 🔐 **Production-grade security** — Gunicorn behind nginx, HTTPS, secure cookies, hardened headers, env-driven secrets
-- 📊 **Full audit trail** — every IP update, login attempt, and admin action persisted to Postgres
-- 🌍 **i18n out of the box** — English, Spanish, German, Japanese, Simplified Chinese
+- 🔌 **`dyndns2` protocol compatible** — drop-in replacement for No-IP, DynDNS, Duck DNS for any existing client (`ddclient`, `inadyn`, router firmware)
+- 🔑 **Token-authenticated REST API** (optional, opt-in) — full CRUD over users, subdomains, activity log, with per-token revocation
+- 👥 **Multi-user, multi-domain** — admin panel, per-user subdomains, role-based permissions, soft-delete prevention for the current user
+- 🎭 **Admin impersonation** — superusers can sign in as any active account (with a sticky banner and full audit trail) for support and debugging without needing the user's password
+- 🎨 **Modern dark UI** — responsive Django templates + Alpine.js, no SPA build pipeline. Amber accent palette, Inter for UI, JetBrains Mono for technical data
+- 🌍 **8 languages out of the box** — 🇺🇸 English · 🇪🇸 Spanish · 🇧🇷 Portuguese (Brazilian) · 🇫🇷 French · 🇩🇪 German · 🇷🇺 Russian · 🇯🇵 Japanese · 🇨🇳 Chinese (Simplified). Browser auto-detection, in-app picker, or operator-locked mode
+- 🔐 **Production-grade security** — Argon2id password hashing (PBKDF2 fallback), HSTS, secure cookies, CSP-friendly, hardened headers, env-driven secrets, brute-force throttle (per-IP and per-user), input validation
+- 📊 **Full audit trail** — every IP update, login attempt, and admin action persisted to Postgres with timestamps, agent strings, and return codes
+- 🛡 **Container hardening** — multi-stage build, non-root user, read-only root filesystem, dropped capabilities, no-new-privileges
+- 🩺 **Healthchecks everywhere** — Postgres `pg_isready`, Gunicorn TCP probe, `depends_on: service_healthy` gates startup order
+- 🧪 **Tested in CI** — pytest suite (88+ tests), GitHub Actions on every push with `pip-audit` for CVE scanning, `ruff` for lint
+- 🔄 **Smooth upgrades** — scripted Postgres 9.6 → 15 migration runs both versions in parallel under a Compose profile
 - 🧰 **One-command deployment** — `docker compose up -d` and you're live
-- 🩺 **Healthchecks everywhere** — Postgres, Gunicorn, and TCP probes baked into Compose
-- 🧪 **Tested in CI** — pytest suite + GitHub Actions on every push
-- 🔄 **Smooth upgrades** — scripted Postgres 9.6 → 15 migration for v1/v2 deployments
 
 ---
 
@@ -51,12 +73,17 @@ Point a delegated subdomain at your server, create user accounts, and let users 
 |-------|-----------|
 | Backend | [Django 5.2 LTS](https://www.djangoproject.com) on [Python 3.11](https://www.python.org) |
 | WSGI | [Gunicorn 23](https://gunicorn.org) — 3 workers in production, `--reload` in development |
+| Frontend | Server-rendered Django templates + [Alpine.js](https://alpinejs.dev) for interactivity |
+| Design tokens | Inter (UI), JetBrains Mono (data), oklch palette, dark mode by default |
+| REST API | [Django REST framework](https://www.django-rest-framework.org) (optional, gated by `ENABLE_REST_API`) |
 | DNS | [BIND](https://www.isc.org/bind/) via [`davd/docker-ddns`](https://hub.docker.com/r/davd/docker-ddns) |
 | Database | [PostgreSQL 15](https://www.postgresql.org) |
-| Reverse Proxy | [nginx 1.27](https://nginx.org) — HTTPS termination, static files |
-| Orchestration | [Docker Compose v2](https://docs.docker.com/compose/) — multi-stage build, non-root container |
-| Testing | [pytest](https://pytest.org), [pytest-django](https://pytest-django.readthedocs.io), [ruff](https://docs.astral.sh/ruff/) |
-| CI | [GitHub Actions](https://github.com/features/actions) — tests + lint on every push |
+| Reverse Proxy | [nginx 1.27](https://nginx.org) — TLS 1.2/1.3, modern ciphers, security headers |
+| Orchestration | [Docker Compose v2](https://docs.docker.com/compose/) — multi-stage build, hardened runtime |
+| Auth | Sessions for web UI, Token for REST API, HTTP Basic for `dyndns2` |
+| Hashing | Argon2id (with `argon2-cffi`), PBKDF2 fallback |
+| Testing | [pytest](https://pytest.org), [pytest-django](https://pytest-django.readthedocs.io), [pytest-env](https://pypi.org/project/pytest-env/), [ruff](https://docs.astral.sh/ruff/) |
+| CI | [GitHub Actions](https://github.com/features/actions) — tests + lint + `pip-audit` on every push |
 
 ---
 
@@ -79,7 +106,7 @@ cd PyDDNS
 # 1. Configure environment
 cp .env-demo .env
 
-# 2. Generate a Django secret key and paste it into DJANGO_SECRET_KEY in .env
+# 2. Generate a Django secret key — paste it into DJANGO_SECRET_KEY in .env
 docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_urlsafe(50))"
 
 # 3. Build and start the stack
@@ -92,6 +119,8 @@ docker compose ps
 
 All four services — `python`, `postgres`, `nginx`, `ddns` — should reach `(healthy)` within ~30 seconds. The web UI is on `HTTP_PORT` (80 by default); log in with `DJANGO_SU_NAME` / `DJANGO_SU_PASSWORD` defined in `.env`.
 
+> **Picked up an env change?** `docker compose restart python` reloads code only. To pick up `.env` or `docker-compose.yml` edits use `docker compose up -d --force-recreate python`.
+
 ---
 
 ## 🔧 Configuration
@@ -102,17 +131,17 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 |----------|---------|:-:|
 | `DOMAIN` | Delegated subdomain (e.g. `ddns.example.com`) | ✅ |
 | `SHARED_SECRET` | Internal API token between Django and BIND | ✅ |
-| `DJANGO_SECRET_KEY` | Cryptographic signing key | ✅ |
+| `DJANGO_SECRET_KEY` | Cryptographic signing key (fail-loud if unset) | ✅ |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated valid `Host` headers | ✅ |
 | `DJANGO_SETTINGS_MODULE` | `pyddns.settings.production` or `.development` | ✅ |
-| `DJANGO_LANGUAGE_CODE` | UI language (`en`, `es`, `de`, `ja`, `zh-hans`) | ➖ |
+| `DJANGO_LANGUAGE_CODE` | **Empty** = international mode (browser auto-detects, picker visible). **Set** (`es`, `fr`, `pt-br`, …) = locked: every page in that language, picker hidden | ➖ |
 | `DJANGO_TIME_ZONE` | TZ database name (default `UTC`) | ➖ |
 | `DATABASE_NAME` / `_USER` / `_PASS` | PostgreSQL connection | ✅ |
-| `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user | ✅ |
+| `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user (created on first start) | ✅ |
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
-| `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist | ➖ |
+| `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist for `/nic/update` | ➖ |
 | `ENABLE_REST_API` | Set to `1` to expose Token-authenticated `/api/` endpoints (off by default) | ➖ |
-| `COMPOSE_PROFILES` | Set to `migration` to run Postgres 9.6 → 15 upgrade | ➖ |
+| `COMPOSE_PROFILES` | Set to `migration` to run the Postgres 9.6 → 15 upgrade flow | ➖ |
 
 ### Development mode
 
@@ -153,7 +182,7 @@ rndc thaw ddns.example.com
 <details>
 <summary><strong>SSL / HTTPS configuration</strong></summary>
 
-The default nginx config exposes both HTTP (`HTTP_PORT`) and HTTPS (`HTTPS_PORT`).
+The default nginx config exposes both HTTP (`HTTP_PORT`) and HTTPS (`HTTPS_PORT`) with TLS 1.2/1.3 only and modern ciphers.
 
 For testing, generate a self-signed certificate:
 
@@ -165,14 +194,14 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 For production, drop your CA-issued `https.crt` and `https.key` into `data/certs/` (Let's Encrypt, Cloudflare Origin, your own CA, etc.).
 
-To remove HTTPS entirely, delete the `listen 8443 ssl;` server block from `config/nginx/mydjango.conf`.
+In production settings, `SECURE_SSL_REDIRECT` forces HTTP → HTTPS, HSTS is set with a 1-year max-age, and CSRF cookies are `Secure` + `HttpOnly`.
 </details>
 
 ---
 
 ## 🔌 REST API (optional)
 
-Set `ENABLE_REST_API=1` in `.env` to expose a Token-authenticated JSON API under `/api/`. Useful for custom integrations, mobile apps, automation, or replacing `dyndns2` with a more modern protocol.
+Set `ENABLE_REST_API=1` in `.env` to expose a Token-authenticated JSON API under `/api/`. When disabled, neither DRF nor the `api` app are loaded — zero attack surface added.
 
 ```bash
 # 1. Obtain a token
@@ -204,6 +233,31 @@ curl -X POST https://ddns.example.com/api/auth/token/revoke/ \
 - `GET POST /api/users/` and `GET PUT DELETE /api/users/{id}/` (admin only)
 
 The classic `/nic/update` (`dyndns2`) endpoint stays available regardless — `ddclient` and friends keep working.
+
+---
+
+## 🌐 Internationalization
+
+PyDDNS ships with translations for **8 locales**:
+
+🇺🇸 English · 🇪🇸 Spanish · 🇧🇷 Portuguese (BR) · 🇫🇷 French · 🇩🇪 German · 🇷🇺 Russian · 🇯🇵 Japanese · 🇨🇳 Chinese (Simplified)
+
+The `DJANGO_LANGUAGE_CODE` env var controls behaviour:
+
+- **Empty / unset** → *international mode*. `LocaleMiddleware` auto-detects from the browser's `Accept-Language`. Users can switch via the in-app picker (globe icon, top-right). EN is the fallback when nothing else matches.
+- **Set** to a supported code (e.g. `es`, `fr`, `pt-br`, `ja`) → *locked mode*. Every page is served in that language and the picker is hidden — useful when you're deploying for a specific community and don't want the choice exposed. Regional variants (`es-es`, `pt-BR`, `fr-FR`) canonicalise automatically.
+
+To add or refine a translation:
+
+```bash
+# Extract new strings (run from a container with gettext available)
+docker compose exec python python manage.py makemessages --locale <code>
+# Edit appdata/pyddns/locale/<code>/LC_MESSAGES/django.po
+docker compose exec python python manage.py compilemessages
+docker compose restart python
+```
+
+If your runtime image is read-only-hardened (default), use a one-off container with `gettext` installed instead. See `scripts/` for examples.
 
 ---
 
@@ -243,32 +297,25 @@ ASUS, MikroTik, OpenWrt, OPNsense, pfSense, and most consumer routers ship with 
 
 ---
 
-## 🌐 Internationalization
-
-Languages shipped: 🇺🇸 English · 🇪🇸 Spanish · 🇩🇪 German · 🇯🇵 Japanese · 🇨🇳 Simplified Chinese.
-
-Browser auto-detection via `Accept-Language` is on by default. Override per-deployment with `DJANGO_LANGUAGE_CODE`.
-
-To add or update a translation:
-
-```bash
-docker compose exec python python manage.py makemessages --locale <code>
-# Edit appdata/pyddns/locale/<code>/LC_MESSAGES/django.po
-docker compose exec python python manage.py compilemessages
-```
-
----
-
 ## 🧪 Testing
 
-51 tests cover models, views, the dyndns2 protocol, settings hardening, and DNS update flows.
+The pytest suite covers models, views, the full `dyndns2` protocol path, REST API endpoints, settings hardening, and DNS update flows.
+
+Running locally:
 
 ```bash
-docker compose exec python pip install pytest==7.4.4 pytest-django==4.8.0
-docker compose exec python python -m pytest -v
+# Easiest: ephemeral container with dev deps already bundled
+docker run --rm \
+  --network=pyddns_old_red \
+  -v $(pwd)/appdata/pyddns:/usr/src/app \
+  -w /usr/src/app \
+  -e DJANGO_SECRET_KEY=test \
+  -e DB_HOST=postgres -e DB_NAME=pyddns -e DB_USER=pyddns -e DB_PASSWORD=$(grep DATABASE_PASS .env | cut -d= -f2) \
+  python:3.11-slim \
+  bash -c "pip install -q -r /usr/src/app/../docker/requirements-dev.txt 2>/dev/null && python -m pytest -v"
 ```
 
-Pushes and pull requests automatically run the full suite against PostgreSQL 15 via [GitHub Actions](.github/workflows/test.yml).
+In CI: pushes and pull requests automatically run the full suite against PostgreSQL 15 via [`.github/workflows/test.yml`](.github/workflows/test.yml). The same workflow runs `ruff check` and `pip-audit --strict` to fail on known CVEs.
 
 ---
 
@@ -284,35 +331,24 @@ The script preserves your old data directory in `data/dbdata-old/` until you con
 
 ---
 
-## 🗺 Roadmap
-
-- [ ] **API tokens** — issue revocable per-user tokens, replacing HTTP Basic in dyndns2 update
-- [ ] **IPv6 (AAAA records)** — first-class support for IPv6-only and dual-stack updates
-- [ ] **Webhook notifications** — POST to a user-configured URL on every update or anomaly
-- [ ] **Prometheus metrics** — scraping endpoint for sync rates, login failures, zone health
-- [ ] **OAuth / OIDC login** — optional SSO via Authentik, Keycloak, GitHub
-- [ ] **Per-user rate limits** — configurable abuse protection beyond the global threshold
-- [ ] **Two-factor authentication** — TOTP for admin and end-user accounts
-- [ ] **REST API** — full CRUD for users and subdomains, OpenAPI spec
-- [ ] **UI refresh** — modernized templates, dark mode, mobile-first layout
-
-Have an idea? [Open an issue](https://github.com/olimpo88/PyDDNS/issues/new).
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome — bug reports, translation updates, documentation polish, and pull requests alike.
 
 1. **Fork** the repository and clone your fork.
 2. **Create a branch**: `git checkout -b feat/your-feature`.
-3. **Run tests locally** before pushing:
-   ```bash
-   docker compose exec python python -m pytest -v
-   ```
+3. **Run tests locally** before pushing (see [Testing](#-testing)).
 4. **Open a pull request** against `master`, describing the change and linking any related issues.
 
 Please follow the existing code style: Django conventions for Python, `ruff` for linting, conventional commit messages where practical.
+
+**Translation contributions** are especially valuable. The shipped translations for `ja`, `de`, `zh-hans`, `fr`, `pt-br`, and `ru` are technically correct but were not reviewed by native speakers — refinements from native speakers (formality, regional terminology) are very welcome.
+
+---
+
+## 🔒 Security
+
+Found a vulnerability? Please follow the disclosure process in [`SECURITY.md`](SECURITY.md). Don't open a public GitHub issue.
 
 ---
 
@@ -331,7 +367,7 @@ What this means in plain English:
 
 ## 🙏 Acknowledgments
 
-PyDDNS builds on the excellent [`docker-ddns`](https://github.com/dprandzioch/docker-ddns) image by **dprandzioch**. PyDDNS adds the multi-tenant Django front-end, audit logging, web management UI, and an opinionated production deployment.
+PyDDNS builds on the excellent [`docker-ddns`](https://github.com/dprandzioch/docker-ddns) image by **dprandzioch**. PyDDNS adds the multi-tenant Django front-end, audit logging, web management UI, REST API, hardened container runtime, and an opinionated production deployment.
 
 ---
 
@@ -376,6 +412,25 @@ docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_
 ```
 </details>
 
+<details>
+<summary><strong>The language picker doesn't appear / language won't change</strong></summary>
+
+If `DJANGO_LANGUAGE_CODE` is set in your `.env`, the app is in *locked mode* and the picker is hidden by design. Empty the variable and recreate the container:
+
+```bash
+# Edit .env: set DJANGO_LANGUAGE_CODE=
+docker compose up -d --force-recreate python
+```
+
+`docker compose restart` only reloads code — env changes need `--force-recreate`.
+</details>
+
+<details>
+<summary><strong>403 / CSRF errors on POST after deploying behind a reverse proxy</strong></summary>
+
+Django 5 requires `CSRF_TRUSTED_ORIGINS` for HTTPS POSTs from a proxy. The production settings derive it from `DJANGO_ALLOWED_HOSTS` automatically — make sure your hostname is listed there.
+</details>
+
 ---
 
 ## 📬 Contact
@@ -387,5 +442,5 @@ If PyDDNS is useful to you, ⭐ the repo — it's the cheapest way to support an
 ---
 
 <div align="center">
-<sub>Keywords: dynamic DNS, self-hosted DDNS, dyndns2 server, ddclient server, BIND web UI, Django DDNS, Docker DDNS, no-ip alternative, duckdns alternative, AGPL DNS</sub>
+<sub>Keywords: dynamic DNS · self-hosted DDNS · dyndns2 server · ddclient server · BIND web UI · Django DDNS · Docker DDNS · no-ip alternative · duckdns alternative · AGPL DNS · REST API DDNS · Argon2 DDNS</sub>
 </div>
