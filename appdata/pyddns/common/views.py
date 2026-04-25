@@ -11,7 +11,8 @@ import json
 #from servers.models import Activity_log
 from common.utils import getForwardedFor
 from common.models import Activity_log
-from datetime import datetime, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from pyddns.views import main
 import base64
 import requests
@@ -26,7 +27,7 @@ def dologin(request):
 	}
 	username=request.POST['username']
 	if request.session.test_cookie_worked():
-		cant_fails=Activity_log.objects.filter(action='DOLOGIN', xforward=getForwardedFor(request), date__gt=(datetime.now()-timedelta(minutes=10)), result__startswith='False').count()
+		cant_fails=Activity_log.objects.filter(action='DOLOGIN', xforward=getForwardedFor(request), date__gt=(timezone.now()-timedelta(minutes=10)), result__startswith='False').count()
 		if cant_fails>=5:
 			myjson['errors']['reason']=u'Ha superado la cantidad máxima de intentos.'
 		else:

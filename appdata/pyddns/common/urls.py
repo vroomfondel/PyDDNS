@@ -8,5 +8,5 @@ urlpatterns = [
     re_path(r'^dologin/', dologin, name="dologin"),
     re_path(r'^permission_denied', permission_denied, name="permission_denied"),
     re_path(r'^sin_permiso', sin_permiso, name="sin_permiso"),
-    re_path(r'^$', login, name="login"),
+    re_path(r'^$', login),
 ]

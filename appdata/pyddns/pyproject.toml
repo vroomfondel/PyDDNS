@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["**/migrations/", "**/static/", "manage.py"]
+
+[tool.ruff.lint]
+# Conservative starter ruleset: only catch real bugs, not style.
+# Expand over time as the codebase is modernized.
+select = [
+    "E9",   # Syntax errors
+    "F63",  # invalid comparisons
+    "F7",   # syntax errors in expressions
+    "F82",  # undefined name in __all__
+]

@@ -16,8 +16,9 @@ import base64
 import requests
 
 from common.models import Activity_log
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.conf import settings
+from django.utils import timezone
 from pyddns.models import SubDomain
 from django.db.models import Q
 from common.utils import getForwardedFor
@@ -153,10 +154,8 @@ def add_user(request,id_user=None):
     if id_user:
         try:
             user=User.objects.get(id=id_user)
-            #print user
-        except OstUserEmail.DoesNotExist:
+        except User.DoesNotExist:
             pass
-            #print "DoesNotExist"
     return render(request,"add_user.html",{'user':user})
 
 def add_subdomain(request):
@@ -424,7 +423,7 @@ def updateip(request):
     else:
         verified_agent=True
 
-    cant_fails=Activity_log.objects.filter(action='SYNC', ip=ip, date__gt=(datetime.now()-timedelta(minutes=10)), result__startswith='False').count()
+    cant_fails=Activity_log.objects.filter(action='SYNC', ip=ip, date__gt=(timezone.now()-timedelta(minutes=10)), result__startswith='False').count()
     if cant_fails<10:
         if verified_agent:
             if 'HTTP_AUTHORIZATION' in request.META:
