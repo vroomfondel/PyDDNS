@@ -88,6 +88,41 @@ Point a delegated subdomain at your server, create user accounts, and let users 
 
 ---
 
+## 🏛 Architecture
+
+```mermaid
+flowchart LR
+  subgraph Clients
+    DDNS[ddclient / inadyn / router firmware]
+    Browser[Browser]
+    API[REST API client<br/>optional]
+    Resolver[DNS resolver<br/>any]
+  end
+
+  subgraph PyDDNS["PyDDNS stack (docker compose)"]
+    Edge[nginx 1.27<br/>TLS 1.2/1.3]
+    App[Django 5.2 LTS<br/>+ Gunicorn]
+    DB[(PostgreSQL 15)]
+    DNS[BIND<br/>davd/docker-ddns]
+  end
+
+  DDNS -- "HTTPS /nic/update" --> Edge
+  Browser -- "HTTPS web UI" --> Edge
+  API -- "HTTPS /api/" --> Edge
+  Edge --> App
+  App -- "ORM" --> DB
+  App -- "internal HTTP /update" --> DNS
+  Resolver -- "UDP/TCP 53" --> DNS
+```
+
+- **Clients** speak the standard `dyndns2` protocol over HTTPS, the web UI in a browser, or the optional Token-authenticated REST API. DNS queries from the wider internet hit BIND directly on port 53.
+- **nginx** terminates TLS, serves static assets, and reverse-proxies dynamic requests to Django.
+- **Django + Gunicorn** handle authentication, validate updates, persist the audit trail to Postgres, and call BIND's internal HTTP API to mutate the zone.
+- **BIND** holds the live zone file in `data/bind-data/` and answers public DNS queries.
+- All internal traffic between containers stays on a private Compose network — only ports 53, 80, and 443 are exposed to the host.
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -141,6 +176,8 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user (created on first start) | ✅ |
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
 | `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist for `/nic/update` | ➖ |
+| `OWN_ADMIN` | `1` = every user can create their own subdomains. `0` = only superusers can create subdomains (admin-curated mode) | ➖ |
+| `HTTP_PORT` / `HTTPS_PORT` / `DNS_PORT` | Host-side ports nginx and BIND bind to (defaults: 80 / 443 / 53) | ➖ |
 | `ENABLE_REST_API` | Set to `1` to expose Token-authenticated `/api/` endpoints (off by default) | ➖ |
 | `EMAIL_HOST` / `_PORT` / `_HOST_USER` / `_HOST_PASSWORD` | SMTP credentials. Empty `EMAIL_HOST` = log emails to stderr instead of sending (zero-config in dev) | ➖ |
 | `EMAIL_USE_TLS` / `EMAIL_USE_SSL` | Enable STARTTLS or SSL on the SMTP socket (defaults: TLS on) | ➖ |
@@ -161,7 +198,7 @@ Then `docker compose restart python` — Gunicorn picks up code changes automati
 <details>
 <summary><strong>DNS zone setup (NS delegation, glue records)</strong></summary>
 
-You need a delegated subdomain. Create an **NS record** in your parent zone:
+You need a delegated subdomain. Create an **NS record** in your parent zone pointing at PyDDNS's public IP:
 
 ```
 ddns.example.com IN NS X.X.X.X
@@ -175,14 +212,56 @@ $ORIGIN ddns.example.com.
 @                   IN  NS  ddns.example.com.
 ```
 
-To edit the zone file directly (e.g. for static records):
+The first time PyDDNS starts, BIND in the `ddns` container materializes the zone file in `data/bind-data/<your-zone>.zone`. A typical file looks like this:
+
+```
+$ORIGIN .
+$TTL 86400      ; 1 day
+ddns.example.com           IN SOA  localhost. root.localhost. (
+                                75         ; serial
+                                3600       ; refresh (1 hour)
+                                900        ; retry (15 minutes)
+                                604800     ; expire (1 week)
+                                86400      ; minimum (1 day)
+                                )
+                        NS      localhost.
+                        A       1.2.3.4
+$ORIGIN ddns.example.com.
+$TTL 60 ; 1 minute
+```
+
+The dynamic A records added by users land below the `$ORIGIN ddns.example.com.` line with a 60-second TTL.
+
+### Editing static records by hand
+
+To add fixed entries (the parent A record, glue records, MX, TXT, etc.) without going through the web UI, freeze the zone, edit the file, and thaw:
 
 ```bash
 docker compose exec ddns bash
 rndc freeze ddns.example.com
-# edit data/bind-data/ddns.example.com.zone
+# edit /var/cache/bind/ddns.example.com.zone (host path: data/bind-data/...)
 rndc thaw ddns.example.com
 ```
+
+Don't forget to **bump the SOA serial** when you edit by hand (BIND won't notify secondaries otherwise).
+</details>
+
+<details>
+<summary><strong>Friendly URL for the web interface</strong></summary>
+
+By default the web UI is reachable at the same hostname as the DDNS zone (e.g. `https://ddns.example.com`). If you'd rather expose it on a different name (for branding, friendlier URL, separate certificate), you don't need glue or NS magic — just add an A record in your DNS pointing to PyDDNS's public IP:
+
+```
+admin.example.com  IN  A   X.X.X.X
+```
+
+Then add `admin.example.com` to `DJANGO_ALLOWED_HOSTS` in `.env` and recreate the container:
+
+```bash
+docker compose up -d --force-recreate python
+```
+
+`https://admin.example.com` reaches the same nginx → Django stack as the DDNS zone, but DNS updates keep flowing to `https://ddns.example.com/nic/update`.
 </details>
 
 <details>
