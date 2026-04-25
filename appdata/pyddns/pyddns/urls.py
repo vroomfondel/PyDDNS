@@ -37,6 +37,12 @@ urlpatterns += i18n_patterns(
     re_path(r'^$', main),
 )
 
+# Action URLs that should NOT carry a language prefix (they redirect after).
+urlpatterns += [
+    re_path(r'^impersonate/(?P<user_id>\d+)/start', impersonate, name='impersonate_start'),
+    re_path(r'^impersonate/stop', stop_impersonating, name='impersonate_stop'),
+]
+
 admin_url = os.environ.get('DJANGO_ADMIN_URL', 'admin')
 urlpatterns += [
     re_path(r'^' + admin_url + '/', admin.site.urls),

@@ -1,0 +1,16 @@
+{% load i18n %}
+<div class="impersonate-banner" role="alert">
+  <div class="impersonate-banner-inner">
+    <span class="impersonate-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 19c0-3 4-5 9-5s9 2 9 5"/>
+        <circle cx="8" cy="9" r="3"/>
+        <circle cx="16" cy="9" r="3"/>
+      </svg>
+    </span>
+    <span class="impersonate-text">
+      {% blocktrans with target=request.user.username admin=IMPERSONATOR.username %}Acting as <b>{{ target }}</b> · You are <b>{{ admin }}</b>{% endblocktrans %}
+    </span>
+    <a class="impersonate-stop" href="{% url 'impersonate_stop' %}">{% trans "Return to admin" %} →</a>
+  </div>
+</div>

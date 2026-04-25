@@ -291,6 +291,55 @@ def delet_user(request):
         myjson['error']= "No se pasaron los datos por post"
     return HttpResponse(json.dumps(myjson))
 
+@user_passes_test(lambda u: u.is_superuser, login_url='/common/permission_denied')
+def impersonate(request, user_id):
+    """Admin-only: switch the active session to another user.
+
+    The original admin user id is stored in the session so the banner can
+    offer a 'Stop impersonating' action. djlogin() flushes the session when
+    the user changes, so we record the impersonator AFTER login.
+    """
+    try:
+        target = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return HttpResponseRedirect('/users/')
+    if target.id == request.user.id or not target.is_active:
+        return HttpResponseRedirect('/users/')
+
+    admin_id = request.user.id
+    admin_username = request.user.username
+    djlogin(request, target, backend='django.contrib.auth.backends.ModelBackend')
+    request.session['_impersonator_id'] = admin_id
+    request.session.save()
+    Activity_log(
+        action='IMPERSONATE_START',
+        xforward=get_client_ip(request),
+        user_affected=target.username,
+        result='Admin %s -> %s' % (admin_username, target.username),
+    ).save()
+    return HttpResponseRedirect('/main/')
+
+
+@login_required
+def stop_impersonating(request):
+    impersonator_id = request.session.pop('_impersonator_id', None)
+    if not impersonator_id:
+        return HttpResponseRedirect('/main/')
+    try:
+        impersonator = User.objects.get(id=impersonator_id)
+    except User.DoesNotExist:
+        return HttpResponseRedirect('/main/')
+    target_username = request.user.username
+    djlogin(request, impersonator, backend='django.contrib.auth.backends.ModelBackend')
+    Activity_log(
+        action='IMPERSONATE_STOP',
+        xforward=get_client_ip(request),
+        user_affected=impersonator.username,
+        result='Restored %s (was acting as %s)' % (impersonator.username, target_username),
+    ).save()
+    return HttpResponseRedirect('/users/')
+
+
 @login_required
 def delet_domain(request):
     myjson = {

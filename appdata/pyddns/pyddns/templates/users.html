@@ -109,6 +109,16 @@
               </td>
               <td class="col-shrink">
                 <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                  {% if u.id != request.user.id and u.is_active %}
+                    <a class="btn btn-sm btn-ghost" href="{% url 'impersonate_start' user_id=u.id %}"
+                       title="{% trans 'Sign in as' %} {{ u.username }}" aria-label="{% trans 'Sign in as' %} {{ u.username }}">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 19c0-3 4-5 9-5s9 2 9 5"/>
+                        <circle cx="8" cy="9" r="3"/>
+                        <circle cx="16" cy="9" r="3"/>
+                      </svg>
+                    </a>
+                  {% endif %}
                   <a class="btn btn-sm btn-ghost" href="/add_user/{{ u.id }}" title="{% trans 'Edit' %}" aria-label="{% trans 'Edit' %}">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>

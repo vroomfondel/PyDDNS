@@ -16,6 +16,9 @@
 </head>
 <body>
   {% block body %}
+    {% if IS_IMPERSONATING %}
+      {% include "_impersonate_banner.html" %}
+    {% endif %}
     <div class="app">
       <div class="app-shell">
         {% block topbar %}{% endblock %}
