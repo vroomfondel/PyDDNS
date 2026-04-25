@@ -448,26 +448,38 @@ def updateip(request):
                             username, passwd = base64.b64decode(auth[1]).decode("utf-8", "ignore").split(':', 1)
                         except (ValueError, base64.binascii.Error):
                             username, passwd = "", ""
-                        if settings.DEBUG:
-                            logger.debug("dyndns2 auth attempt user=%r", username)
-                        user = authenticate(username=username, password=passwd)
-                        if user is not None and user.is_active:
 
-                            user_subdomains=SubDomain.objects.filter(user=user)
-                            valid_domain=False
+                        user_fails = Activity_log.objects.filter(
+                            action='SYNC',
+                            user_affected=username,
+                            date__gt=(timezone.now() - timedelta(minutes=10)),
+                            result__startswith='False',
+                        ).count() if username else 0
 
-                            for sub in user_subdomains:
-                                if domain == "%s.%s"%(sub.name,settings.DNS_DOMAIN):
-                                    valid_domain=True
-
-                            if valid_domain:
-                                return_code, message = set_ip(request,domain,ip)
-                            else:
-                                return_code="nohost"
-                                message="The hostname specified does not exist in this user account"
+                        if user_fails >= 5:
+                            return_code = "abuse"
+                            message = "Too many failed attempts for this user"
                         else:
-                            return_code="badauth"
-                            message="The username and password pair do not match a real user"
+                            if settings.DEBUG:
+                                logger.debug("dyndns2 auth attempt user=%r", username)
+                            user = authenticate(username=username, password=passwd)
+                            if user is not None and user.is_active:
+
+                                user_subdomains = SubDomain.objects.filter(user=user)
+                                valid_domain = False
+
+                                for sub in user_subdomains:
+                                    if domain == "%s.%s" % (sub.name, settings.DNS_DOMAIN):
+                                        valid_domain = True
+
+                                if valid_domain:
+                                    return_code, message = set_ip(request, domain, ip)
+                                else:
+                                    return_code = "nohost"
+                                    message = "The hostname specified does not exist in this user account"
+                            else:
+                                return_code = "badauth"
+                                message = "The username and password pair do not match a real user"
                     else:
                         return_code="unknown"
                         message="Incorrect authentication format"

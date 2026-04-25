@@ -17,6 +17,13 @@ services:
     image: pyddns:5.2.0
     build: ./docker
     restart: always
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ./appdata/pyddns:/usr/src/app
       - ./appdata/static/node_modules:/usr/src/app/static/node_modules

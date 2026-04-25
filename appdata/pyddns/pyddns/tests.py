@@ -439,3 +439,21 @@ class TestUpdateIpView:
             HTTP_AUTHORIZATION=_basic_auth_header('bob', 'bob-pass'),
         )
         assert response.content.decode() == 'abuse'
+
+    def test_per_user_abuse_after_5_failures(self, client, regular_user):
+        """Per-user rate limit kicks in independently of per-IP, even from a
+        rotating attacker IP."""
+        for i in range(5):
+            Activity_log.objects.create(
+                action='SYNC',
+                user_affected='bob',
+                ip=f'10.0.0.{i}',
+                date=timezone.now(),
+                result='False - bad',
+            )
+        response = client.get(
+            self.URL + '?hostname=myhost.ddns.example.com&myip=9.9.9.9',
+            HTTP_USER_AGENT='ddclient/3.9',
+            HTTP_AUTHORIZATION=_basic_auth_header('bob', 'bob-pass'),
+        )
+        assert response.content.decode() == 'abuse'

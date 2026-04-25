@@ -30,10 +30,10 @@ RUN pip install /wheels/*.whl && rm -rf /wheels
 
 WORKDIR /usr/src/app
 
-COPY --chmod=0755 runserver.sh wait-for-it.sh /script/
+COPY --chmod=0755 runserver.sh /script/
 
 EXPOSE 8000
 
 USER app
 
-CMD ["/script/wait-for-it.sh", "postgres:5432", "--", "/script/runserver.sh"]
+CMD ["/script/runserver.sh"]
