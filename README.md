@@ -63,7 +63,7 @@ Point a delegated subdomain at your server, create user accounts, and let users 
 - 🛡 **Container hardening** — multi-stage build, non-root user, read-only root filesystem, dropped capabilities, no-new-privileges
 - 🩺 **Healthchecks everywhere** — Postgres `pg_isready`, Gunicorn TCP probe, `depends_on: service_healthy` gates startup order
 - 🧪 **Tested in CI** — pytest suite (88+ tests), GitHub Actions on every push with `pip-audit` for CVE scanning, `ruff` for lint
-- 🔄 **Smooth upgrades** — scripted Postgres 9.6 → 15 migration runs both versions in parallel under a Compose profile
+- 🔄 **Smooth upgrades** — scripted Postgres 9.6 → 15 migration runs both versions in parallel via a separate Compose overlay file
 - 🧰 **One-command deployment** — `docker compose up -d` and you're live
 
 ---
@@ -184,7 +184,6 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `EMAIL_FROM` | `From:` header used by outgoing mail (default: `PyDDNS <noreply@<DNS_DOMAIN>>`) | ➖ |
 | `SITE_URL` | Absolute base URL used by email templates for clickable links | ➖ |
 | `ALLOW_PASSWORD_RESET` | `1` (default) = users can reset their own passwords via email. `0` = admin-only: reset URLs return 404 and the "Forgot your password?" link is hidden | ➖ |
-| `COMPOSE_PROFILES` | Set to `migration` to run the Postgres 9.6 → 15 upgrade flow | ➖ |
 
 ### Development mode
 
@@ -431,13 +430,53 @@ In CI: pushes and pull requests automatically run the full suite against Postgre
 
 ## 🔄 Migrating from Postgres 9.6
 
-PyDDNS v3+ runs on PostgreSQL 15. If you're upgrading from a 9.6-based release, the included script handles a side-by-side `pg_dump` → `psql` migration with both versions running in parallel under a Compose profile:
+PyDDNS v3+ runs on PostgreSQL 15. If you're upgrading from a 9.6-based release, the included script handles a side-by-side `pg_dump` → `psql` migration. Both versions run in parallel via a dedicated overlay (`docker-compose.migration.yml`) so the main `docker-compose.yml` stays clean of legacy services.
+
+### Required `.env` updates before migrating
+
+PyDDNS v3 ships with new mandatory env vars that v1/v2 deployments don't have. **The migration script pre-flight checks for these and refuses to proceed if any are missing**, so add them to `.env` first:
+
+| Variable | Notes |
+|----------|-------|
+| `DJANGO_SECRET_KEY` | Generate with `docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_urlsafe(50))"` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated valid `Host` headers (e.g. `ddns.example.com,localhost`) |
+| `DOMAIN`, `SHARED_SECRET`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASS` | Already in v1/v2 .env, but the script verifies they're non-empty |
+
+Also recommended (optional but useful for v3):
+
+```ini
+DJANGO_SETTINGS_MODULE=pyddns.settings.production
+ENABLE_REST_API=0          # set to 1 if you want the JSON API
+ALLOW_PASSWORD_RESET=1
+EMAIL_HOST=                # leave empty for now; configure later when ready
+```
+
+### Run the migration
 
 ```bash
+git pull                          # bring code up to v3
+# update .env with the new vars listed above
 ./scripts/migrate-postgres.sh
 ```
 
-The script preserves your old data directory in `data/dbdata-old/` until you confirm the new cluster works. Full details in the [`scripts/migrate-postgres.sh`](scripts/migrate-postgres.sh) header.
+Internally the script runs:
+
+```bash
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.migration.yml \
+  up --abort-on-container-exit --exit-code-from migrator \
+  prep-migration postgres-old postgres migrator
+```
+
+After it exits successfully:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+The script preserves your old data directory in `data/dbdata-old/` until you confirm the new cluster works. Once verified, `rm -rf data/dbdata-old` and the migration overlay never needs to be referenced again. Full details in the [`scripts/migrate-postgres.sh`](scripts/migrate-postgres.sh) header.
 
 ---
 

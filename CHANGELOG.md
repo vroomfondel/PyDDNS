@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`ALLOW_PASSWORD_RESET` toggle** — operators that prefer admin-controlled
   credentials can disable the entire flow with a single env var. URLs return
   404 and the "Forgot your password?" link disappears from login.
+- **Migration pre-flight check** — `scripts/migrate-postgres.sh` now refuses
+  to start unless `.env` already declares the variables PyDDNS v3 needs to
+  boot (notably `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`, which v1/v2
+  deployments don't have). Avoids the "DB migrated but app won't start"
+  failure mode.
+- **Separate Compose overlay for migration** — `docker-compose.migration.yml`
+  holds `prep-migration` / `postgres-old` / `migrator`. The main
+  `docker-compose.yml` no longer carries any legacy services.
 - **Modernized UI** — full template rewrite from the legacy Bootstrap layout
   to a responsive dark theme with amber accents, Inter for UI text and
   JetBrains Mono for technical data (FQDNs, IPs, return codes). Powered by
