@@ -1,216 +1,353 @@
-# ![PyDDNS](https://i.imgur.com/kOrgTBW.png)
-Complete system to create your own dynamic DNS server.
+<div align="center">
 
-Based on the <b>dprandzioch</b> project: https://github.com/dprandzioch/docker-ddns
+<img src="https://i.imgur.com/kOrgTBW.png" alt="PyDDNS" width="320" />
 
+# PyDDNS — Self-Hosted Dynamic DNS Server
 
-## Description
-PyDDNs is a complete solution, allows you to set up and manage their own dns, compatible with the dyndns2 protocol, the user can update his ip by web interface or using a compatible client for example ddclient.
-<br><br><br>
+**Run your own `dyndns2`-compatible DNS service. No vendor lock-in, no monthly fees, no rate limits.**
 
-### Screenshots
-![screenshots](https://i.imgur.com/6HTwrfn.png)
+[![Tests](https://github.com/olimpo88/PyDDNS/actions/workflows/test.yml/badge.svg)](https://github.com/olimpo88/PyDDNS/actions/workflows/test.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Python](https://img.shields.io/badge/python-3.11-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
+[![Django](https://img.shields.io/badge/Django-5.2%20LTS-092E20.svg?logo=django&logoColor=white)](https://www.djangoproject.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com)
 
-<br><br><br>
-**VIDEO**: https://www.youtube.com/watch?v=ALN9901EoyA&feature=youtu.be
-<br><br><br>
+[Quick Start](#-quick-start) · [Features](#-features) · [Use Cases](#-use-cases) · [Roadmap](#-roadmap) · [Contributing](#-contributing)
 
+</div>
+
+---
+
+## 🌟 Why PyDDNS?
+
+Public Dynamic DNS providers come with caveats: rate limits, paid tiers, branded subdomains, and data you don't own. **PyDDNS** is the self-hosted, production-ready alternative — a complete DDNS solution wrapped in a clean web UI and one-command Docker deployment.
+
+Point a delegated subdomain at your server, create user accounts, and let users update their public IP from any standard `dyndns2` client — router firmware, `ddclient`, `inadyn`, mobile apps. DNS lives in your own BIND zone, activity is fully logged, and access is gated per-user.
+
+> 📺 **See it in action:** [demo video](https://www.youtube.com/watch?v=ALN9901EoyA)
+
+![PyDDNS web interface](https://i.imgur.com/6HTwrfn.png)
+
+---
+
+## ✨ Features
+
+- 🔌 **`dyndns2` protocol compatible** — drop-in replacement for No-IP, DynDNS, Duck DNS, with any existing client
+- 👥 **Multi-user, multi-domain** — admin panel, per-user subdomains, role-based permissions
+- 🔐 **Production-grade security** — Gunicorn behind nginx, HTTPS, secure cookies, hardened headers, env-driven secrets
+- 📊 **Full audit trail** — every IP update, login attempt, and admin action persisted to Postgres
+- 🌍 **i18n out of the box** — English, Spanish, German, Japanese, Simplified Chinese
+- 🧰 **One-command deployment** — `docker compose up -d` and you're live
+- 🩺 **Healthchecks everywhere** — Postgres, Gunicorn, and TCP probes baked into Compose
+- 🧪 **Tested in CI** — pytest suite + GitHub Actions on every push
+- 🔄 **Smooth upgrades** — scripted Postgres 9.6 → 15 migration for v1/v2 deployments
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | [Django 5.2 LTS](https://www.djangoproject.com) on [Python 3.11](https://www.python.org) |
+| WSGI | [Gunicorn 23](https://gunicorn.org) — 3 workers in production, `--reload` in development |
+| DNS | [BIND](https://www.isc.org/bind/) via [`davd/docker-ddns`](https://hub.docker.com/r/davd/docker-ddns) |
+| Database | [PostgreSQL 15](https://www.postgresql.org) |
+| Reverse Proxy | [nginx 1.27](https://nginx.org) — HTTPS termination, static files |
+| Orchestration | [Docker Compose v2](https://docs.docker.com/compose/) — multi-stage build, non-root container |
+| Testing | [pytest](https://pytest.org), [pytest-django](https://pytest-django.readthedocs.io), [ruff](https://docs.astral.sh/ruff/) |
+| CI | [GitHub Actions](https://github.com/features/actions) — tests + lint on every push |
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-Install git
 
-Install docker - Dockerhttps://docs.docker.com/install/
+- [Docker](https://docs.docker.com/install/) and [Docker Compose v2](https://docs.docker.com/compose/install/)
+- A delegated subdomain (e.g. `ddns.example.com`) pointing to your server's public IP
+- Ports 53 (TCP/UDP), 80, and 443 reachable from the internet
 
-Install docker-composer - https://docs.docker.com/compose/install/
+> **Ubuntu 18+ users:** see [troubleshooting](#-troubleshooting) about freeing port 53 from `systemd-resolved`.
 
-**important**: if you use ubuntu 18 you should see the note at the end of this text
-<br><br><br>
-## Quick Start
+### Installation
 
-**IMPORTANT**: If you are using PyDDNS v1 before updating, make a backup of the file docker-compose.yml
+```bash
+git clone https://github.com/olimpo88/PyDDNS.git
+cd PyDDNS
 
-- Clone de proyect
-- ```cd PyDDNS```
-- copy the configuration file ```cp .env-demo .env```
-- Edit the configuration file ```nano .env```
+# 1. Configure environment
+cp .env-demo .env
 
+# 2. Generate a Django secret key and paste it into DJANGO_SECRET_KEY in .env
+docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_urlsafe(50))"
+
+# 3. Build and start the stack
+docker compose build
+docker compose up -d
+
+# 4. Watch services become healthy
+docker compose ps
 ```
-DOMAIN=ddns.demo.com  <-- our domain
-SHARED_SECRET=el@sadsadyS58 <-- password for internal API-REST
 
-DATABASE_NAME=pyddns
-DATABASE_USER=pyddns
-DATABASE_PASS=PyDyn@m1cDNSP0s
-DATABASE_HOST=postgres
-DATABASE_PORT=5432
+All four services — `python`, `postgres`, `nginx`, `ddns` — should reach `(healthy)` within ~30 seconds. The web UI is on `HTTP_PORT` (80 by default); log in with `DJANGO_SU_NAME` / `DJANGO_SU_PASSWORD` defined in `.env`.
 
-DJANGO_SU_NAME=admin
-DJANGO_SU_EMAIL=admin@company.com
-DJANGO_SU_PASSWORD=1234 <-- Password to default administrator
+---
+
+## 🔧 Configuration
+
+Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
+
+| Variable | Purpose | Required |
+|----------|---------|:-:|
+| `DOMAIN` | Delegated subdomain (e.g. `ddns.example.com`) | ✅ |
+| `SHARED_SECRET` | Internal API token between Django and BIND | ✅ |
+| `DJANGO_SECRET_KEY` | Cryptographic signing key | ✅ |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated valid `Host` headers | ✅ |
+| `DJANGO_SETTINGS_MODULE` | `pyddns.settings.production` or `.development` | ✅ |
+| `DJANGO_LANGUAGE_CODE` | UI language (`en`, `es`, `de`, `ja`, `zh-hans`) | ➖ |
+| `DJANGO_TIME_ZONE` | TZ database name (default `UTC`) | ➖ |
+| `DATABASE_NAME` / `_USER` / `_PASS` | PostgreSQL connection | ✅ |
+| `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user | ✅ |
+| `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
+| `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist | ➖ |
+| `COMPOSE_PROFILES` | Set to `migration` to run Postgres 9.6 → 15 upgrade | ➖ |
+
+### Development mode
+
+```ini
 DJANGO_DEBUG=1
-DJANGO_LOG_LEVEL=INFO
-DJANGO_PYTHONUNBUFFERED=1
-OWN_ADMIN: 1  <-- 1 = all users can create subdomains, 0 = only the administrator can create subdomains
-DNS_ALLOW_AGENT: ddclient3,ddclient <-- If you want to control by client, put their names separated by comma
-
-WEB_PORT=80
-DNS_PORT=53
+DJANGO_SETTINGS_MODULE=pyddns.settings.development
 ```
 
-- Install docker and docker-compose
-- Start with command: `docker-compose up`
-<br><br><br>
-### Configuration of DNS
-You need a subdomain for example: ddns.demo.com
+Then `docker compose restart python` — Gunicorn picks up code changes automatically via `--reload`.
 
-Then you must create an **NS record** as follows:
-ddns.demo.com IN NS X.X.X.X <-- SERVER PUBLIC IP (CHECK)
+<details>
+<summary><strong>DNS zone setup (NS delegation, glue records)</strong></summary>
 
-
-Example in bind9:
+You need a delegated subdomain. Create an **NS record** in your parent zone:
 
 ```
-ddns.demo.com.	IN	A	X.X.X.X
-$ORIGIN ddns.demo.com.
-@                       IN NS   ddns.demo.com.
+ddns.example.com IN NS X.X.X.X
 ```
 
-<br><br><br>
-### Create SSL certificate
-As web today is almost required to have SSL the package is setup for that by default.
-
-1. Create folder `mkdir -p data/certs/`
-2. To generate a certificate do `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout data/certs/https.key -out data/certs/https.crt`
-3. Then send to your certificate authority and get the server.crt file back
-4. Install the key and crt files into certificate store in `/data/certs`
-
-<br><br><br>
-### Running without SSL
-It is not recomended to run without SSL but if you wish to
-
-Edit `/config/nginx/mydjango.conf` and comment this line:
-```
-return 302 https://$host$request_uri;
-```
-    
-
-<br><br><br>
-### Edit static records or glue records
-This is usefull for creating the @ A X.X.X.X that is needed from above.
-Sometimes you wish to have some static records or change the zone file outside of what you can do via gui.
-
-1. Enter the container console: `docker-compose exec ddns bash`
-2. You must execute the following command, replacing the last attribute: `rndc freeze ddns.demo.com`
-3. Edit the zone file: `data/bind-data/ddns.demo.com.zone`
-4. Thaw the zone: `rndc thaw ddns.demo.com`
-
-Add the A record line (change to your PUBLIC IP).
-Your file will look something like this,
+Example BIND zone for delegation:
 
 ```
-$ORIGIN .
-$TTL 86400      ; 1 day
-ddns.demo.com           IN SOA  localhost. root.localhost. (
-                                75         ; serial
-                                3600       ; refresh (1 hour)
-                                900        ; retry (15 minutes)
-                                604800     ; expire (1 week)
-                                86400      ; minimum (1 day)
-                                )
-                        NS      localhost.
-                        A       1.2.3.4
-$ORIGIN ddns.demo.com.
-$TTL 60 ; 1 minute
-
+ddns.example.com.   IN  A   X.X.X.X
+$ORIGIN ddns.example.com.
+@                   IN  NS  ddns.example.com.
 ```
 
-<br><br><br>
-### Friendly URL for the web interface
-sometimes we want to have a friendly url for the web interface, in this case, you don't need edit static records or glue records.
-For example, if you want to use myip.ddns.com for your web interface. Then you only need to create an A record in your DNS pointing to the public IP of PYDDNS.
+To edit the zone file directly (e.g. for static records):
 
-Now you will have myip.demo.com for the web interface and ddns.demo.com for the dynamic dns service.
-
-
-<br><br><br>
-## Architecture
-![screenshots](https://i.imgur.com/KWZzxOs.png)
-<br><br><br>
-## DDNS clients
-You can use any client compatible with the DynDNS2 protocol.
-
-###### For Windows
-I recommend using `DynDNS Simply Client`, you can download it here: https://sourceforge.net/projects/dyndnssimplycl/
-![screenshots](https://i.imgur.com/cTwjRFS.png)
-
-
-###### For Linux and Mac OS X
-I recommend using `ddclient`, basic configuration:
+```bash
+docker compose exec ddns bash
+rndc freeze ddns.example.com
+# edit data/bind-data/ddns.example.com.zone
+rndc thaw ddns.example.com
 ```
+</details>
+
+<details>
+<summary><strong>SSL / HTTPS configuration</strong></summary>
+
+The default nginx config exposes both HTTP (`HTTP_PORT`) and HTTPS (`HTTPS_PORT`).
+
+For testing, generate a self-signed certificate:
+
+```bash
+mkdir -p data/certs/
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout data/certs/https.key -out data/certs/https.crt
+```
+
+For production, drop your CA-issued `https.crt` and `https.key` into `data/certs/` (Let's Encrypt, Cloudflare Origin, your own CA, etc.).
+
+To remove HTTPS entirely, delete the `listen 8443 ssl;` server block from `config/nginx/mydjango.conf`.
+</details>
+
+---
+
+## 🖥 DDNS Clients
+
+Any `dyndns2`-compatible client works.
+
+### Linux / macOS — `ddclient`
+
+```ini
 protocol=dyndns2
 use=web, web=checkip.dyndns.com, web-skip='IP Address'
-server=localhost.com
-ssl=no
-login=userdemo
-password='userpassword'
-yourdomain.ddns.demo.com
+server=ddns.example.com
+ssl=yes
+login=youruser
+password='yourpassword'
+yourdomain.ddns.example.com
 ```
 
-<br><br><br>
-### Translation :us::es:
-The system automatically detects the language of your browser.
-If you want to add your translations you must follow the following steps:
+### Windows
 
-1. Enter the container console: `docker-compose exec python bash`
-2. You must execute the following command, replacing the last attribute: `python manage.py makemessages --locale es`
-3. Edit the file: `appdata/pyddns/locale/XXXX/LC_MESSAGES/django.po`
-4. Once the translations are finished, it must be compiled: `python manage.py compilemessages`
+[DynDNS Simply Client](https://sourceforge.net/projects/dyndnssimplycl/) — free and lightweight.
 
-<br><br><br>
-### Change default language
-- open file --> nano ~/PyDDNS/appdata/pyddns/pyddns/settings.py
-- change the variable in line 149/185 to --> LANGUAGE_CODE = 'en-En'
+### Routers
 
-<br><br><br>
-### TODO
-Config default language in .env file
+ASUS, MikroTik, OpenWrt, OPNsense, pfSense, and most consumer routers ship with `dyndns2` support. Use the *Custom DNS* option and point it at your PyDDNS instance.
 
-<br><br><br>
-### Notes for Ubuntu 18 and later
-On Ubuntu , port 53 is most likeley already busy with the systemd-resolve service.
+---
 
-To check this run this command.
+## 💡 Use Cases
+
+- 🏠 **Home server access** — expose your NAS, IP cameras, or self-hosted services without paying for a static IP
+- 🧪 **Lab and staging environments** — give every developer a stable subdomain that follows their dev VPN
+- 🏢 **SMB infrastructure** — internal DDNS for branch offices, ISP-rotated IPs, or remote-worker VPN endpoints
+- 🌍 **Sovereign deployments** — sidestep public DDNS providers that block your country, ISP, or charge premium tiers
+- 🔒 **Privacy-first setups** — keep IP rotation patterns out of third-party logs
+
+---
+
+## 🌐 Internationalization
+
+Languages shipped: 🇺🇸 English · 🇪🇸 Spanish · 🇩🇪 German · 🇯🇵 Japanese · 🇨🇳 Simplified Chinese.
+
+Browser auto-detection via `Accept-Language` is on by default. Override per-deployment with `DJANGO_LANGUAGE_CODE`.
+
+To add or update a translation:
+
+```bash
+docker compose exec python python manage.py makemessages --locale <code>
+# Edit appdata/pyddns/locale/<code>/LC_MESSAGES/django.po
+docker compose exec python python manage.py compilemessages
 ```
+
+---
+
+## 🧪 Testing
+
+51 tests cover models, views, the dyndns2 protocol, settings hardening, and DNS update flows.
+
+```bash
+docker compose exec python pip install pytest==7.4.4 pytest-django==4.8.0
+docker compose exec python python -m pytest -v
+```
+
+Pushes and pull requests automatically run the full suite against PostgreSQL 15 via [GitHub Actions](.github/workflows/test.yml).
+
+---
+
+## 🔄 Migrating from Postgres 9.6
+
+PyDDNS v3+ runs on PostgreSQL 15. If you're upgrading from a 9.6-based release, the included script handles a side-by-side `pg_dump` → `psql` migration with both versions running in parallel under a Compose profile:
+
+```bash
+./scripts/migrate-postgres.sh
+```
+
+The script preserves your old data directory in `data/dbdata-old/` until you confirm the new cluster works. Full details in the [`scripts/migrate-postgres.sh`](scripts/migrate-postgres.sh) header.
+
+---
+
+## 🗺 Roadmap
+
+- [ ] **API tokens** — issue revocable per-user tokens, replacing HTTP Basic in dyndns2 update
+- [ ] **IPv6 (AAAA records)** — first-class support for IPv6-only and dual-stack updates
+- [ ] **Webhook notifications** — POST to a user-configured URL on every update or anomaly
+- [ ] **Prometheus metrics** — scraping endpoint for sync rates, login failures, zone health
+- [ ] **OAuth / OIDC login** — optional SSO via Authentik, Keycloak, GitHub
+- [ ] **Per-user rate limits** — configurable abuse protection beyond the global threshold
+- [ ] **Two-factor authentication** — TOTP for admin and end-user accounts
+- [ ] **REST API** — full CRUD for users and subdomains, OpenAPI spec
+- [ ] **UI refresh** — modernized templates, dark mode, mobile-first layout
+
+Have an idea? [Open an issue](https://github.com/olimpo88/PyDDNS/issues/new).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome — bug reports, translation updates, documentation polish, and pull requests alike.
+
+1. **Fork** the repository and clone your fork.
+2. **Create a branch**: `git checkout -b feat/your-feature`.
+3. **Run tests locally** before pushing:
+   ```bash
+   docker compose exec python python -m pytest -v
+   ```
+4. **Open a pull request** against `master`, describing the change and linking any related issues.
+
+Please follow the existing code style: Django conventions for Python, `ruff` for linting, conventional commit messages where practical.
+
+---
+
+## 📜 License
+
+PyDDNS is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**. See [`LICENSE`](LICENSE) for the full text and the additional Section 7 attribution clause.
+
+What this means in plain English:
+
+- ✅ You can use, modify, and run PyDDNS commercially
+- ✅ You can host it as a paid service for others
+- ⚠️ If you modify it, including operating a modified version as a network service (SaaS), you must publish your modifications under the same license
+- ⚠️ The in-app attribution footer linking to the original repository must remain visible in any derivative
+
+---
+
+## 🙏 Acknowledgments
+
+PyDDNS builds on the excellent [`docker-ddns`](https://github.com/dprandzioch/docker-ddns) image by **dprandzioch**. PyDDNS adds the multi-tenant Django front-end, audit logging, web management UI, and an opinionated production deployment.
+
+---
+
+## 🛟 Troubleshooting
+
+<details>
+<summary><strong>Port 53 already in use (Ubuntu 18+, systemd-resolved)</strong></summary>
+
+```bash
 sudo lsof -i :53
 ```
 
-If the command shows that systemd-resolve then we need to change so that it does not bind the port. First, edit /etc/systemd/resolved.conf, and for DNS enter your dns server ip (1.1.1.1 for cloudflare or 8.8.8.8 for google).
-```
+If `systemd-resolve` is bound, edit `/etc/systemd/resolved.conf`:
+
+```ini
 [Resolve]
 DNS=1.1.1.1
-#FallbackDNS=
-#Domains=
-#LLMNR=no
-#MulticastDNS=no
-#DNSSEC=no
-#DNSOverTLS=no
-#Cache=no
 DNSStubListener=no
-#ReadEtcHosts=yes
 ```
 
-Then link the file to etc
+Then symlink the resolver and reboot:
 
-```
+```bash
 sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
-```
-
-And lastly reboot:
-
-```
 sudo reboot
 ```
+</details>
 
-<br><br><br>
-### Contact :email:
-https://www.linkedin.com/in/peraltaleandro/
+<details>
+<summary><strong>Postgres 15 fails to start with "incompatible data directory"</strong></summary>
+
+You're upgrading from Postgres 9.6 and haven't migrated yet. Run [`./scripts/migrate-postgres.sh`](#-migrating-from-postgres-96) before `docker compose up`.
+</details>
+
+<details>
+<summary><strong>"DJANGO_SECRET_KEY environment variable is required"</strong></summary>
+
+The app refuses to start without a secret key. Generate one and add it to `.env`:
+
+```bash
+docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+</details>
+
+---
+
+## 📬 Contact
+
+**Leandro Peralta** — [LinkedIn](https://www.linkedin.com/in/peraltaleandro/) · [GitHub](https://github.com/olimpo88)
+
+If PyDDNS is useful to you, ⭐ the repo — it's the cheapest way to support an open-source author.
+
+---
+
+<div align="center">
+<sub>Keywords: dynamic DNS, self-hosted DDNS, dyndns2 server, ddclient server, BIND web UI, Django DDNS, Docker DDNS, no-ip alternative, duckdns alternative, AGPL DNS</sub>
+</div>
