@@ -1,139 +1,137 @@
+{% extends "_base.html" %}
 {% load i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-</head>
-<body>
 
-	<div class="col-md-12">
-		{% if user %}
-			<h3> {% trans "Edit user" %}: {{ user.username }}</h3>
-		{% else %}
-			<h3> {% trans "Add user" %}</h3>
-		{% endif %}
+{% block title %}{% if user %}{% trans "Edit user" %}{% else %}{% trans "Add user" %}{% endif %} — PyDDNS{% endblock %}
 
-		<table id="formulario" style=" border-collapse: separate;;">
-			<tr>
-				<td style="width: 84px;">{% trans "Username" %}</td>
-				<td><input id="username" name="username" type="text" size="40" class="form-control input-md" value="{{ user.username }}" {% if user  %} readonly{% endif %}> </td>
-			</tr>
-			<tr>
-				<td style="width: 84px;">{% trans "Name" %}</td>
-				<td><input id="name" name="name" type="text" size="40" class="form-control input-md" value="{{ user.first_name }}"> </td>
-			</tr>
-			<tr>
-				<td style="width: 84px;">{% trans "Last name" %}</td>
-				<td><input id="last_name" name="last_name" type="text" size="40" class="form-control input-md" value="{{ user.last_name }}"> </td>
-			</tr>
-			<tr>
-				<td style="width: 84px;">{% trans "Email" %}</td>
-				<td><input id="email" name="email" type="text" size="40" class="form-control input-md" value="{{ user.email }}"> </td>
-			</tr>
-			<tr>
-				<td style="width: 84px;">{% trans "Password" %}</td>
-				<td><input id="password" name="password" type="text" size="40" class="form-control input-md" placeholder="Empty to not change"> </td>
-			</tr>
-			<tr>
-				<td>{% trans "Is admin?" %}{{ user.id_admin}}</td>
-				<td>
-					<input type="checkbox" name="is_admin" id="is_admin" value="1" style="height: 18px;width: 18px;" {% if user.is_superuser %} checked="checked" {% endif %}>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<button id="button2id" name="button2id" class="btn btn-success" style="float:right;margin-top:15px"  onclick="guardar()"><i class="fa fa-save"></i>{% trans "Save" %}</button>
-				</td>
-			</tr>
-		</table>
-	</div>
-	<script type="text/javascript">
+{% block topbar %}{% include "_topbar.html" %}{% endblock %}
 
-		function guardar(){
+{% block content %}
+<div class="main" style="max-width: 720px;"
+     x-data="{
+       name: '{{ user.first_name|default:'' }}',
+       last_name: '{{ user.last_name|default:'' }}',
+       username: '{{ user.username|default:'' }}',
+       email: '{{ user.email|default:'' }}',
+       password: '',
+       is_admin: {% if user.is_superuser %}true{% else %}false{% endif %},
+       error: '',
+       submitting: false,
+       getCookie(name) {
+         const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+         return v ? v.pop() : '';
+       },
+       async submit() {
+         this.error = '';
+         if (this.username.trim().length < 2) { this.error = '{% trans 'Username must be at least 2 characters' %}'; return; }
+         if (this.name.trim().length < 1) { this.error = '{% trans 'First name is required' %}'; return; }
+         if (this.email.trim().length < 4) { this.error = '{% trans 'A valid email is required' %}'; return; }
+         {% if not user %}
+         if (this.password.length < 8) { this.error = '{% trans 'Password must be at least 8 characters' %}'; return; }
+         {% else %}
+         if (this.password.length > 0 && this.password.length < 8) { this.error = '{% trans 'Password must be at least 8 characters' %}'; return; }
+         {% endif %}
 
-			if ($( "#username" ).val().length < 2){
-				alert('{% trans "you must enter a username" %}');
-			}
-			else if ($( "#name" ).val().length < 2){
-				alert('{% trans "you must enter a name" %}');
-			}
-			else if ($( "#last_name" ).val().length < 2){
-				alert('{% trans "you must enter a last name" %}');
-			}
-			else if ($( "#email" ).val().length < 2){
-				alert('{% trans "you must enter a email" %}');
-			}
-			{% if not user %}
-				else if ( ($( "#password" ).val().length < 8) {% if user %} & ($( "#password" ).val().length != 0) {% endif %}){
-					alert('{% trans "Please enter a password of at least 8 characters" %}');
-				}
-			{% endif %}
+         this.submitting = true;
+         const fd = new FormData();
+         {% if user %}
+         fd.append('id_user', '{{ user.id }}');
+         {% else %}
+         fd.append('username', this.username);
+         {% endif %}
+         fd.append('name', this.name);
+         fd.append('last_name', this.last_name);
+         fd.append('email', this.email);
+         fd.append('password', this.password);
+         fd.append('is_admin', this.is_admin ? '1' : '0');
+         fd.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+         try {
+           const res = await fetch('{% url 'set_user' %}', { method: 'POST', body: fd });
+           const data = await res.json();
+           if (data.success) {
+             window.toast && window.toast('{% trans 'User saved' %}');
+             setTimeout(() => location.href = '{% url 'users' %}', 600);
+           } else {
+             this.error = data.error === 'username exist'
+               ? '{% trans 'Username already exists' %}'
+               : (data.error || '{% trans 'Failed' %}');
+           }
+         } catch (e) {
+           this.error = '{% trans 'Network error' %}';
+         } finally {
+           this.submitting = false;
+         }
+       }
+     }">
 
+  <div class="page-head">
+    <div>
+      <a class="btn btn-ghost btn-sm" href="{% url 'users' %}" style="margin-bottom: 6px;">← {% trans "Users" %}</a>
+      <h1 class="page-title">
+        {% if user %}{% trans "Edit user" %}: <span class="mono">{{ user.username }}</span>{% else %}{% trans "Add user" %}{% endif %}
+      </h1>
+      <p class="page-sub">
+        {% if user %}
+          {% trans "Update profile, password, or admin permission." %}
+        {% else %}
+          {% trans "Create a new account that can manage its own subdomains." %}
+        {% endif %}
+      </p>
+    </div>
+  </div>
 
-			//Si esta todo bien mando a guardar
-			else{
+  <div class="card card-pad">
+    <form @submit.prevent="submit()" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="field">
+        <label>{% trans "First name" %}</label>
+        <input class="input" x-model="name" autofocus>
+      </div>
+      <div class="field">
+        <label>{% trans "Last name" %}</label>
+        <input class="input" x-model="last_name">
+      </div>
+      <div class="field">
+        <label>{% trans "Username" %}</label>
+        <input class="input mono" x-model="username" {% if user %}readonly{% endif %}>
+      </div>
+      <div class="field">
+        <label>{% trans "Email" %}</label>
+        <input class="input" type="email" x-model="email">
+      </div>
+      <div class="field" style="grid-column: span 2;">
+        <label>
+          {% trans "Password" %}
+          {% if user %}<span style="color: var(--text-dim); font-weight: normal; margin-left: 6px;">{% trans "(leave blank to keep current)" %}</span>{% endif %}
+        </label>
+        <input class="input" type="password" x-model="password" autocomplete="new-password">
+      </div>
 
-				if($("#is_admin").is(':checked'))
-				    is_admin=1
-				else
-				    is_admin=0
+      <label style="grid-column: span 2; display: flex; gap: 12px; align-items: center; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: var(--r-ctl); cursor: pointer;">
+        <input type="checkbox" x-model="is_admin" style="width: 18px; height: 18px; accent-color: var(--accent);">
+        <div>
+          <div style="font-weight: 600;">{% trans "Administrator" %}</div>
+          <div style="color: var(--text-muted); font-size: 12.5px;">{% trans "Permissions: full access to users and all subdomains." %}</div>
+        </div>
+      </label>
 
+      <div x-show="error" x-cloak role="alert" style="grid-column: span 2; background: oklch(from var(--bad) l c h / 0.12); border: 1px solid oklch(from var(--bad) l c h / 0.3); color: var(--bad); padding: 10px 12px; border-radius: var(--r-ctl); font-size: 13px;" x-text="error"></div>
 
-	            var m_data = new FormData();
-	            {% if user %}
-	            	m_data.append( 'id_user', {{ user.id }});
-	            {% else %}
-	            	m_data.append( 'username', $("#username").val());
-	            {% endif %}
-	            m_data.append( 'name', $("#name").val());
-	            m_data.append( 'last_name', $("#last_name").val());
-	            m_data.append( 'email', $("#email").val());
-	            m_data.append( 'password', $("#password").val());
-	            m_data.append( 'is_admin', is_admin);
-	            m_data.append( 'csrfmiddlewaretoken', getCookie('csrftoken'));
-
-				$.ajax({
-					url: "{% url 'set_user' %}",
-					data: m_data,
-					processData: false,
-					contentType: false,
-					type: 'POST',
-					dataType:'json',
-					success:function(result){
-						console.log(result);
-						//var result = JSON.parse(result);
-						if(result['success']){
-							location.reload(true);
-						}
-						else{
-							if (result['error']=="username exist"){
-								alert('{% trans "The username " %}'+$("#username").val()+'{% trans " already exists" %}');
-							}
-							else{
-								alert(result['error']);
-							}
-						}
-					}
-				});
-			}
-		}
-
-		function getCookie(name) {
-		    var cookieValue = null;
-		    if (document.cookie && document.cookie != '') {
-			var cookies = document.cookie.split(';');
-			for (var i = 0; i < cookies.length; i++) {
-			    var cookie = jQuery.trim(cookies[i]);
-			    // Does this cookie string begin with the name we want?
-			    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			    }
-			}
-		    }
-		    return cookieValue;
-		}
-	</script>
-</body>
-</html>
+      <div style="grid-column: span 2; display: flex; gap: 8px; justify-content: flex-end;">
+        <a class="btn" href="{% url 'users' %}">{% trans "Cancel" %}</a>
+        <button type="submit" class="btn btn-primary" :disabled="submitting">
+          <template x-if="submitting">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="animation: spin 1s linear infinite;">
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+            </svg>
+          </template>
+          <template x-if="!submitting">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </template>
+          <span x-text="submitting ? '{% trans 'Saving...' %}' : '{% trans 'Save' %}'"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

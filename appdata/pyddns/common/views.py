@@ -39,7 +39,7 @@ def dologin(request):
 					djlogin(request, user)
 					myjson['success'] = True
 					myjson['message'] = 'Bienvenido, %s!' % (user.get_full_name(),)
-					myjson['redirect'] = '/common/main/'
+					myjson['redirect'] = '/main/'
 					myjson['errors']['reason'] = 'Login correcto.'
 				else:
 					myjson['errors']['reason'] = 'Cuenta deshabilitada.'

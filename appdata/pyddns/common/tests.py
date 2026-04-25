@@ -35,7 +35,7 @@ def test_dologin_success(client, regular_user):
     )
     data = json.loads(response.content)
     assert data['success'] is True
-    assert data['redirect'] == '/common/main/'
+    assert data['redirect'] == '/main/'
 
 
 def test_dologin_wrong_password(client, regular_user):

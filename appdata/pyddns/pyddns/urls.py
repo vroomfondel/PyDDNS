@@ -12,17 +12,18 @@ from pyddns.views import *
 
 urlpatterns = [
     re_path(r'^nic/update', updateip),
+    re_path(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
 if getattr(settings, 'ENABLE_REST_API', False):
     urlpatterns.append(re_path(r'^api/', include('api.urls')))
 
 urlpatterns += i18n_patterns(
-    re_path(r'^main/(?P<id_user>.*)', main),
+    re_path(r'^main/(?P<id_user>.+)', main),
     re_path(r'^main/', main, name="main"),
-    re_path(r'^users/(?P<buscar>.*)', users),
+    re_path(r'^users/(?P<buscar>.+)', users),
     re_path(r'^users/', users, name='users'),
-    re_path(r'^domains/(?P<buscar>.*)', domains),
+    re_path(r'^domains/(?P<buscar>.+)', domains),
     re_path(r'^domains/', domains, name="domains"),
     re_path(r'^add_user/(?P<id_user>\d+)', add_user),
     re_path(r'^add_user/', add_user, name="add_user"),

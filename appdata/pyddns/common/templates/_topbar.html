@@ -1,0 +1,50 @@
+{% load i18n %}{% load app_filters %}
+{% get_current_language as CURRENT_LANG %}
+<header class="topbar" x-data="{ navOpen: false }">
+ <div class="topbar-inner">
+  <a href="{% url 'main' %}" class="brand" style="color: inherit; text-decoration: none;">
+    <span class="brand-text"><b>Py</b>DDNS</span>
+  </a>
+
+  <button class="btn btn-icon btn-ghost menu-btn" @click="navOpen = !navOpen" :aria-expanded="navOpen" aria-label="menu">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <nav class="nav" :class="{ 'open': navOpen }">
+    <a class="nav-btn" href="{% url 'main' %}" {% if request.resolver_match.url_name == 'main' %}aria-current="page"{% endif %}>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>
+      </svg>
+      {% trans "Dashboard" %}
+    </a>
+    {% if request.user.is_superuser %}
+      <a class="nav-btn" href="{% url 'users' %}" {% if request.resolver_match.url_name == 'users' %}aria-current="page"{% endif %}>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-6-6.92"/>
+        </svg>
+        {% trans "Users" %}
+      </a>
+      <a class="nav-btn" href="{% url 'domains' %}" {% if request.resolver_match.url_name == 'domains' %}aria-current="page"{% endif %}>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+        </svg>
+        {% trans "All domains" %}
+      </a>
+    {% endif %}
+  </nav>
+
+  <div class="right">
+    {% include "_lang_toggle.html" %}
+
+    <span class="avatar" title="{{ request.user.first_name }} {{ request.user.last_name }}">{{ request.user|get_initials }}</span>
+
+    <a class="btn btn-icon btn-ghost" href="{% url 'common:logout' %}" title="{% trans 'Sign out' %}" aria-label="{% trans 'Sign out' %}">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </a>
+  </div>
+ </div>
+</header>

@@ -53,37 +53,44 @@ def main(request,id_user=None):
 
     name = user.first_name
     username = user.username
-    actividad=Activity_log.objects.filter(user_affected=username,action="SYNC")
+    actividad = Activity_log.objects.filter(user_affected=username, action="SYNC")
 
-    my_subdomains=SubDomain.objects.filter(user=user).order_by('name')
-    domain=settings.DNS_DOMAIN
+    my_subdomains = SubDomain.objects.filter(user=user).order_by('name')
+    domain = settings.DNS_DOMAIN
 
-    ip_x_forwarded=None
+    ip_x_forwarded = None
     if 'HTTP_X_FORWARDED_FOR' in request.META:
-        ip_x_forwarded=request.META['HTTP_X_FORWARDED_FOR']
+        ip_x_forwarded = request.META['HTTP_X_FORWARDED_FOR']
 
+    # Stats over the last 24 hours for the cards on the dashboard.
+    last_24h = timezone.now() - timedelta(hours=24)
+    syncs_24h = actividad.filter(date__gte=last_24h).count()
+    failed_24h = actividad.filter(date__gte=last_24h).exclude(code__in=['good', 'nochg']).count()
 
-    paginator = Paginator(actividad, 10) # Show 25 contacts per page
+    paginator = Paginator(actividad, 10)
     page = request.GET.get('page')
     try:
         list_activity = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         list_activity = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
         list_activity = paginator.page(paginator.num_pages)
 
-    return render(request,"dash.html",{    'name':name,
-                                            'username':username,
-                                            'list_activity':list_activity,
-                                            'my_subdomains':my_subdomains,
-                                            'ip_x_forwarded':ip_x_forwarded,
-                                            'admin':admin,
-                                            'see_user':see_user,
-                                            'domain':domain,
-                                            'id_user': id_user,
-                                            'own_admin':own_admin })
+    return render(request, "dash.html", {
+        'name': name,
+        'username': username,
+        'list_activity': list_activity,
+        'my_subdomains': my_subdomains,
+        'ip_x_forwarded': ip_x_forwarded,
+        'admin': admin,
+        'see_user': see_user,
+        'domain': domain,
+        'id_user': id_user,
+        'own_admin': own_admin,
+        'view_user': user,
+        'syncs_24h': syncs_24h,
+        'failed_24h': failed_24h,
+    })
 
 @login_required
 def manage(request):

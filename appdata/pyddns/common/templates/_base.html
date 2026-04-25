@@ -1,0 +1,45 @@
+{% load static %}{% load i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="dark" data-density="comfortable" data-layout="topbar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}PyDDNS{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'pyddns/css/styles.css' %}">
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    [x-cloak] { display: none !important; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% block body %}
+    <div class="app">
+      <div class="app-shell">
+        {% block topbar %}{% endblock %}
+        {% block content %}{% endblock %}
+        {% include "_footer.html" %}
+      </div>
+    </div>
+  {% endblock %}
+
+  {# Toasts container — Alpine controlled via window.toast() helper #}
+  <div class="toasts" aria-live="polite"
+       x-data="{ items: [] }"
+       x-init="window.toast = (msg) => { const id = Math.random().toString(36).slice(2); items.push({id, msg}); setTimeout(() => items = items.filter(i => i.id !== id), 1800); }">
+    <template x-for="t in items" :key="t.id">
+      <div class="toast">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span x-text="t.msg"></span>
+      </div>
+    </template>
+  </div>
+
+  <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

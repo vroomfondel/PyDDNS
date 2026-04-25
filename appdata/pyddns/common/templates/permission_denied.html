@@ -1,37 +1,26 @@
+{% extends "_base.html" %}
 {% load i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Permission Denied</title>
-	  <link href="/static/common/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-	  <link href="/static/common/css/style.css?v=0.1" rel="stylesheet" id="bootstrap-css">
-	  <link href="https://fonts.googleapis.com/css?family=Muli|Oswald" rel="stylesheet">
-	  <link href="/static/common/css/bootstrap-glyphicons.css" rel="stylesheet">
-	<style>
-		span{
-			color: #cc6666;
-    		font-size: 2.5em;
-		}
-		body{
-			background: #f5f5f5;
-		}
-		.btn{
-			padding: 10px;
-    		margin-top: 15px;
-		}
-	</style>
-</head>
-<body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12" style="text-align: center; margin-top: 10vh;">
-				<h1><span class="glyphicon glyphicon-ban-circle"></span></h1>
-				<h1>{% trans "ACCESS DENIED" %}</h1>
-				<h4>{% trans "You do not have permission to see this page" %}</h4>
-				<a href="javascript:history.go(-1)" class="btn btn-success">{% trans "Go to back" %}</a>
-			</div>
-		</div>
-	</div>
-</body>
-</html>
+
+{% block title %}{% trans "Access denied" %} — PyDDNS{% endblock %}
+
+{% block body %}
+<div class="login-wrap">
+  <div class="login-card" style="text-align: center;">
+    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+      <div class="em-icon" style="width: 56px; height: 56px; color: var(--bad); border-color: oklch(from var(--bad) l c h / 0.3); background: oklch(from var(--bad) l c h / 0.1);">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+        </svg>
+      </div>
+    </div>
+    <h1 style="margin: 0 0 6px;">{% trans "Access denied" %}</h1>
+    <p class="lead" style="margin-bottom: 22px;">{% trans "You do not have permission to see this page." %}</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <a href="javascript:history.go(-1)" class="btn">← {% trans "Back" %}</a>
+      <a href="{% url 'main' %}" class="btn btn-primary">{% trans "Dashboard" %}</a>
+    </div>
+  </div>
+
+  {% include "_footer.html" %}
+</div>
+{% endblock %}

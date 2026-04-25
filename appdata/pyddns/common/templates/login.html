@@ -1,126 +1,99 @@
+{% extends "_base.html" %}
 {% load i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta charset="utf-8">
-  <title>Login Screen</title>
-  <meta name="author" content="Peralta Leandro">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="/static/common/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <link href="/static/common/css/style.css?v=0.1" rel="stylesheet" id="bootstrap-css">
-  <link href="https://fonts.googleapis.com/css?family=Muli|Oswald" rel="stylesheet">
-  <script src="/static/common/js/jquery-1.10.2.min.js"></script>
-  <script src="/static/common/js/bootstrap.min.js"></script>
-  <script>
-    function getCookie(name) {
-      var cookieValue = null;
-      if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-            }
-        }
-      }
-      return cookieValue;
-    }
 
-    function enviar(){
-      var passwd = document.getElementById("password").value;
-      var username = document.getElementById("username").value;
+{% get_current_language as CURRENT_LANG %}
 
-        //data: { username: username, password: passwd, csrfmiddlewaretoken: getCookie('csrftoken')},
-        //{% csrf_token %}
-      var csr= $( "input[name$='csrfmiddlewaretoken']" ).val();
-      $.ajax({url:"{% url 'common:dologin' %}",
-        type: "POST",
-        data: { username: username, password: passwd, csrfmiddlewaretoken: csr },
-        success:function(result){
-          var myObject = eval('(' + result + ')');
-          console.log(myObject);
-            //Si el login es correcto lo mando a la pagina que corresponde
-            if (myObject['success']==true){
-              location.href="/main/";
-            }
-            else{
-              $('#error').html(myObject['errors']['reason']).show(200);
-            }
-        }
-      });
-    }
-  </script>
+{% block title %}{% trans "Sign in to PyDDNS" %}{% endblock %}
 
-  <style>
-    body {
-      margin: 0;
-    }
+{% block body %}
+<div class="login-wrap"
+     x-data="{
+       username: '',
+       password: '',
+       show: false,
+       error: '',
+       submitting: false,
+       async submit() {
+         this.error = '';
+         this.submitting = true;
+         try {
+           const fd = new FormData();
+           fd.append('username', this.username);
+           fd.append('password', this.password);
+           fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+           const res = await fetch('{% url 'common:dologin' %}', { method: 'POST', body: fd });
+           const data = await res.json();
+           if (data.success) {
+             window.location.href = data.redirect || '/main/';
+           } else {
+             this.error = (data.errors && data.errors.reason) || 'Login failed';
+           }
+         } catch (e) {
+           this.error = '{% trans "Network error" %}';
+         } finally {
+           this.submitting = false;
+         }
+       }
+     }">
+  <div class="login-card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="brand">
+        <div class="brand-text"><b>Py</b>DDNS</div>
+      </div>
 
-    .form-signin{
-      background: rgba(0,0,0,0.6);
-      border-radius: 10px;
-      border: 1px solid #636363;
-      margin-top: 10%;
-    }
+      {% include "_lang_toggle.html" %}
+    </div>
 
-    .form-signin .form-signin-heading{
-      margin: 5px;
-      margin-bottom: 20px;
-    }
+    <h1>{% trans "Sign in to PyDDNS" %}</h1>
+    <p class="lead">{% trans "Welcome back. Sign in to manage your dynamic DNS records." %}</p>
 
-    .form-signin input[type="text"], .form-signin input[type="password"]{
-        border:1px solid #444444;
-        margin-bottom: 5px;
-    }
+    <form class="row" @submit.prevent="submit()">
+      <div class="field">
+        <label for="username">{% trans "Username" %}</label>
+        <input id="username" class="input" x-model="username" autocomplete="username" autofocus required>
+      </div>
 
-    #error{
-      color: white;
-      font-size: 1em;
-      text-align: center;
-      background: #ff000073;
-      border: 1px solid #a32525;
-      border-radius: 5px;
-      margin-bottom: 5px;
-      padding: 5px;
-      display: none;
-    }
- </style>
-</head>
-<body>
+      <div class="field">
+        <label for="password">{% trans "Password" %}</label>
+        <div class="input-row">
+          <input id="password" class="input" :type="show ? 'text' : 'password'"
+                 x-model="password" autocomplete="current-password" required>
+          <button type="button" class="input-row-btn" @click="show = !show"
+                  :aria-label="show ? '{% trans "Hide password" %}' : '{% trans "Show password" %}'">
+            <svg class="icon" x-show="!show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="icon" x-show="show" x-cloak viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-6 0-10-7-10-7a18.5 18.5 0 0 1 4.22-4.85"/>
+              <path d="M9.9 4.24A10 10 0 0 1 12 4c6 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/>
+              <line x1="2" y1="2" x2="22" y2="22"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-	<div  class="fullscreen_bg">
-    <div class="">
-    	<form class="form-signin">
-    		<h1 class="form-signin-heading"><span style="color: #ffa900;">PY</span>DDNS</h1>
-        <div id="error"></div>
-        <input type="text" class="form-control" placeholder="{% trans "User" %}" required="" autofocus="" id="username">
-        <input type="password" class="form-control" placeholder="{% trans "Password" %}" required="" id="password">
-        {% csrf_token %}
-    		<button class="btn btn-lg btn-success btn-block" type="button" onclick="enviar()" style="margin-top: 15px;">{% trans "Login" %}</button>
-    	</form>
-      <script>
-    </script>
+      <div x-show="error" x-cloak
+           role="alert"
+           style="background: oklch(from var(--bad) l c h / 0.12); border: 1px solid oklch(from var(--bad) l c h / 0.3); color: var(--bad); padding: 10px 12px; border-radius: var(--r-ctl); font-size: 13px;"
+           x-text="error"></div>
+
+      <button type="submit" class="btn btn-primary"
+              :disabled="submitting"
+              style="justify-content: center; padding: 11px 14px;">
+        <template x-if="submitting">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="animation: spin 1s linear infinite;">
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+          </svg>
+        </template>
+        <span x-text="submitting ? '{% trans "Signing in..." %}' : '{% trans "Sign in" %}'"></span>
+      </button>
+    </form>
+
+    <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line-soft); color: var(--text-dim); font-size: 12px; text-align: center;">
+      {{ DNS_DOMAIN|default:"ddns.demo.com" }} · {% trans "self-hosted on your homelab" %}
     </div>
   </div>
-  <script>
-  $('#password').keypress(function(e)
-  {
-     if(e.which == 13)
-     {
-        enviar()
-     }
-  });
-  $('#username').keypress(function(e)
-  {
-     if(e.which == 13)
-     {
-        enviar()
-     }
-  });
 
-  </script>
-</body>
-</html>
+  {% include "_footer.html" %}
+</div>
+{% endblock %}

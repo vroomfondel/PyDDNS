@@ -1,203 +1,175 @@
-{% load i18n %}
-{% load app_filters %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>PYDDNS</title>
-	<meta name="author" content="Peralta Leandro">
-	<link rel="stylesheet" type="text/css" href="/static/common/css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="/static/common/css/general.css?v=1" />
-	<link href="/static/common/css/bootstrap-glyphicons.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Muli|Oswald" rel="stylesheet">
-	<script src="/static/common/js/jquery-1.10.2.min.js"></script>
-    <script src="/static/common/js/bootstrap.min.js"></script>
+{% extends "_base.html" %}
+{% load i18n %}{% load app_filters %}
 
-    <link type='text/css' href='/static/pyddns/modal/css/basic.css' rel='stylesheet' media='screen' />
-    <script type='text/javascript' src='/static/pyddns/modal/js/jquery.simplemodal.js'></script>
-    <script type='text/javascript' src='/static/pyddns/modal/js/basic.js'></script>
+{% block title %}{% trans "Users" %} — PyDDNS{% endblock %}
 
-</head>
-<body>
-<div class="container">
+{% block topbar %}{% include "_topbar.html" %}{% endblock %}
 
-	<div class="row" style="border: 1px solid #4e4e4e;#cecece;margin-top: 20px; margin-bottom: 30px; background:white">
+{% block content %}
+<div class="main"
+     x-data="{
+       q: '{{ buscar|default:'' }}',
+       confirm: null,
+       getCookie(name) {
+         const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+         return v ? v.pop() : '';
+       },
+       search() {
+         const term = this.q.trim();
+         window.location.href = term ? '/users/' + encodeURIComponent(term) : '{% url 'users' %}';
+       },
+       async doDelete() {
+         if (!this.confirm) return;
+         const fd = new FormData();
+         fd.append('id_user', this.confirm.id);
+         fd.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+         try {
+           const res = await fetch('{% url 'del_user' %}', { method: 'POST', body: fd });
+           const data = await res.json();
+           if (data.success) {
+             window.toast && window.toast('{% trans 'User removed' %}');
+             setTimeout(() => location.reload(), 600);
+           } else {
+             window.toast && window.toast(data.error || '{% trans 'Failed' %}');
+           }
+         } catch (e) {
+           window.toast && window.toast('{% trans 'Network error' %}');
+         } finally {
+           this.confirm = null;
+         }
+       }
+     }">
 
-		<nav class="navbar navbar-default barra_superior">
-			<div class="container-fluid">
-			  <div class="navbar-header">
-			    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			      <span class="sr-only">Toggle navigation</span>
-			      <span class="icon-bar"></span>
-			      <span class="icon-bar"></span>
-			      <span class="icon-bar"></span>
-			    </button>
-			    <a class="navbar-brand logo" href="/"><span>PY</span>DDNS</a>
-			  </div>
-			  <div id="navbar" class="navbar-collapse collapse">
-			    <ul class="nav navbar-nav navbar-right">
-			    	{% if request.user.is_superuser %}
-				      <li><a href="{% url 'users' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {% trans "Users" %}</a></li>
-				      <li><a href="{% url 'domains' %}"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> {% trans "Domains" %}</a></li>
-			    	{% endif %}
-			      <li><a href="{% url 'common:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> {% trans "Logout" %}</a></li>
-			    </ul>
-			  </div><!--/.nav-collapse -->
-			</div><!--/.container-fluid -->
-		</nav>
-			<div class="col-md-12 cuerpo">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">{% trans "Users" %}</h1>
+      <p class="page-sub">
+        {% if buscar %}{% blocktrans %}Search results for "{{ buscar }}"{% endblocktrans %}{% else %}{% trans "All users in the system" %}{% endif %}
+      </p>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <div class="input-row" style="width: 240px;">
+        <span style="display: grid; place-items: center; padding: 0 0 0 10px; color: var(--text-dim);">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>
+          </svg>
+        </span>
+        <input class="input" placeholder="{% trans 'Search' %}"
+               x-model="q" @keydown.enter.prevent="search()">
+      </div>
+      <a class="btn btn-primary" href="{% url 'add_user' %}">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        {% trans "Add" %}
+      </a>
+    </div>
+  </div>
 
-				<h3>{% trans "Admin users" %}</h3><br/>
+  <div class="card">
+    {% if list_users %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>{% trans "Username" %}</th>
+            <th>{% trans "Email" %}</th>
+            <th>{% trans "Permissions" %}</th>
+            <th>{% trans "Domains" %}</th>
+            <th>{% trans "Last sync" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in list_users %}
+            <tr>
+              <td>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <div class="avatar">{{ u|get_initials }}</div>
+                  <div>
+                    <div style="font-weight: 600;">{{ u.first_name }} {{ u.last_name }}</div>
+                    <div class="mono" style="color: var(--text-muted); font-size: 12px;">@{{ u.username }}</div>
+                  </div>
+                </div>
+              </td>
+              <td style="color: var(--text-muted);">{{ u.email }}</td>
+              <td>
+                {% if u.is_superuser %}
+                  <span class="badge info"><span class="dot"></span>{% trans "admin" %}</span>
+                {% else %}
+                  <span class="badge">{% trans "user" %}</span>
+                {% endif %}
+              </td>
+              <td>
+                <a class="btn btn-sm btn-ghost" href="{% url 'main' %}{{ u.id }}" title="{% trans 'View domains' %}">{{ u|count_domain }}</a>
+              </td>
+              <td style="color: var(--text-muted);">
+                {% with last=u|last_user_sync %}
+                  {% if last %}{{ last|timesince }} {% trans "ago" %}{% else %}{% trans "Never" %}{% endif %}
+                {% endwith %}
+              </td>
+              <td class="col-shrink">
+                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                  <a class="btn btn-sm btn-ghost" href="/add_user/{{ u.id }}" title="{% trans 'Edit' %}" aria-label="{% trans 'Edit' %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </a>
+                  {% if u.id != request.user.id %}
+                    <button class="btn btn-sm btn-danger" @click="confirm = { id: '{{ u.id }}', name: '{{ u.username }}' }" title="{% trans 'Delete' %}" aria-label="{% trans 'Delete' %}">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      </svg>
+                    </button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if list_users.has_other_pages %}
+        <div style="padding: 12px var(--pad); display: flex; justify-content: flex-end; gap: 12px; align-items: center; color: var(--text-muted); font-size: 13px;">
+          {% if list_users.has_previous %}
+            <a class="btn btn-sm btn-ghost" href="?page={{ list_users.previous_page_number }}">‹ {% trans "Previous" %}</a>
+          {% endif %}
+          <span>{% trans "Page" %} {{ list_users.number }} / {{ list_users.paginator.num_pages }}</span>
+          {% if list_users.has_next %}
+            <a class="btn btn-sm btn-ghost" href="?page={{ list_users.next_page_number }}">{% trans "Next" %} ›</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty">
+        <div class="em-icon">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-6-6.92"/>
+          </svg>
+        </div>
+        <div class="em-title">{% trans "No users found" %}</div>
+        <div class="em-sub">
+          {% if buscar %}{% trans "Try a different search term." %}{% else %}{% trans "Create your first user to get started." %}{% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
 
-				<a class="btn btn-success" href="#" role="button" style="float:right;margin-bottom: 10px;" onclick="ventana('{% url 'add_user' %}','450px','420px')"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {% trans "Add user" %}</a>
-
-
-				<div class="col-xs-3" style="padding: 0px;"><input type="text" id="buscar" class="form-control" placeholder="{% trans "Search user" %}" style="margin-bottom: 10px;"
-				{% if buscar != "" %}
-					value="{{ buscar }}"
-				{% endif %}
-				></div><br/><br/>
-
-
-
-				<table class="table table-striped" id="mis_subdominios">
-					<tr>
-						<th>{% trans "User" %}</th>
-						<th>{% trans "Email" %}</th>
-						<th>{% trans "Name" %}</th>
-						<th>{% trans "Last Name" %}</th>
-						<th style="text-align: center;">{% trans "Superuser" %}</th>
-						<th style="text-align: center;">{% trans "Domains" %}</th>
-						<th>{% trans "Actions" %}</th>
-					</tr>
-					{% for user in list_users %}
-						<tr>
-							<td>{{ user.username }}</td>
-							<td>{{ user.email }}</td>
-							<td>{{ user.first_name }}</td>
-							<td>{{ user.last_name }}</td>
-							<td  style="text-align: center;">
-								{% if user.is_superuser %}
-									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-								{% else %}
-									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								{% endif %}
-							</td>
-							<td  style="text-align: center;">
-								<a class="btn btn-success btn-xs" href="{% url 'main' %}{{ user.id }}">{{ user|count_domain }}</a>
-							</td>
-							<td>
-								<button type="button" class="btn btn-default btn-xs" onclick="ventana('/add_user/{{user.id}}','450px','420px')" style="margin-right: 15px;"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-								<button type="button" class="btn btn-danger btn-xs" onclick="delet_user('{{ user.id }}','{{ user.username}}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-							</td>
-						</tr>
-					{% endfor %}
-				</table>
-				<div class="pagination" style="float:right;margin-right: 5px;">
-					    <span class="step-links">
-					        {% if list_users.has_previous %}
-					            <a href="?page={{ list_users.previous_page_number }}">< {% trans "Previous" %}</a>
-					        {% endif %}
-
-					        <span class="current">
-					            {% trans "Page" %} {{ list_users.number }} {% trans "of" %} {{ list_users.paginator.num_pages }}
-					        </span>
-
-					        {% if list_users.has_next %}
-					            <a href="?page={{ list_users.next_page_number }}">{% trans "Next" %} ></a>
-					        {% endif %}
-					    </span>
-				</div>
-			</div>
-			<div class="col-md-12 barra_inferior">
-				<a href="https://github.com/olimpo88/PyDDNS" target="_blank"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxMDI0IiB3aWR0aD0iMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNTEyIDBDMjI5LjI1IDAgMCAyMjkuMjUgMCA1MTJjMCAyMjYuMjUgMTQ2LjY4OCA0MTguMTI1IDM1MC4xNTYgNDg1LjgxMiAyNS41OTQgNC42ODggMzQuOTM4LTExLjEyNSAzNC45MzgtMjQuNjI1IDAtMTIuMTg4LTAuNDY5LTUyLjU2Mi0wLjcxOS05NS4zMTJDMjQyIDkwOC44MTIgMjExLjkwNiA4MTcuNSAyMTEuOTA2IDgxNy41Yy0yMy4zMTItNTkuMTI1LTU2Ljg0NC03NC44NzUtNTYuODQ0LTc0Ljg3NS00Ni41MzEtMzEuNzUgMy41My0zMS4xMjUgMy41My0zMS4xMjUgNTEuNDA2IDMuNTYyIDc4LjQ3IDUyLjc1IDc4LjQ3IDUyLjc1IDQ1LjY4OCA3OC4yNSAxMTkuODc1IDU1LjYyNSAxNDkgNDIuNSA0LjY1NC0zMyAxNy45MDQtNTUuNjI1IDMyLjUtNjguMzc1QzMwNC45MDYgNzI1LjQzOCAxODUuMzQ0IDY4MS41IDE4NS4zNDQgNDg1LjMxMmMwLTU1LjkzOCAxOS45NjktMTAxLjU2MiA1Mi42NTYtMTM3LjQwNi01LjIxOS0xMy0yMi44NDQtNjUuMDk0IDUuMDYyLTEzNS41NjIgMCAwIDQyLjkzOC0xMy43NSAxNDAuODEyIDUyLjUgNDAuODEyLTExLjQwNiA4NC41OTQtMTcuMDMxIDEyOC4xMjUtMTcuMjE5IDQzLjUgMC4xODggODcuMzEyIDUuODc1IDEyOC4xODggMTcuMjgxIDk3LjY4OC02Ni4zMTIgMTQwLjY4OC01Mi41IDE0MC42ODgtNTIuNSAyOCA3MC41MzEgMTAuMzc1IDEyMi41NjIgNS4xMjUgMTM1LjUgMzIuODEyIDM1Ljg0NCA1Mi42MjUgODEuNDY5IDUyLjYyNSAxMzcuNDA2IDAgMTk2LjY4OC0xMTkuNzUgMjQwLTIzMy44MTIgMjUyLjY4OCAxOC40MzggMTUuODc1IDM0Ljc1IDQ3IDM0Ljc1IDk0Ljc1IDAgNjguNDM4LTAuNjg4IDEyMy42MjUtMC42ODggMTQwLjUgMCAxMy42MjUgOS4zMTIgMjkuNTYyIDM1LjI1IDI0LjU2MkM4NzcuNDM4IDkzMCAxMDI0IDczOC4xMjUgMTAyNCA1MTIgMTAyNCAyMjkuMjUgNzk0Ljc1IDAgNTEyIDB6Ii8+PC9zdmc+" width="20px"/> PYDDNS</a>
-			</div>
-	</div>
-
-	<!--
-	Posibles menssajes:
-	{% trans "The updatewas successful and the hostname is now updated" %}
-	{% trans "The APP not sinc bind" %}
-	{% trans "The hostname specified does not exist in this user account" %}
-	{% trans "The username and password pair do not match a real user" %}
-	{% trans "Incorrect authentication format" %}
-	{% trans "Incorrect authentication format" %}
-	{% trans "Missing header HTTP_AUTHORIZATION" %}
-	{% trans "Missing header HTTP_USER_AGENT" %}
-	{% trans "You have exceeded the maximum number of attempts" %}
-	-->
-
-
-	<script type="application/javascript">
-		$("#buscar").keypress(function(e) {
-		    if(e.which == 13) {
-		        buscar=$("#buscar").val();
-		        window.location.href = "/users/"+buscar;
-		    }
-		});
-
-
-        function ventana(url, ancho, alto ){
- 			//Parametros opcionales
-            ancho = (ancho) ? ancho : 'auto';
-            alto = (alto) ? alto : '70%';
-
-            $('<div id="modal"></div>').load(url).modal({
-            	dataCss: { height: "100%", width: "100%" },
-            	overlayClose: false,
-			    onShow: function(dialog){
-			    	//$('#simplemodal-container').css("height","600px" )
-			        dialog.container.css({"height": alto });
-			        if (ancho!='auto'){
-			        	dialog.container.css({"width": ancho });
-			        }
-			        dialog.container.css({position: 'absolute', top: '15%'});
-		      	}
-			    //d.container.css({position: 'absolute', top: '0px'});
-            });
-        }
-
-		function delet_user(id_user,username){
-			var m_data = new FormData();
-			m_data.append( 'id_user', id_user);
-            m_data.append( 'csrfmiddlewaretoken', getCookie('csrftoken'));
-            var r = confirm('{% trans "You certainly want to delete the user" %} '+username);
-			if (r == true) {
-				$.ajax({url:"{% url 'del_user' %}",
-				type: "POST",
-				data: m_data,
-				processData: false,
-				contentType: false,
-				dataType:'json',
-				success:function(result){
-			  		if(result['success']){
-		            	//alert("producto borrada correctamente");
-		            	location.reload(true);
-		            }
-		            else{
-		                alert(result['error']);
-		            }
-			  	}
-				});
-			}
-		}
-
-
-		function getCookie(name) {
-		    var cookieValue = null;
-		    if (document.cookie && document.cookie != '') {
-			var cookies = document.cookie.split(';');
-			for (var i = 0; i < cookies.length; i++) {
-			    var cookie = jQuery.trim(cookies[i]);
-			    // Does this cookie string begin with the name we want?
-			    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			    }
-			}
-		    }
-		    return cookieValue;
-		}
-	</script>
-</body>
-</html>
+  {# Confirm delete modal #}
+  <template x-if="confirm">
+    <div class="modal-bg" @click="confirm = null">
+      <div class="modal" @click.stop role="dialog">
+        <h3>{% trans "Delete user?" %}</h3>
+        <p>
+          {% trans "This will remove" %}
+          <span class="mono"><b x-text="confirm.name"></b></span>
+          {% trans "and all their subdomains. This can't be undone." %}
+        </p>
+        <div class="modal-actions">
+          <button class="btn" @click="confirm = null">{% trans "Cancel" %}</button>
+          <button class="btn btn-danger" @click="doDelete()">{% trans "Delete" %}</button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+{% endblock %}

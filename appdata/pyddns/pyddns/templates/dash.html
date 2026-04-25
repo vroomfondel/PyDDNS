@@ -1,313 +1,364 @@
-{% load i18n %}
-{% load app_filters %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>PYDDNS</title>
-	<meta name="author" content="Peralta Leandro">
-	<link rel="stylesheet" type="text/css" href="/static/common/css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="/static/common/css/general.css?v=1" />
-	<link href="/static/common/css/bootstrap-glyphicons.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Muli|Oswald" rel="stylesheet">
-	<script src="/static/common/js/jquery-1.10.2.min.js"></script>
-    <script src="/static/common/js/bootstrap.min.js"></script>
-    <script src="/static/common/js/clipboard.min.js"></script>
-<style>
-	.nostyle{
-		background: transparent;
-	    border: 0px;
-	}
+{% extends "_base.html" %}
+{% load i18n %}{% load app_filters %}
 
-</style>
-</head>
-<body>
+{% block title %}{% trans "Dashboard" %} — PyDDNS{% endblock %}
 
+{% block topbar %}{% include "_topbar.html" %}{% endblock %}
 
+{% block content %}
+<div class="main"
+     x-data="{
+       currentIp: '—',
+       newSub: '',
+       confirm: null,
+       drawer: null,
+       busyId: null,
+       activityFilter: 'all',
+       showSecret: false,
+       quickstartTab: 'ddclient',
+       async detectIp() {
+         try {
+           const r = await fetch('https://api.ipify.org?format=json');
+           const j = await r.json();
+           this.currentIp = j.ip;
+         } catch (e) { this.currentIp = '—'; }
+       },
+       async copy(text) {
+         try { await navigator.clipboard.writeText(text); } catch (e) {}
+         window.toast && window.toast('{% trans "Copied to clipboard" %}');
+       },
+       getCookie(name) {
+         const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+         return v ? v.pop() : '';
+       },
+       async addSub() {
+         const name = this.newSub.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+         if (!name) return;
+         const fd = new FormData();
+         fd.append('subdomain', name);
+         fd.append('id_user', '{{ id_user }}');
+         fd.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+         try {
+           const res = await fetch('{% url 'add_subdomain' %}', { method: 'POST', body: fd });
+           const data = await res.json();
+           if (data.success) {
+             window.toast && window.toast('{% trans "Subdomain added" %}');
+             setTimeout(() => location.reload(), 600);
+           } else {
+             window.toast && window.toast(data.error || '{% trans "Failed" %}');
+           }
+         } catch (e) {
+           window.toast && window.toast('{% trans "Network error" %}');
+         }
+       },
+       async updateIp(name) {
+         if (this.currentIp === '—') {
+           window.toast && window.toast('{% trans "Detecting IP..." %}');
+           return;
+         }
+         this.busyId = name;
+         try {
+           const res = await fetch('{% url 'ip_update' %}' + name + '.{{ domain }}/' + this.currentIp);
+           const data = await res.json();
+           if (data.success) {
+             window.toast && window.toast('{% trans "IP updated" %}');
+             setTimeout(() => location.reload(), 600);
+           } else {
+             window.toast && window.toast(data.message || '{% trans "Failed" %}');
+           }
+         } catch (e) {
+           window.toast && window.toast('{% trans "Network error" %}');
+         } finally {
+           this.busyId = null;
+         }
+       },
+       async doDelete() {
+         if (!this.confirm) return;
+         const fd = new FormData();
+         fd.append('id_domain', this.confirm.id);
+         fd.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+         try {
+           const res = await fetch('{% url 'delete_domain' %}', { method: 'POST', body: fd });
+           const data = await res.json();
+           if (data.success) {
+             window.toast && window.toast('{% trans "Subdomain removed" %}');
+             setTimeout(() => location.reload(), 600);
+           } else {
+             window.toast && window.toast(data.error || '{% trans "Failed" %}');
+           }
+         } catch (e) {
+           window.toast && window.toast('{% trans "Network error" %}');
+         } finally {
+           this.confirm = null;
+         }
+       }
+     }"
+     x-init="detectIp()">
 
-<div class="container">
+  <div class="page-head">
+    <div>
+      {% if not see_user %}
+        <h1 class="page-title">{% trans "Welcome back" %}, {{ name|default:request.user.username }} 👋</h1>
+      {% else %}
+        <h1 class="page-title">{% trans "Dashboard of" %} {{ username }}</h1>
+      {% endif %}
+      <p class="page-sub">
+        {% trans "Your dynamic DNS records on" %} <span class="mono">{{ domain }}</span>
+      </p>
+    </div>
+    {% if request.user.is_superuser or own_admin %}
+      <div class="input-row" style="width: 360px; max-width: 100%;">
+        <input class="input mono" placeholder="{% trans 'Subdomain' %}"
+               x-model="newSub"
+               @keydown.enter.prevent="addSub()">
+        <span class="suffix mono">.{{ domain }}</span>
+        <button class="input-row-btn" @click="addSub()">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          {% trans "Add" %}
+        </button>
+      </div>
+    {% endif %}
+  </div>
 
-	<div class="row" style="border: 1px solid #4e4e4e;#cecece;margin-top: 20px; margin-bottom: 30px; background:white">
+  {# Stats row #}
+  <div class="stats" style="margin-bottom: 16px;">
+    <div class="card stat">
+      <div class="label">{% trans "Your current public IP" %}</div>
+      <div class="value mono" x-text="currentIp"></div>
+      <div class="delta">
+        <span class="pulse-dot" style="display: inline-block; vertical-align: middle; margin-right: 6px;"></span>
+        {% trans "Auto-detected" %}
+      </div>
+    </div>
+    <div class="card stat">
+      <div class="label">{% trans "Subdomains" %}</div>
+      <div class="value">{{ my_subdomains|length }}</div>
+      <div class="delta">{% trans "in your account" %}</div>
+    </div>
+    <div class="card stat">
+      <div class="label">{% trans "Syncs (24h)" %}</div>
+      <div class="value">{{ syncs_24h }}</div>
+      <div class="delta">{% blocktrans count counter=my_subdomains|length %}across {{ counter }} host{% plural %}across {{ counter }} hosts{% endblocktrans %}</div>
+    </div>
+    <div class="card stat">
+      <div class="label">{% trans "Failed" %}</div>
+      <div class="value">{{ failed_24h }}</div>
+      <div class="delta {% if failed_24h %}down{% else %}up{% endif %}">
+        {% if failed_24h %}{% trans "check agent" %}{% else %}{% trans "all good" %}{% endif %}
+      </div>
+    </div>
+  </div>
 
-		<nav class="navbar navbar-default barra_superior">
-			<div class="container-fluid">
-			  <div class="navbar-header">
-			    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			      <span class="sr-only">Toggle navigation</span>
-			      <span class="icon-bar"></span>
-			      <span class="icon-bar"></span>
-			      <span class="icon-bar"></span>
-			    </button>
-			    <a class="navbar-brand logo" href="/"><span>PY</span>DDNS</a>
-			  </div>
-			  <div id="navbar" class="navbar-collapse collapse">
-			    <ul class="nav navbar-nav navbar-right">
-			    	{% if request.user.is_superuser  %}
-				      <li><a href="{% url 'users' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {% trans "Users" %}</a></li>
-				      <li><a href="{% url 'domains' %}"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> {% trans "Domains" %}</a></li>
-			    	{% endif %}
-			      <li><a href="{% url 'common:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> {% trans "Logout" %}</a></li>
-			    </ul>
-			  </div><!--/.nav-collapse -->
-			</div><!--/.container-fluid -->
-		</nav>
-			<div class="col-md-12 cuerpo">
-				{% if not see_user %}
-					<h3>{% trans "Welcome" %} {{ name }}  </h3>
-				{% else %}
-					<h3>{% trans "Dashboard of the user " %} {{ username }}  </h3>
-				{% endif %}
+  <div class="grid-2">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {# My domains card #}
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">{% trans "My domains" %}</h3>
+            <p class="card-sub">{% trans "Subdomains pointing at your current IP" %}</p>
+          </div>
+          <span style="font-size: 12px; color: var(--text-dim);">● {% trans "synced" %} · {% trans "gap = no update" %}</span>
+        </div>
+        <hr>
+        {% if my_subdomains %}
+          <div class="subs">
+            {% for d in my_subdomains %}
+              {% with last_known=d.name|last_ip last_when=d.name|last_update %}
+              <div class="sub-row">
+                <div class="fqdn">
+                  <button class="btn btn-icon btn-ghost" title="{% trans 'Copy' %}"
+                          @click="copy('{{ d.name }}.{{ domain }}')" aria-label="{% trans 'Copy' %}">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+                    </svg>
+                  </button>
+                  <span class="name mono"><b>{{ d.name }}</b>.{{ domain }}</span>
+                </div>
+                <div class="ip-cell mono">{{ last_known }}</div>
+                <div class="updated">
+                  {% if last_when != "---" %}{{ last_when|timesince }} {% trans "ago" %}{% else %}—{% endif %}
+                </div>
+                <div class="spark-cell" style="color: var(--accent);">
+                  {{ d.name|sparkline_24h }}
+                </div>
+                <div class="actions">
+                  <button class="btn btn-sm btn-primary"
+                          :disabled="busyId === '{{ d.name }}'"
+                          @click="updateIp('{{ d.name }}')">
+                    <template x-if="busyId === '{{ d.name }}'">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="animation: spin 1s linear infinite;">
+                        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+                      </svg>
+                    </template>
+                    <template x-if="busyId !== '{{ d.name }}'">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><polyline points="21 3 21 8 16 8"/><polyline points="3 21 3 16 8 16"/>
+                      </svg>
+                    </template>
+                    {% trans "Sync" %}
+                  </button>
+                  {% if request.user.is_superuser or own_admin %}
+                    <button class="btn btn-sm btn-danger"
+                            @click="confirm = { id: '{{ d.id }}', name: '{{ d.name }}' }"
+                            aria-label="{% trans 'Delete' %}" title="{% trans 'Delete' %}">
+                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      </svg>
+                    </button>
+                  {% endif %}
+                </div>
+                <div class="meta-cell">
+                  <span class="mono">{{ last_known }}</span>
+                  <span>· {% if last_when != "---" %}{{ last_when|timesince }} {% trans "ago" %}{% else %}—{% endif %}</span>
+                </div>
+              </div>
+              {% endwith %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <div class="em-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+              </svg>
+            </div>
+            <div class="em-title">{% trans "No subdomains yet" %}</div>
+            <div class="em-sub">{% trans "Add your first subdomain above to start syncing your IP." %}</div>
+          </div>
+        {% endif %}
+      </div>
 
+      {# Activity log card #}
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">{% trans "Recent activity" %}</h3>
+            <p class="card-sub">{% trans "Last sync attempts across your account" %}</p>
+          </div>
+          <div class="chips">
+            {% for c in 'all,good,nochg,badauth,badagent,abuse,dnserr,nohost'|cut:' '|stringformat:'s'|slice:':' %}{% endfor %}
+            <button class="chip" :aria-pressed="activityFilter === 'all'" @click="activityFilter = 'all'">{% trans "All" %}</button>
+            <button class="chip" :aria-pressed="activityFilter === 'good'" @click="activityFilter = 'good'">good</button>
+            <button class="chip" :aria-pressed="activityFilter === 'nochg'" @click="activityFilter = 'nochg'">nochg</button>
+            <button class="chip" :aria-pressed="activityFilter === 'badauth'" @click="activityFilter = 'badauth'">badauth</button>
+            <button class="chip" :aria-pressed="activityFilter === 'abuse'" @click="activityFilter = 'abuse'">abuse</button>
+            <button class="chip" :aria-pressed="activityFilter === 'dnserr'" @click="activityFilter = 'dnserr'">dnserr</button>
+          </div>
+        </div>
+        <hr>
+        {% if list_activity %}
+          {% for a in list_activity %}
+            <div class="log-row" x-show="activityFilter === 'all' || activityFilter === '{{ a.code }}'">
+              <div class="when">{{ a.date|date:"M d, H:i" }}</div>
+              <div class="code"><span class="code-pill {{ a.code|code_class }}">{{ a.code|default:"—" }}</span></div>
+              <div class="domain">{{ a.domain|default:"—" }}</div>
+              <div class="ip">{{ a.ip|default:"—" }}</div>
+              <div class="agent" title="{{ a.agent }}">{{ a.agent|default:""|slice:":40" }}</div>
+            </div>
+          {% endfor %}
+          {% if list_activity.has_other_pages %}
+            <div style="padding: 12px var(--pad); display: flex; justify-content: flex-end; gap: 12px; align-items: center; color: var(--text-muted); font-size: 13px;">
+              {% if list_activity.has_previous %}
+                <a class="btn btn-sm btn-ghost" href="?page={{ list_activity.previous_page_number }}">‹ {% trans "Previous" %}</a>
+              {% endif %}
+              <span>{% trans "Page" %} {{ list_activity.number }} / {{ list_activity.paginator.num_pages }}</span>
+              {% if list_activity.has_next %}
+                <a class="btn btn-sm btn-ghost" href="?page={{ list_activity.next_page_number }}">{% trans "Next" %} ›</a>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="empty">
+            <div class="em-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="3 12 7 12 10 5 14 19 17 12 21 12"/>
+              </svg>
+            </div>
+            <div class="em-title">{% trans "No activity to show" %}</div>
+            <div class="em-sub">{% trans "Sync attempts will appear here once your client checks in." %}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
 
-				{% if request.user.is_superuser or own_admin %}
-					<div style="float:right;margin-bottom: 10px;width: 40%;">
-						<div class="input-group">
-						  <input type="text" class="form-control" placeholder="{% trans "Subdomain name " %}" aria-describedby="basic-addon2" style="height: 33px;" id="subdomain">
-						  <span class="input-group-addon" id="basic-addon2"  style="height: 33px;">.{{domain}}</span>
-						  <span class="input-group-btn"  style="height: 33px;">
-					        <button class="btn btn-success" type="button" style="height: 33px;" onclick="add_subdomain()"><span class="glyphicon glyphicon-plus" aria-hidden="true" ></span></button>
-					      </span>
-						</div>
-					</div>
-				{% endif %}
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {# Quickstart #}
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3 class="card-title">{% trans "Quickstart with ddclient" %}</h3>
+            <p class="card-sub">{% trans "Drop this into ~/.ddclient.conf and run ddclient -force" %}</p>
+          </div>
+        </div>
+        <div style="padding: 0 var(--pad) 14px;">
+          <div class="tabs">
+            <button class="tab" :aria-selected="quickstartTab === 'ddclient'" @click="quickstartTab = 'ddclient'">ddclient.conf</button>
+            <button class="tab" :aria-selected="quickstartTab === 'curl'" @click="quickstartTab = 'curl'">curl</button>
+          </div>
+          <div class="code-block" x-show="quickstartTab === 'ddclient'"><button class="btn btn-sm btn-ghost copy" @click="copy(`protocol=dyndns2\nuse=web, web=checkip.dyndns.com, web-skip='IP Address'\nserver={{ domain }}\nssl=yes\nlogin={{ request.user.username }}\npassword='your-password'\n{% if my_subdomains %}{% for d in my_subdomains %}{{ d.name }}.{{ domain }}{% if not forloop.last %},{% endif %}{% endfor %}{% else %}your-host.{{ domain }}{% endif %}`)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button><span class="k">protocol</span>=dyndns2
+<span class="k">use</span>=web, web=checkip.dyndns.com, web-skip=<span class="s">'IP Address'</span>
+<span class="k">server</span>={{ domain }}
+<span class="k">ssl</span>=yes
+<span class="k">login</span>={{ request.user.username }}
+<span class="k">password</span>=<span class="s">'your-password'</span>
+{% if my_subdomains %}{% for d in my_subdomains %}{{ d.name }}.{{ domain }}{% if not forloop.last %},{% endif %}{% endfor %}{% else %}your-host.{{ domain }}{% endif %}</div>
+          <div class="code-block" x-show="quickstartTab === 'curl'" x-cloak><button class="btn btn-sm btn-ghost copy" @click="copy(`curl -u {{ request.user.username }}:your-password \\\n  &quot;https://{{ domain }}/nic/update?hostname={% if my_subdomains %}{{ my_subdomains.0.name }}{% else %}your-host{% endif %}.{{ domain }}&myip=auto&quot;`)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button><span class="c"># {% trans "Force update for one subdomain" %}</span>
+curl -u {{ request.user.username }}:your-password \
+  "https://{{ domain }}/nic/update?hostname={% if my_subdomains %}{{ my_subdomains.0.name }}{% else %}your-host{% endif %}.{{ domain }}&myip=auto"</div>
+          <p style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">
+            {% trans "Replace 'your-password' with the password you use to sign into PyDDNS." %}
+          </p>
+        </div>
+      </div>
 
+      {# Admin shortcuts #}
+      {% if request.user.is_superuser %}
+        <div class="card card-pad">
+          <h3 class="card-title" style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="13 2 4 14 11 14 9 22 20 10 13 10 13 2"/>
+            </svg>
+            {% trans "Admin" %}
+          </h3>
+          <p class="card-sub" style="margin-bottom: 12px;">{% trans "Superuser shortcuts." %}</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <a class="btn" href="{% url 'users' %}">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-6-6.92"/>
+              </svg>
+              {% trans "Users" %}
+            </a>
+            <a class="btn" href="{% url 'domains' %}">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+              </svg>
+              {% trans "All domains" %}
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
-
-				<span>{% trans "Your current IP is" %} <span class="my_ip"></span></span><br/><br/><br/>
-
-				<table class="table table-striped" id="mis_subdominios">
-					<tr>
-						<th>{% trans "My domains" %}</th>
-						<th>IP</th>
-						<th>{% trans "Last update" %}</th>
-						<th>{% trans "Action" %}</th>
-					</tr>
-					{% for d in my_subdomains %}
-						<tr>
-							<td><input id="domain_{{ d.name }}" value="{{ d.name }}.{{domain}}" class="nostyle" readonly /><button class="btn btn-xs" data-clipboard-target="#domain_{{ d.name }}" title="{% trans "Copy" %}"> <img class="clippy" src="/static/admin/img/clippy.svg" width="13" alt="Copy to clipboard"> </button></td>
-							<td>{{ d.name|last_ip }}</td>
-							<td>{{ d.name|last_update }}</td>
-							<td>
-								<button type="button" class="btn btn-success btn-xs attr_ip" id="date_{{d.name}}" onclick="actualizarIp('{{d.name}}.{{domain}}')">{% trans "Update to" %} <span class="my_ip"></span></button>
-								{% if request.user.is_superuser or own_admin %}
-									<button type="button" class="btn btn-danger btn-xs" onclick="delet_domain('{{ d.id }}','{{ d.name }}')" style="float: right;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-								{% endif %}
-							</td>
-						</tr>
-					{% endfor %}
-				</table>
-				<br>
-				<h3>{% trans "My last records" %}</h3>
-				<table class="table table-striped">
-					<thead class="thead-dark" style="background:#dfdfdf;">
-						<tr>
-							<th>
-								#ID
-							</th>
-							<th>
-								{% trans "Date" %}
-							</th>
-							<th>
-								{% trans "Code" %}
-							</th>
-							<th>
-								{% trans "Message" %}
-							</th>
-							<th>
-								{% trans "Domain" %}
-							</th>
-							<th>
-								IP
-							</th>
-							<th>
-								{% trans "Agent" %}
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for a in list_activity %}
-							<tr>
-								<td>{{ a.id_log }}</td>
-								<td>{{ a.date|date:"d/m/Y H:i" }}</td>
-								<td>{{ a.code }}</td>
-								<td>{% trans a.result %}</td>
-								<td>{{ a.domain }}</td>
-								<td>{{ a.ip }}</td>
-								<td title="{{ a.agent }}">{{ a.agent|slice:":30" }}...</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-				<div class="pagination" style="float:right;margin-right: 5px;">
-					    <span class="step-links">
-					        {% if list_activity.has_previous %}
-					            <a href="?page={{ list_activity.previous_page_number }}">< {% trans "Previous" %}</a>
-					        {% endif %}
-
-					        <span class="current">
-					            {% trans "Page" %} {{ list_activity.number }} {% trans "of" %} {{ list_activity.paginator.num_pages }}
-					        </span>
-
-					        {% if list_activity.has_next %}
-					            <a href="?page={{ list_activity.next_page_number }}">{% trans "Next" %} ></a>
-					        {% endif %}
-					    </span>
-				</div>
-			</div>
-			<div class="col-md-12 barra_inferior">
-				<a href="https://github.com/olimpo88/PyDDNS" target="_blank"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIxMDI0IiB3aWR0aD0iMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNTEyIDBDMjI5LjI1IDAgMCAyMjkuMjUgMCA1MTJjMCAyMjYuMjUgMTQ2LjY4OCA0MTguMTI1IDM1MC4xNTYgNDg1LjgxMiAyNS41OTQgNC42ODggMzQuOTM4LTExLjEyNSAzNC45MzgtMjQuNjI1IDAtMTIuMTg4LTAuNDY5LTUyLjU2Mi0wLjcxOS05NS4zMTJDMjQyIDkwOC44MTIgMjExLjkwNiA4MTcuNSAyMTEuOTA2IDgxNy41Yy0yMy4zMTItNTkuMTI1LTU2Ljg0NC03NC44NzUtNTYuODQ0LTc0Ljg3NS00Ni41MzEtMzEuNzUgMy41My0zMS4xMjUgMy41My0zMS4xMjUgNTEuNDA2IDMuNTYyIDc4LjQ3IDUyLjc1IDc4LjQ3IDUyLjc1IDQ1LjY4OCA3OC4yNSAxMTkuODc1IDU1LjYyNSAxNDkgNDIuNSA0LjY1NC0zMyAxNy45MDQtNTUuNjI1IDMyLjUtNjguMzc1QzMwNC45MDYgNzI1LjQzOCAxODUuMzQ0IDY4MS41IDE4NS4zNDQgNDg1LjMxMmMwLTU1LjkzOCAxOS45NjktMTAxLjU2MiA1Mi42NTYtMTM3LjQwNi01LjIxOS0xMy0yMi44NDQtNjUuMDk0IDUuMDYyLTEzNS41NjIgMCAwIDQyLjkzOC0xMy43NSAxNDAuODEyIDUyLjUgNDAuODEyLTExLjQwNiA4NC41OTQtMTcuMDMxIDEyOC4xMjUtMTcuMjE5IDQzLjUgMC4xODggODcuMzEyIDUuODc1IDEyOC4xODggMTcuMjgxIDk3LjY4OC02Ni4zMTIgMTQwLjY4OC01Mi41IDE0MC42ODgtNTIuNSAyOCA3MC41MzEgMTAuMzc1IDEyMi41NjIgNS4xMjUgMTM1LjUgMzIuODEyIDM1Ljg0NCA1Mi42MjUgODEuNDY5IDUyLjYyNSAxMzcuNDA2IDAgMTk2LjY4OC0xMTkuNzUgMjQwLTIzMy44MTIgMjUyLjY4OCAxOC40MzggMTUuODc1IDM0Ljc1IDQ3IDM0Ljc1IDk0Ljc1IDAgNjguNDM4LTAuNjg4IDEyMy42MjUtMC42ODggMTQwLjUgMCAxMy42MjUgOS4zMTIgMjkuNTYyIDM1LjI1IDI0LjU2MkM4NzcuNDM4IDkzMCAxMDI0IDczOC4xMjUgMTAyNCA1MTIgMTAyNCAyMjkuMjUgNzk0Ljc1IDAgNTEyIDB6Ii8+PC9zdmc+" width="20px"/> PYDDNS</a>
-			</div>
-	</div>
-
-	<!--
-	Posibles menssajes:
-	{% trans "The updatewas successful and the hostname is now updated" %}
-	{% trans "The APP not sinc bind" %}
-	{% trans "The hostname specified does not exist in this user account" %}
-	{% trans "The username and password pair do not match a real user" %}
-	{% trans "Incorrect authentication format" %}
-	{% trans "Incorrect authentication format" %}
-	{% trans "Missing header HTTP_AUTHORIZATION" %}
-	{% trans "Missing header HTTP_USER_AGENT" %}
-	{% trans "You have exceeded the maximum number of attempts" %}
-	-->
-
-
-	<script type="application/javascript">
-	var ip
-
-	function actualizarIp(domain){
-
-		$.ajax({url:"{% url 'ip_update' %}"+domain+"/"+ip,
-			type: "GET",
-			processData: false,
-			contentType: false,
-			dataType:'json',
-			success:function(result){
-				console.log(result)
-		  		if(result['success']){
-	            	//alert("Contrato agregado correctamente");
-	            	location.reload(true);
-	            }
-	            else{
-	                alert(result['message']);
-	            }
-		  	}	
-		});
-
-	}
-
-
-	$(function() {
-		$.getJSON("https://api.ipify.org?format=jsonp&callback=?",
-			function(json) {
-				console.log(json)
-				$('.my_ip').html(json.ip);
-				ip=json.ip;
-			}
-		);
-	});
-
-
-	$("#subdomain").keypress(function(e) {
-	    if(e.which == 13) {
-	        add_subdomain();
-	    }
-	});
-
-	{% if request.user.is_superuser or own_admin %}
-		function add_subdomain(){
-			var m_data = new FormData();
-			m_data.append( 'subdomain', $('#subdomain').val());
-			m_data.append( 'id_user', '{{ id_user }}');
-			m_data.append( 'csrfmiddlewaretoken', getCookie('csrftoken'));
-			$.ajax({url:"{% url 'add_subdomain' %}",
-				data: m_data,
-				processData: false,
-				contentType: false,
-				type: 'POST',
-				dataType:'json',
-				success:function(result){
-			  		if(result['success']){
-		            	//alert("Contrato agregado correctamente");
-		            	location.reload(true);
-		            }
-		            else{
-		            	if (result['error']=="exist"){
-		            		alert('{% trans "The subdomain already exists" %}');
-		            	}
-		            	else{
-		            		alert(result['error']);
-		            	}
-		            }
-			  	}
-			});
-		}
-
-		function delet_domain(id_domain,domain){
-			var m_data = new FormData();
-			m_data.append( 'id_domain', id_domain);
-	        m_data.append( 'csrfmiddlewaretoken', getCookie('csrftoken'));
-	        var r = confirm('{% trans "You certainly want to delete the domain " %}'+domain);
-			if (r == true) {
-				$.ajax({url:"{% url 'delete_domain' %}",
-					type: "POST",
-					data: m_data,
-					processData: false,
-					contentType: false,
-					dataType:'json',
-					success:function(result){
-				  		if(result['success']){
-			            	//alert("producto borrada correctamente");
-			            	location.reload(true);
-			            }
-			            else{
-			            	if (result['error']=="permission"){
-			            		alert('{% trans "You do not have permission to delete the subdomain" %}');
-			            	}
-			            	else{
-			            		alert(result['error']);
-			            	}
-			            }
-				  	}
-				});
-			}
-		}
-
-		function getCookie(name) {
-		    var cookieValue = null;
-		    if (document.cookie && document.cookie != '') {
-			var cookies = document.cookie.split(';');
-			for (var i = 0; i < cookies.length; i++) {
-			    var cookie = jQuery.trim(cookies[i]);
-			    // Does this cookie string begin with the name we want?
-			    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			    }
-			}
-		    }
-		    return cookieValue;
-		}
-	{% endif %}
-
-
-	var clipboard = new ClipboardJS('.btn');
-
-	clipboard.on('success', function(e) {
-	    console.info('Action:', e.action);
-	    console.info('Text:', e.text);
-	    console.info('Trigger:', e.trigger);
-
-	    e.clearSelection();
-	});
-
-	clipboard.on('error', function(e) {
-	    console.error('Action:', e.action);
-	    console.error('Trigger:', e.trigger);
-	});
-
-
-	</script>
-</body>
-</html>
+  {# Confirm delete modal #}
+  <template x-if="confirm">
+    <div class="modal-bg" @click="confirm = null">
+      <div class="modal" @click.stop role="dialog">
+        <h3>{% trans "Delete subdomain?" %}</h3>
+        <p>
+          {% trans "This will permanently remove" %}
+          <span class="mono"><b x-text="confirm.name"></b>.{{ domain }}</span>
+          {% trans "from BIND. This can't be undone." %}
+        </p>
+        <div class="modal-actions">
+          <button class="btn" @click="confirm = null">{% trans "Cancel" %}</button>
+          <button class="btn btn-danger" @click="doDelete()">{% trans "Delete" %}</button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+{% endblock %}

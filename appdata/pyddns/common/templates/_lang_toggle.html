@@ -1,0 +1,14 @@
+{% load i18n %}
+{% get_available_languages as LANGUAGES %}
+{% get_current_language as CURRENT_LANG %}
+<form action="{% url 'set_language' %}" method="post" class="lang" role="group" aria-label="Language" style="margin: 0;">
+  {% csrf_token %}
+  <input name="next" type="hidden" value="{{ request.path }}">
+  {% for lang_code, lang_name in LANGUAGES %}
+    {% with code_short=lang_code|slice:':2'|upper %}
+      <button name="language" value="{{ lang_code }}" type="submit"
+              title="{{ lang_name }}"
+              aria-pressed="{% if CURRENT_LANG|slice:':2' == lang_code|slice:':2' %}true{% else %}false{% endif %}">{{ code_short }}</button>
+    {% endwith %}
+  {% endfor %}
+</form>
