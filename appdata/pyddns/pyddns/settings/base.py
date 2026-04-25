@@ -95,8 +95,8 @@ AUTHENTICATION_BACKENDS = (
 
 
 # Internationalization
-LANGUAGE_CODE = 'es-Es'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = os.environ.get('DJANGO_LANGUAGE_CODE', 'es-es')
+TIME_ZONE = os.environ.get('DJANGO_TIME_ZONE', 'UTC')
 USE_I18N = True
 USE_TZ = True
 

@@ -27,7 +27,6 @@ urlpatterns += i18n_patterns(
     re_path(r'^delet_user', delet_user, name="del_user"),
     re_path(r'^delet_domain', delet_domain, name="delete_domain"),
     re_path(r'^common/', include(('common.urls', 'common'), namespace='common')),
-    re_path(r'^nic/update', updateip),
     re_path(r'^ip/update/(?P<domain>.*)/(?P<ip>.*)', set_ip_web),
     re_path(r'^ip/update/', set_ip_web, name="ip_update"),
     re_path(r'^$', main),

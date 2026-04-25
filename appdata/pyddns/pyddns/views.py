@@ -15,8 +15,6 @@ import json
 import base64
 import requests
 
-#from common.utils import getForwardedFor
-#from servers.models import Activity_log
 from common.models import Activity_log
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -370,7 +368,7 @@ def set_ip(request,domain,ip):
     resolver = dns.resolver.Resolver()
     resolver.nameservers=[socket.gethostbyname('ddns')]
     try:
-        ip_dig = resolver.query(domain,"A")[0]
+        ip_dig = resolver.resolve(domain, "A")[0]
     except:
         ip_dig=None
 
