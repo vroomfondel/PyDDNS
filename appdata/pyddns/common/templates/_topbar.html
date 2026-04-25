@@ -15,7 +15,10 @@
   <nav class="nav" :class="{ 'open': navOpen }">
     <a class="nav-btn" href="{% url 'main' %}" {% if request.resolver_match.url_name == 'main' %}aria-current="page"{% endif %}>
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
       </svg>
       {% trans "Dashboard" %}
     </a>
@@ -28,7 +31,12 @@
       </a>
       <a class="nav-btn" href="{% url 'domains' %}" {% if request.resolver_match.url_name == 'domains' %}aria-current="page"{% endif %}>
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+          <line x1="9" y1="6" x2="20" y2="6"/>
+          <line x1="9" y1="12" x2="20" y2="12"/>
+          <line x1="9" y1="18" x2="20" y2="18"/>
+          <circle cx="4.5" cy="6" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="12" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="18" r="1.2" fill="currentColor"/>
         </svg>
         {% trans "All domains" %}
       </a>

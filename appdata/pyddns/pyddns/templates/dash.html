@@ -333,7 +333,12 @@ curl -u {{ request.user.username }}:your-password \
             </a>
             <a class="btn" href="{% url 'domains' %}">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>
+                <line x1="9" y1="6" x2="20" y2="6"/>
+                <line x1="9" y1="12" x2="20" y2="12"/>
+                <line x1="9" y1="18" x2="20" y2="18"/>
+                <circle cx="4.5" cy="6" r="1.2" fill="currentColor"/>
+                <circle cx="4.5" cy="12" r="1.2" fill="currentColor"/>
+                <circle cx="4.5" cy="18" r="1.2" fill="currentColor"/>
               </svg>
               {% trans "All domains" %}
             </a>
