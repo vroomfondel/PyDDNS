@@ -17,10 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   credentials can disable the entire flow with a single env var. URLs return
   404 and the "Forgot your password?" link disappears from login.
 - **Migration pre-flight check** — `scripts/migrate-postgres.sh` now refuses
-  to start unless `.env` already declares the variables PyDDNS v3 needs to
-  boot (notably `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`, which v1/v2
+  to start unless `.env` already declares the variables PyDDNS v2 needs to
+  boot (notably `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS`, which v1
   deployments don't have). Avoids the "DB migrated but app won't start"
   failure mode.
+- **Automatic Django migration reconciliation** — after restoring the
+  Postgres data, the migration script now also moves any untracked
+  v1-era migration files into `data/migrations-backup-<timestamp>/`
+  and re-runs `migrate --fake-initial` so the `django_migrations` table
+  aligns with v2's committed `0001_initial`. Fresh installs are unaffected.
 - **Separate Compose overlay for migration** — `docker-compose.migration.yml`
   holds `prep-migration` / `postgres-old` / `migrator`. The main
   `docker-compose.yml` no longer carries any legacy services.
@@ -87,14 +92,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   POSTs over HTTPS behind the nginx proxy on Django 5+. Now derived
   automatically from `DJANGO_ALLOWED_HOSTS`.
 
-## [3.0.0] — 2026-04-25
+## [2.0.0] — 2026-04-25
 
 Major modernization release. Stack upgraded end-to-end, security hardened,
 test coverage added, deployment automated.
 
 ### Breaking changes
 
-- **Postgres 9.6 → 15.** Existing v1/v2 deployments must run
+- **Postgres 9.6 → 15.** Existing v1 deployments must run
   `./scripts/migrate-postgres.sh` before upgrading; the script preserves the
   9.6 cluster in `data/dbdata-old/` until you confirm the migration.
 - **`DJANGO_SECRET_KEY` is now required.** The application refuses to start
@@ -168,5 +173,5 @@ See `SECURITY.md` for the disclosure policy. This release closes 2 critical,
 
 ---
 
-[Unreleased]: https://github.com/olimpo88/PyDDNS/compare/v3.0.0...HEAD
-[3.0.0]: https://github.com/olimpo88/PyDDNS/releases/tag/v3.0.0
+[Unreleased]: https://github.com/olimpo88/PyDDNS/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/olimpo88/PyDDNS/releases/tag/v2.0.0

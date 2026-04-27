@@ -1,10 +1,9 @@
 
 *.pyc
+__pycache__/
 pyntra.sock
 newenv/*
 logs/*
 appdata/pyddns/db.sqlite3
-appdata/pyddns/common/migrations/[0-9]*.py
-appdata/pyddns/pyddns/migrations/[0-9]*.py
 data/*
 .env

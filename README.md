@@ -430,19 +430,19 @@ In CI: pushes and pull requests automatically run the full suite against Postgre
 
 ## 🔄 Migrating from Postgres 9.6
 
-PyDDNS v3+ runs on PostgreSQL 15. If you're upgrading from a 9.6-based release, the included script handles a side-by-side `pg_dump` → `psql` migration. Both versions run in parallel via a dedicated overlay (`docker-compose.migration.yml`) so the main `docker-compose.yml` stays clean of legacy services.
+PyDDNS v2+ runs on PostgreSQL 15. If you're upgrading from a 9.6-based release, the included script handles a side-by-side `pg_dump` → `psql` migration. Both versions run in parallel via a dedicated overlay (`docker-compose.migration.yml`) so the main `docker-compose.yml` stays clean of legacy services.
 
 ### Required `.env` updates before migrating
 
-PyDDNS v3 ships with new mandatory env vars that v1/v2 deployments don't have. **The migration script pre-flight checks for these and refuses to proceed if any are missing**, so add them to `.env` first:
+PyDDNS v2 ships with new mandatory env vars that v1 deployments don't have. **The migration script pre-flight checks for these and refuses to proceed if any are missing**, so add them to `.env` first:
 
 | Variable | Notes |
 |----------|-------|
 | `DJANGO_SECRET_KEY` | Generate with `docker run --rm python:3.11-slim python -c "import secrets; print(secrets.token_urlsafe(50))"` |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated valid `Host` headers (e.g. `ddns.example.com,localhost`) |
-| `DOMAIN`, `SHARED_SECRET`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASS` | Already in v1/v2 .env, but the script verifies they're non-empty |
+| `DOMAIN`, `SHARED_SECRET`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASS` | Already in v1 .env, but the script verifies they're non-empty |
 
-Also recommended (optional but useful for v3):
+Also recommended (optional but useful for v2):
 
 ```ini
 DJANGO_SETTINGS_MODULE=pyddns.settings.production
@@ -454,10 +454,34 @@ EMAIL_HOST=                # leave empty for now; configure later when ready
 ### Run the migration
 
 ```bash
-git pull                          # bring code up to v3
+git pull                          # bring code up to v2
 # update .env with the new vars listed above
 ./scripts/migrate-postgres.sh
 ```
+
+### Note about Django migrations
+
+Prior to v2 the project gitignored `0001_initial.py` for both apps; v2
+commits them so CI can build the test schema. v1 deployments
+generated their own `0001_initial.py` (and possibly `0002+`, `0003+`)
+locally on first boot via `makemigrations`. After pulling v2 those
+local files would conflict with the committed ones.
+
+**The migration script handles this for you.** As its final step,
+`migrate-postgres.sh` automatically:
+
+1. Moves any *untracked* numbered migration files for `common` and
+   `pyddns` into `data/migrations-backup-<timestamp>/` (preserved, not
+   deleted).
+2. Runs `migrate <app> zero --fake` for both apps to clear stale rows
+   from the `django_migrations` table.
+3. Runs `migrate --fake-initial` to record v2's `0001_initial` as
+   applied — the schema already exists from the `pg_dump` restore, so
+   nothing is re-created.
+
+This is idempotent and a no-op for fresh installs. If you want to
+inspect what was moved aside afterwards, look under
+`data/migrations-backup-*/`.
 
 Internally the script runs:
 

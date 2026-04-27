@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # ── Python deps ───────────────────────────────────────────────────────────
   - package-ecosystem: pip
     directory: /docker
     schedule:
@@ -14,17 +15,58 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      # Stay on Django 5.2 LTS until 6.2 LTS ships (~Apr 2027).
+      - dependency-name: "Django"
+        update-types: ["version-update:semver-major"]
+      # Conservative: avoid major bumps for the rest of the runtime stack
+      # without explicit review (psycopg2, Pillow, etc. tend to remove APIs).
+      - dependency-name: "psycopg2-binary"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Pillow"
+        update-types: ["version-update:semver-major"]
 
+  # ── Dockerfile (base image) ───────────────────────────────────────────────
   - package-ecosystem: docker
     directory: /docker
     schedule:
       interval: weekly
+    ignore:
+      # Pin to 3.x major; 3.14 was alpha as of April 2026.
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
+  # ── Main docker-compose.yml (runtime services) ────────────────────────────
   - package-ecosystem: docker-compose
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Postgres pinned to 15 LTS in the runtime; allow patch but not major.
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
+      # nginx — patch only; we want predictable TLS behaviour across patches.
+      - dependency-name: "nginx"
+        update-types: ["version-update:semver-major"]
 
+  # ── Migration overlay — never bump anything here automatically ────────────
+  # postgres 9.6 and the surrounding scaffolding are deliberately frozen
+  # to support v1 → v2 upgrades. Updating them defeats the purpose.
+  - package-ecosystem: docker-compose
+    directory: /
+    target-branch: master
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 0   # disable auto-PRs entirely for the overlay
+    # NOTE: docker-compose ecosystem currently scans every *.yml file in the
+    # directory. There is no per-file include/exclude. The combo of
+    # open-pull-requests-limit:0 + ignores below is a defense-in-depth so
+    # nothing here ever lands on its own.
+    ignore:
+      - dependency-name: "postgres"
+      - dependency-name: "alpine"
+
+  # ── GitHub Actions workflows ──────────────────────────────────────────────
   - package-ecosystem: github-actions
     directory: /
     schedule:
