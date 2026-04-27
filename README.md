@@ -391,7 +391,11 @@ yourdomain.ddns.example.com
 
 ### Windows
 
-[DynDNS Simply Client](https://sourceforge.net/projects/dyndnssimplycl/) — free and lightweight.
+[DynDNS Simply Client](https://sourceforge.net/projects/dyndnssimplycl/) — free and lightweight. Point it at your PyDDNS instance:
+
+<img src="docs/img/screenshots/dyndns-simply-client.png" alt="DynDNS Simply Client configuration" width="640" />
+
+Use your PyDDNS host as the server, your account credentials, and the full subdomain (`yourhost.ddns.example.com`) as the hostname.
 
 ### Routers
 
