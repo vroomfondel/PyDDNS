@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   v1-era migration files into `data/migrations-backup-<timestamp>/`
   and re-runs `migrate --fake-initial` so the `django_migrations` table
   aligns with v2's committed `0001_initial`. Fresh installs are unaffected.
+- **`Activity_log` retention sweep** — `prune_activity_log` management
+  command plus a daily background loop in the python container delete
+  rows older than `ACTIVITY_LOG_RETENTION_WEEKS` (default `10`,
+  `0` disables). Keeps the table bounded for high-volume deployments
+  without operator intervention.
 - **Separate Compose overlay for migration** — `docker-compose.migration.yml`
   holds `prep-migration` / `postgres-old` / `migrator`. The main
   `docker-compose.yml` no longer carries any legacy services.
@@ -96,6 +101,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   hidden-master deployments (BIND on a different host) to either run
   Compose with `network_mode: host` or patch the source. Now uses
   `settings.DNS_HOST` like the rest of the DNS API plumbing.
+- Database connections were opened and closed per request, which
+  exhausted Postgres `max_connections` on fleets of 1000+ clients
+  (`FATAL: sorry, too many clients already`). Now uses persistent
+  connections via `CONN_MAX_AGE` (default 60s, override with
+  `DB_CONN_MAX_AGE`) and `CONN_HEALTH_CHECKS=True` for transparent
+  reconnects. `GUNICORN_WORKERS` is also env-configurable so operators
+  can size worker count to their device fanout.
 
 ## [2.0.0] — 2026-04-25
 

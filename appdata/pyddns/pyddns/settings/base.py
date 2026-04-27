@@ -92,6 +92,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'pyddns.wsgi.application'
 
 
+# Persistent connections cap connection churn under load. Each gunicorn
+# worker keeps its DB connection alive for up to DB_CONN_MAX_AGE seconds
+# instead of opening + closing one per request. With CONN_HEALTH_CHECKS
+# Django pings the connection at the start of each request and reconnects
+# transparently if the server has dropped it (typical on idle timeouts).
+# Set DB_CONN_MAX_AGE=0 to revert to the per-request default.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -100,6 +106,8 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
         'PORT': '5432',
+        'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', '60')),
+        'CONN_HEALTH_CHECKS': True,
     }
 }
 
