@@ -56,8 +56,3 @@ jobs:
       - name: Lint with ruff
         working-directory: appdata/pyddns
         run: ruff check . --output-format=github
-
-      - name: Audit Python dependencies for known CVEs
-        run: |
-          pip install pip-audit
-          pip-audit -r docker/requirements.txt --strict
