@@ -91,6 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `production.py` did not declare `CSRF_TRUSTED_ORIGINS`, breaking all
   POSTs over HTTPS behind the nginx proxy on Django 5+. Now derived
   automatically from `DJANGO_ALLOWED_HOSTS`.
+- `set_ip` resolved the BIND nameserver via a hardcoded
+  `socket.gethostbyname('ddns')`, ignoring `DNS_HOST`. This forced
+  hidden-master deployments (BIND on a different host) to either run
+  Compose with `network_mode: host` or patch the source. Now uses
+  `settings.DNS_HOST` like the rest of the DNS API plumbing.
 
 ## [2.0.0] — 2026-04-25
 

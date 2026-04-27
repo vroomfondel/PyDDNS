@@ -605,6 +605,27 @@ Django 5 requires `CSRF_TRUSTED_ORIGINS` for HTTPS POSTs from a proxy. The produ
 </details>
 
 <details>
+<summary><strong>Pointing PyDDNS at an external BIND (hidden-master setup)</strong></summary>
+
+PyDDNS can drive a BIND that runs outside the Compose stack — useful when you don't want to expose port 53 publicly and prefer a hidden-master / slave-zone arrangement with your domain provider.
+
+What you need:
+
+1. **Disable the bundled `ddns` service** in `docker-compose.yml` (or just leave it stopped) and reach your external BIND directly.
+2. **Set `DNS_HOST`** in `.env` to the hostname or IP the Python container should query and post updates to:
+   ```ini
+   DNS_HOST=10.0.0.50      # or `localhost` if BIND runs on the Docker host
+   DNS_API_PORT=8080
+   DNS_SHARED_SECRET=<your secret>
+   ```
+   PyDDNS uses `DNS_HOST` for both the resolver lookup *and* the HTTP API call to BIND. Older releases had this hostname hardcoded to `ddns`; that was fixed in v2.
+3. **Make sure the Python container can reach the external BIND.** If it's on the Docker host, either expose BIND on a Docker bridge IP or run the python service with `network_mode: host`. If it's elsewhere, route accordingly and allow `update-policy local` (or equivalent) for the source IP.
+4. **Zone file**: keep `allow-update { localhost; };` (or your specific source) and add `also-notify` / `allow-transfer` for the public slaves.
+
+If BIND replies but PyDDNS still answers `dnserr`, check `docker compose logs python` — the most common causes are a wrong `DNS_SHARED_SECRET` or the API not listening on `DNS_API_PORT`.
+</details>
+
+<details>
 <summary><strong>My router (Fritz!Box, MikroTik, …) gets <code>badagent</code> on <code>/nic/update</code></strong></summary>
 
 `DNS_ALLOW_AGENT` is a comma-separated **substring** allowlist matched against the request's `User-Agent` header. Many consumer routers send non-standard UAs that don't include `ddclient` or `DynDNS`, so they get rejected with `badagent`.

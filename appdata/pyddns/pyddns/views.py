@@ -437,7 +437,7 @@ def set_ip_web(request, domain, ip):
 
 def set_ip(request, domain, ip):
     resolver = dns.resolver.Resolver()
-    resolver.nameservers = [socket.gethostbyname('ddns')]
+    resolver.nameservers = [socket.gethostbyname(settings.DNS_HOST)]
     try:
         ip_dig = resolver.resolve(domain, "A")[0]
     except Exception:
