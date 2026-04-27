@@ -173,6 +173,9 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `DJANGO_LANGUAGE_CODE` | **Empty** = international mode (browser auto-detects, picker visible). **Set** (`es`, `fr`, `pt-br`, …) = locked: every page in that language, picker hidden | ➖ |
 | `DJANGO_TIME_ZONE` | TZ database name (default `UTC`) | ➖ |
 | `DATABASE_NAME` / `_USER` / `_PASS` | PostgreSQL connection | ✅ |
+| `DB_CONN_MAX_AGE` | Seconds each worker holds its DB connection alive between requests (default `60`). `0` = open/close per request (legacy behavior) | ➖ |
+| `GUNICORN_WORKERS` | Number of Gunicorn worker processes (default `3`). Scale up for fleets of 1000+ clients; size together with Postgres `max_connections` | ➖ |
+| `ACTIVITY_LOG_RETENTION_WEEKS` | How long activity rows are kept (default `10`). The python container runs a daily prune sweep in the background. `0` disables retention (keep forever) | ➖ |
 | `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user (created on first start) | ✅ |
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
 | `DNS_ALLOW_AGENT` | Comma-separated **substring** allowlist matched against the `User-Agent` header on `/nic/update`. Empty = any UA accepted (useful for routers with non-standard UAs like Fritz!Box, MikroTik). Example: `ddclient,DynDNS,FRITZ` | ➖ |
@@ -602,6 +605,28 @@ docker compose up -d --force-recreate python
 <summary><strong>403 / CSRF errors on POST after deploying behind a reverse proxy</strong></summary>
 
 Django 5 requires `CSRF_TRUSTED_ORIGINS` for HTTPS POSTs from a proxy. The production settings derive it from `DJANGO_ALLOWED_HOSTS` automatically — make sure your hostname is listed there.
+</details>
+
+<details>
+<summary><strong>Postgres "FATAL: sorry, too many clients already" under heavy load</strong></summary>
+
+If you're running PyDDNS for hundreds or thousands of clients and start seeing connection-exhaustion errors in the logs, two things to tune:
+
+1. **Persistent DB connections.** Make sure `DB_CONN_MAX_AGE` is set (default `60`). With this enabled, each Gunicorn worker keeps a single warm connection instead of churning one per request. Total simultaneous Postgres connections ≈ `replicas × GUNICORN_WORKERS`.
+
+2. **Postgres `max_connections`.** The image default is `100`. With multiple Python replicas and many workers, you can saturate that. Bump it via the official Postgres entrypoint or a `postgresql.conf` override and restart the container:
+
+   ```yaml
+   # docker-compose.yml
+   postgres:
+     command: postgres -c max_connections=300
+   ```
+
+3. **Right-size Gunicorn workers.** `GUNICORN_WORKERS=8` (or higher) for ~1000+ clients updating every few minutes. Each worker is sync, so concurrency = workers; over-provisioning beyond `2 × cores` rarely pays off.
+
+4. **`Activity_log` growth is auto-managed.** The python container runs a daily prune sweep that deletes rows older than `ACTIVITY_LOG_RETENTION_WEEKS` (default `10`). Set it to `0` to disable, or run the prune manually with `docker compose exec python python manage.py prune_activity_log [--weeks N] [--dry-run]`.
+
+For very high fanout (5k+ devices, sub-minute updates) the right next step is putting **PgBouncer** between Django and Postgres in transaction-pooling mode — but for the typical self-host SOHO scale, the four bullets above are usually enough.
 </details>
 
 <details>
