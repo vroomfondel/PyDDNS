@@ -49,11 +49,18 @@ updates:
       interval: weekly
     ignore:
       # Postgres pinned to 15 LTS in the runtime; allow patch but not major.
+      # `update-types` ignores don't apply to security updates, so we also
+      # pin a `versions:` ceiling — otherwise grouped security PRs can drag
+      # in postgres 16+ unexpectedly.
       - dependency-name: "postgres"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "postgres"
+        versions: [">=16.0"]
       # nginx — patch only; we want predictable TLS behaviour across patches.
       - dependency-name: "nginx"
         update-types: ["version-update:semver-major"]
+      # alpine is only used by the migration overlay; never auto-bump in main.
+      - dependency-name: "alpine"
 
   # ── Migration overlay — never bump anything here automatically ────────────
   # postgres 9.6 and the surrounding scaffolding are deliberately frozen
