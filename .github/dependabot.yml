@@ -17,8 +17,14 @@ updates:
           - "*"
     ignore:
       # Stay on Django 5.2 LTS until 6.2 LTS ships (~Apr 2027).
+      # NOTE: `update-types` ignores do NOT apply to security updates, so
+      # we also pin a hard `versions:` ceiling — otherwise a security group
+      # PR can drag in Django 6.x and break the 3.11 runtime (Django 6.0+
+      # requires Python ≥3.12).
       - dependency-name: "Django"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "Django"
+        versions: [">=6.0.0"]
       # Conservative: avoid major bumps for the rest of the runtime stack
       # without explicit review (psycopg2, Pillow, etc. tend to remove APIs).
       - dependency-name: "psycopg2-binary"
