@@ -175,7 +175,7 @@ Environment variables live in `.env` (template: [`.env-demo`](.env-demo)).
 | `DATABASE_NAME` / `_USER` / `_PASS` | PostgreSQL connection | ✅ |
 | `DJANGO_SU_NAME` / `_EMAIL` / `_PASSWORD` | Bootstrap admin user (created on first start) | ✅ |
 | `DJANGO_ADMIN_URL` | Path of `/admin` (rename for security through obscurity) | ➖ |
-| `DNS_ALLOW_AGENT` | Comma-separated User-Agent allowlist for `/nic/update` | ➖ |
+| `DNS_ALLOW_AGENT` | Comma-separated **substring** allowlist matched against the `User-Agent` header on `/nic/update`. Empty = any UA accepted (useful for routers with non-standard UAs like Fritz!Box, MikroTik). Example: `ddclient,DynDNS,FRITZ` | ➖ |
 | `OWN_ADMIN` | `1` = every user can create their own subdomains. `0` = only superusers can create subdomains (admin-curated mode) | ➖ |
 | `HTTP_PORT` / `HTTPS_PORT` / `DNS_PORT` | Host-side ports nginx and BIND bind to (defaults: 80 / 443 / 53) | ➖ |
 | `ENABLE_REST_API` | Set to `1` to expose Token-authenticated `/api/` endpoints (off by default) | ➖ |
@@ -602,6 +602,29 @@ docker compose up -d --force-recreate python
 <summary><strong>403 / CSRF errors on POST after deploying behind a reverse proxy</strong></summary>
 
 Django 5 requires `CSRF_TRUSTED_ORIGINS` for HTTPS POSTs from a proxy. The production settings derive it from `DJANGO_ALLOWED_HOSTS` automatically — make sure your hostname is listed there.
+</details>
+
+<details>
+<summary><strong>My router (Fritz!Box, MikroTik, …) gets <code>badagent</code> on <code>/nic/update</code></strong></summary>
+
+`DNS_ALLOW_AGENT` is a comma-separated **substring** allowlist matched against the request's `User-Agent` header. Many consumer routers send non-standard UAs that don't include `ddclient` or `DynDNS`, so they get rejected with `badagent`.
+
+Two options:
+
+1. **Allow any User-Agent** — leave `DNS_ALLOW_AGENT` empty (or omit it from `.env`). The header is then ignored entirely.
+2. **Add a fragment of your router's UA** to the list. Find it in the access log first:
+
+   ```bash
+   docker compose logs nginx | grep /nic/update
+   ```
+
+   Then extend the variable, for example:
+
+   ```ini
+   DNS_ALLOW_AGENT=ddclient,DynDNS,FRITZ,MikroTik
+   ```
+
+The query string `?system=dyndns&hostname=...&myip=...` that some routers send is fully compatible — the `system` parameter is accepted and ignored, only `hostname` and `myip` are read.
 </details>
 
 ---
