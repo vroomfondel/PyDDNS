@@ -17,6 +17,7 @@ Applied in filename order against upstream commit
 | `0006-log-and-show-ipv6` | `Activity_log` gains an `ip6` column (with migration) and the dashboard shows it, so a dual-stack update is visible as such. |
 | `0007-wider-shell-and-ip-wrap` | Dashboard layout: the data tables span the full width with the quickstart card below them, and a long IPv6 wraps instead of overlapping the neighbouring column. |
 | `0008-show-live-aaaa-in-domain-table` | The domain table shows the AAAA that is live in DNS. Resolved rather than read from `Activity_log`: its newest good row has an empty `ip6` both when a v4-only update did not mention v6 (AAAA still valid) and when one explicitly cleared it (AAAA gone) — two opposite states, one representation. |
+| `0010-last-seen-counts-nochg` | The "last update" column counts `nochg` as well as `good`, and is renamed `last_seen`. A router whose address does not change reports only `nochg`, so a column looking at `good` alone drifted further from reality the longer everything worked — measured on a live install: a box that had reported 26 minutes earlier was shown as "1 hour 20". `badauth`/`nohost`/`abuse` stay excluded, or a misconfigured router would look healthy. |
 | `0009-resolve-v4-from-dns-too` | The v4 column resolves from DNS as well. `last_ip` returned what the client last *reported*, which drifts from what is published as soon as a record changes by any other route. Renamed to `current_ip` rather than quietly redefined. |
 
 ## DNS backend

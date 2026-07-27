@@ -1,0 +1,73 @@
+diff --git a/appdata/pyddns/pyddns/templates/dash.html b/appdata/pyddns/pyddns/templates/dash.html
+index 308fc16..82cbcdc 100644
+--- a/appdata/pyddns/pyddns/templates/dash.html
++++ b/appdata/pyddns/pyddns/templates/dash.html
+@@ -166,7 +166,7 @@
+         {% if my_subdomains %}
+           <div class="subs">
+             {% for d in my_subdomains %}
+-              {% with last_known=d.name|current_ip last_when=d.name|last_update live_ip6=d.name|current_ip6 %}
++              {% with last_known=d.name|current_ip last_when=d.name|last_seen live_ip6=d.name|current_ip6 %}
+               <div class="sub-row">
+                 <div class="fqdn">
+                   <button class="btn btn-icon btn-ghost" title="{% trans 'Copy' %}"
+diff --git a/appdata/pyddns/pyddns/templates/subdomains.html b/appdata/pyddns/pyddns/templates/subdomains.html
+index 43fc2dc..7f6628d 100644
+--- a/appdata/pyddns/pyddns/templates/subdomains.html
++++ b/appdata/pyddns/pyddns/templates/subdomains.html
+@@ -45,7 +45,7 @@
+             <th>{% trans "Domain" %}</th>
+             <th>{% trans "Owner" %}</th>
+             <th>{% trans "IP" %}</th>
+-            <th>{% trans "Last update" %}</th>
++            <th>{% trans "Last seen" %}</th>
+             <th></th>
+           </tr>
+         </thead>
+@@ -61,7 +61,7 @@
+               </td>
+               <td class="mono" style="color: var(--text-muted); overflow-wrap: anywhere;">{{ s.name|current_ip }}{% with v6=s.name|current_ip6 %}{% if v6 %}<br>{{ v6 }}{% endif %}{% endwith %}</td>
+               <td style="color: var(--text-muted);">
+-                {% with last=s.name|last_update %}
++                {% with last=s.name|last_seen %}
+                   {% if last != "---" %}{{ last|timesince }} {% trans "ago" %}{% else %}—{% endif %}
+                 {% endwith %}
+               </td>
+diff --git a/appdata/pyddns/pyddns/templatetags/app_filters.py b/appdata/pyddns/pyddns/templatetags/app_filters.py
+index 6f66df4..8b4a486 100644
+--- a/appdata/pyddns/pyddns/templatetags/app_filters.py
++++ b/appdata/pyddns/pyddns/templatetags/app_filters.py
+@@ -76,11 +76,30 @@ def current_ip6(subdomain):
+     return _resolve(subdomain, "AAAA")
+ 
+ 
+-@register.filter(name='last_update')
+-def last_update(subdomain):
++@register.filter(name='last_seen')
++def last_seen(subdomain):
++    """When the client for this subdomain last successfully reached us.
++
++    Counts `nochg` as well as `good`. Was `last_update`, which looked at
++    `good` alone -- but a router whose address does not change reports
++    `nochg` every few minutes and nothing else, so the column drifted further
++    from reality the longer everything worked. Measured on a live install: a
++    box that had reported 26 minutes earlier was shown as "1 hour 20".
++
++    Deliberately NOT the other codes. `badauth`, `nohost` and `abuse` mean the
++    client reached us and was rejected; counting them would make a
++    misconfigured router look healthy, which is the one thing this column
++    exists to reveal.
++
++    Renamed because it no longer answers "when did this record last change".
++    Since the address beside it is resolved from DNS (see current_ip), that
++    question has no reliable answer here anyway -- a record changed by any
++    other route leaves no log row at all.
++    """
+     domain = '%s.%s' % (subdomain, settings.DNS_DOMAIN)
+     try:
+-        last_activity = Activity_log.objects.filter(action="SYNC", code="good", domain=domain).latest('date')
++        last_activity = Activity_log.objects.filter(
++            action="SYNC", code__in=("good", "nochg"), domain=domain).latest('date')
+         return last_activity.date
+     except Activity_log.DoesNotExist:
+         return "---"
