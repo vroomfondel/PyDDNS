@@ -1,0 +1,33 @@
+diff --git a/appdata/pyddns/pyddns/views.py b/appdata/pyddns/pyddns/views.py
+index dff94fa..256a4fb 100644
+--- a/appdata/pyddns/pyddns/views.py
++++ b/appdata/pyddns/pyddns/views.py
+@@ -498,6 +498,28 @@ def updateip(request):
+         if 'myip' in request.GET:
+             ip=request.GET['myip']
+ 
++    # dyndns2 lets a client leave myip out entirely, and several clients send
++    # the literal "auto" instead; in both cases the server is expected to use
++    # the address the request arrived from. Upstream does neither -- `ip` stays
++    # "" or "auto" and is handed to set_ip as-is, which can only end in dnserr.
++    #
++    # get_client_ip() (common/utils.py, already imported above) is exactly the
++    # right helper: REMOTE_ADDR here is the nginx sidecar on 127.0.0.1, i.e.
++    # private, so it falls through to the leftmost X-Forwarded-For entry.
++    #
++    # Trusting that entry is sound only because the internet-facing edge
++    # REPLACES the header rather than appending to it (proxy_set_header
++    # X-Forwarded-For $remote_addr), so a client-supplied value is discarded
++    # before it gets here. That does NOT hold for requests reaching the app
++    # directly on the LAN, where a caller could forge the header and register
++    # any address it likes -- acceptable while the LAN path is allowlisted, but
++    # worth knowing before this endpoint is exposed any other way.
++    #
++    # Resolved before the abuse counter below, so rate limiting keys on the
++    # real address instead of on the constant "auto".
++    if not ip or ip.strip().lower() == "auto":
++        ip = get_client_ip(request)
++
+     if 'HTTP_X_FORWARDED_FOR' in request.META:
+         ip_x_forwarded=request.META['HTTP_X_FORWARDED_FOR']
+ 

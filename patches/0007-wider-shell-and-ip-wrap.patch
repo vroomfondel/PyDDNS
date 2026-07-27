@@ -1,0 +1,100 @@
+diff --git a/appdata/pyddns/pyddns/templates/dash.html b/appdata/pyddns/pyddns/templates/dash.html
+index 05e4e68..65799c7 100644
+--- a/appdata/pyddns/pyddns/templates/dash.html
++++ b/appdata/pyddns/pyddns/templates/dash.html
+@@ -151,7 +151,7 @@
+     </div>
+   </div>
+ 
+-  <div class="grid-2">
++  <div class="grid-1">
+     <div style="display: flex; flex-direction: column; gap: 16px;">
+       {# My domains card #}
+       <div class="card">
+diff --git a/appdata/static/pyddns/css/styles.css b/appdata/static/pyddns/css/styles.css
+index 315bb7a..77cb74f 100644
+--- a/appdata/static/pyddns/css/styles.css
++++ b/appdata/static/pyddns/css/styles.css
+@@ -23,6 +23,10 @@
+   --r-ctl: 10px;
+   --r-pill: 999px;
+ 
++  /* One knob for the content shell. Every full-width bar (.topbar-inner,
++     .main, .impersonate-banner-inner) must use it, or their edges stop
++     lining up with each other. */
++  --shell-max: 1600px;
+   --pad: 20px;
+   --pad-tight: 14px;
+ 
+@@ -98,7 +102,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+   border-bottom: 1px solid var(--line-soft);
+ }
+ .topbar-inner {
+-  max-width: 1240px; margin: 0 auto; width: 100%;
++  max-width: var(--shell-max); margin: 0 auto; width: 100%;
+   padding: 14px 20px;
+   display: flex; align-items: center; gap: 14px;
+ }
+@@ -171,7 +175,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ .side-link[aria-current="page"] { background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+ 
+ /* Main content */
+-.main { padding: 24px 20px 40px; max-width: 1240px; margin: 0 auto; width: 100%; }
++.main { padding: 24px 20px 40px; max-width: var(--shell-max); margin: 0 auto; width: 100%; }
+ @media (max-width: 600px) { .main { padding: 16px 14px 32px; } }
+ 
+ .app-shell { display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+@@ -415,7 +419,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ /* Log row */
+ .log-row {
+   display: grid;
+-  grid-template-columns: 100px 70px minmax(0, 2fr) minmax(0, 1.2fr) 100px;
++  grid-template-columns: 100px 70px minmax(0, 1.4fr) minmax(0, 1.6fr) 190px;
+   gap: 14px;
+   padding: 10px var(--pad);
+   border-top: 1px solid var(--line-soft);
+@@ -425,7 +429,12 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ .log-row:first-of-type { border-top: 0; }
+ .log-row .when { color: var(--text-muted); }
+ .log-row .domain { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text); }
+-.log-row .ip { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-muted); }
++/* overflow-wrap is what actually stops a full IPv6 (39 chars, no
++   spaces) from bleeding into the agent column. A wider grid alone
++   only moves the window size at which it happens; this makes it wrap
++   instead, at any width. min-width:0 lets the track shrink below its
++   intrinsic content. */
++.log-row .ip { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-muted); min-width: 0; overflow-wrap: anywhere; }
+ .log-row .agent { color: var(--text-muted); font-size: 12px; truncate: ellipsis; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ 
+ @media (max-width: 760px) {
+@@ -441,7 +450,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+   .log-row .when { grid-area: when; font-size: 11.5px; }
+   .log-row .code { grid-area: code; }
+   .log-row .domain { grid-area: domain; text-align: right; }
+-  .log-row .ip { grid-area: ip; text-align: right; }
++  .log-row .ip { grid-area: ip; text-align: right; min-width: 0; overflow-wrap: anywhere; }
+   .log-row .agent { grid-area: agent; }
+ }
+ 
+@@ -635,6 +644,12 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ 
+ /* Section grid */
+ .grid-2 { display: grid; gap: 16px; grid-template-columns: 2fr 1fr; }
++/* Single-column variant. The dashboard used grid-2 (2fr 1fr), which left
++   the two data tables in the 2fr track while the quickstart card took the
++   rest -- a full IPv6 had nowhere to go. The tables now span the full
++   width and the quickstart sits below them. */
++.grid-1 { display: grid; gap: 16px; grid-template-columns: 1fr; }
++.grid-1 > * { min-width: 0; }
+ .grid-2 > * { min-width: 0; }   /* prevent intrinsic content (long FQDNs in code-block) from blowing the columns */
+ @media (max-width: 1000px) { .grid-2 { grid-template-columns: 1fr; } }
+ 
+@@ -715,7 +730,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+   font-size: 13px;
+ }
+ .impersonate-banner-inner {
+-  max-width: 1240px; margin: 0 auto; padding: 8px 20px;
++  max-width: var(--shell-max); margin: 0 auto; padding: 8px 20px;
+   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+ }
+ .impersonate-icon {

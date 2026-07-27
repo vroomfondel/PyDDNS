@@ -1,0 +1,60 @@
+diff --git a/appdata/pyddns/pyddns/settings/base.py b/appdata/pyddns/pyddns/settings/base.py
+index a664157..cc606e2 100644
+--- a/appdata/pyddns/pyddns/settings/base.py
++++ b/appdata/pyddns/pyddns/settings/base.py
+@@ -145,6 +145,13 @@ STATIC_URL = '/static/'
+ 
+ DNS_HOST = os.environ.get('DNS_HOST')
+ DNS_API_PORT = os.environ.get('DNS_API_PORT')
++# Nameserver queried for the CURRENT value of a record, as opposed to
++# DNS_HOST, which is where the update API lives. Upstream derives both
++# from DNS_HOST because davd/docker-ddns serves DNS and the API from one
++# container; split apart, the update API can sit next to the app while
++# reads go straight to the authoritative master. Defaults to DNS_HOST,
++# so an unset value behaves exactly as before.
++DNS_RESOLVER_HOST = os.environ.get('DNS_RESOLVER_HOST') or DNS_HOST
+ DNS_SHARED_SECRET = os.environ.get('DNS_SHARED_SECRET')
+ DNS_ALLOW_AGENT = os.environ.get('DNS_ALLOW_AGENT')
+ DNS_DOMAIN = os.environ.get('DNS_DOMAIN')
+diff --git a/appdata/pyddns/pyddns/views.py b/appdata/pyddns/pyddns/views.py
+index 3d48f49..dff94fa 100644
+--- a/appdata/pyddns/pyddns/views.py
++++ b/appdata/pyddns/pyddns/views.py
+@@ -437,13 +437,34 @@ def set_ip_web(request, domain, ip):
+ 
+ def set_ip(request, domain, ip):
+     resolver = dns.resolver.Resolver()
+-    resolver.nameservers = [socket.gethostbyname(settings.DNS_HOST)]
++    resolver.nameservers = [socket.gethostbyname(settings.DNS_RESOLVER_HOST)]
++
+     try:
+-        ip_dig = resolver.resolve(domain, "A")[0]
++        addr = ipaddress.ip_address(ip)
++    except ValueError:
++        addr = None
++
++    # Look up the record type we are about to write. Hardcoding "A" made every
++    # IPv6 update miss: the query found nothing, ip_dig stayed None, and the
++    # comparison below could never say "nochg" -- so each poll rewrote an
++    # unchanged AAAA.
++    rdtype = "AAAA" if addr is not None and addr.version == 6 else "A"
++
++    try:
++        ip_dig = resolver.resolve(domain, rdtype)[0]
+     except Exception:
+         ip_dig = None
+ 
+-    if str(ip_dig) != str(ip):
++    # Compare parsed addresses rather than their strings where both parse:
++    # dnspython returns the canonical v6 form, so a client sending
++    # 2001:db8:0:0::1 would never match a stored 2001:db8::1. Falls back to the
++    # original string comparison when either side is unparseable.
++    if ip_dig is not None and addr is not None:
++        changed = ipaddress.ip_address(str(ip_dig)) != addr
++    else:
++        changed = str(ip_dig) != str(ip)
++
++    if changed:
+         subdomain = domain.split(".")[0]
+         r = requests.get(
+             'http://%s:%s/update' % (settings.DNS_HOST, settings.DNS_API_PORT),

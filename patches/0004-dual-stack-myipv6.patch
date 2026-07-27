@@ -1,0 +1,61 @@
+diff --git a/appdata/pyddns/pyddns/views.py b/appdata/pyddns/pyddns/views.py
+index 256a4fb..1465f89 100644
+--- a/appdata/pyddns/pyddns/views.py
++++ b/appdata/pyddns/pyddns/views.py
+@@ -520,6 +520,20 @@ def updateip(request):
+     if not ip or ip.strip().lower() == "auto":
+         ip = get_client_ip(request)
+ 
++    # dyndns2 as most providers extend it: a dual-stack client puts the v4
++    # address in myip and the v6 one in myipv6. A FritzBox fills exactly these
++    # from its <ipaddr> and <ip6addr> placeholders. Upstream reads only myip,
++    # so a combined request answers "good", updates the A record and silently
++    # never touches the AAAA — the failure mode that hides best, because the
++    # router reports success forever.
++    ipv6 = request.GET.get('myipv6', '').strip()
++    if ipv6.lower() == "auto":
++        # Only meaningful if the client actually reached us over v6. With a v4
++        # client there is no v6 address to infer, and guessing one would be
++        # worse than skipping the record.
++        candidate = get_client_ip(request)
++        ipv6 = candidate if ":" in candidate else ""
++
+     if 'HTTP_X_FORWARDED_FOR' in request.META:
+         ip_x_forwarded=request.META['HTTP_X_FORWARDED_FOR']
+ 
+@@ -572,7 +586,34 @@ def updateip(request):
+                                         valid_domain = True
+ 
+                                 if valid_domain:
+-                                    return_code, message = set_ip(request, domain, ip)
++                                    # One call per address family. set_ip picks
++                                    # the RRtype from the address it is handed
++                                    # and the backend replaces only that type,
++                                    # so A and AAAA coexist instead of evicting
++                                    # each other. dict.fromkeys keeps order and
++                                    # drops a duplicate when a client sends the
++                                    # same address in both parameters.
++                                    addresses = [a for a in dict.fromkeys([ip, ipv6]) if a]
++                                    results = [set_ip(request, domain, a) for a in addresses]
++
++                                    # dyndns2 has room for exactly one status
++                                    # code. Report the first FAILURE rather
++                                    # than the last success: a half-applied
++                                    # dual-stack update answering "good" would
++                                    # leave the client believing both families
++                                    # are current, and it would never retry.
++                                    failed = [r for r in results
++                                              if r[0] not in ("good", "nochg")]
++                                    if failed:
++                                        return_code, message = failed[0]
++                                    elif not results:
++                                        return_code = "nochg"
++                                        message = "No address supplied"
++                                    elif any(r[0] == "good" for r in results):
++                                        return_code = "good"
++                                        message = "; ".join(r[1] for r in results)
++                                    else:
++                                        return_code, message = results[0]
+                                 else:
+                                     return_code = "nohost"
+                                     message = "The hostname specified does not exist in this user account"

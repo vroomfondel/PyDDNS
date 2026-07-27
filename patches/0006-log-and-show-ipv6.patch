@@ -1,0 +1,114 @@
+diff --git a/appdata/pyddns/common/migrations/0002_activity_log_ip6.py b/appdata/pyddns/common/migrations/0002_activity_log_ip6.py
+new file mode 100644
+index 0000000..a0cc6a6
+--- /dev/null
++++ b/appdata/pyddns/common/migrations/0002_activity_log_ip6.py
+@@ -0,0 +1,26 @@
++"""Add Activity_log.ip6 so dual-stack updates can be logged per family.
++
++Written by hand rather than left to the `makemigrations` that runserver.sh
++runs on every boot: that would regenerate the file inside the container on
++each start, and the app directory is baked into the image, so nothing would
++persist it. An explicit migration also pins the name, which keeps the graph
++predictable if upstream ever adds a 0002 of its own.
++"""
++
++from django.db import migrations, models
++
++
++class Migration(migrations.Migration):
++
++    dependencies = [
++        ('common', '0001_initial'),
++    ]
++
++    operations = [
++        migrations.AddField(
++            model_name='activity_log',
++            name='ip6',
++            field=models.CharField(blank=True, default=None, max_length=4096,
++                                   null=True, verbose_name='IPv6'),
++        ),
++    ]
+diff --git a/appdata/pyddns/common/models.py b/appdata/pyddns/common/models.py
+index d2c56d9..369d66b 100644
+--- a/appdata/pyddns/common/models.py
++++ b/appdata/pyddns/common/models.py
+@@ -11,6 +11,12 @@ class Activity_log(models.Model):
+     username=models.ForeignKey(User, db_column='username', to_field='username', verbose_name='Usuario', on_delete=models.PROTECT, null=True, blank=True, default=None)
+     action=models.CharField(max_length=256, verbose_name=u'Action', null=True, blank=True, default=None)
+     ip=models.CharField(max_length=4096, verbose_name=u'IP', null=True, blank=True, default=None)
++    # Second address family, kept in its own column rather than folded
++    # into `ip`. The dyndns2 abuse counter filters on `ip` with an exact
++    # match (views.updateip), so a combined "v4, v6" string there would
++    # silently stop the rate limit on the PUBLIC /nic/update endpoint
++    # from ever matching a previous failure.
++    ip6=models.CharField(max_length=4096, verbose_name=u'IPv6', null=True, blank=True, default=None)
+     xforward=models.CharField(max_length=4096, verbose_name=u'IP User', null=True, blank=True, default=None)
+     user_affected=models.CharField(max_length=4096, verbose_name=u'User Affected', null=True, blank=True, default=None)
+     domain=models.CharField(max_length=1096, verbose_name=u'Domain', null=True, blank=True, default=None)
+diff --git a/appdata/pyddns/pyddns/templates/dash.html b/appdata/pyddns/pyddns/templates/dash.html
+index b7e427c..05e4e68 100644
+--- a/appdata/pyddns/pyddns/templates/dash.html
++++ b/appdata/pyddns/pyddns/templates/dash.html
+@@ -255,7 +255,7 @@
+               <div class="when">{{ a.date|date:"M d, H:i" }}</div>
+               <div class="code"><span class="code-pill {{ a.code|code_class }}">{{ a.code|default:"—" }}</span></div>
+               <div class="domain">{{ a.domain|default:"—" }}</div>
+-              <div class="ip">{{ a.ip|default:"—" }}</div>
++              <div class="ip">{{ a.ip|default:"—" }}{% if a.ip6 %}<br>{{ a.ip6 }}{% endif %}</div>
+               <div class="agent" title="{{ a.agent }}">{{ a.agent|default:""|slice:":40" }}</div>
+             </div>
+           {% endfor %}
+diff --git a/appdata/pyddns/pyddns/views.py b/appdata/pyddns/pyddns/views.py
+index 8f2580a..f0c2058 100644
+--- a/appdata/pyddns/pyddns/views.py
++++ b/appdata/pyddns/pyddns/views.py
+@@ -426,7 +426,8 @@ def set_ip_web(request, domain, ip):
+             register=True
+ 
+         if register:
+-            Activity_log(action='SYNC', agent=agent , ip=ip, code=return_code, xforward=ip_x_forwarded, user_affected=subdomain_obj.user.username, domain=domain, result="%s"%(message)).save()
++            _log_v4, _log_v6 = split_families(ip)
++            Activity_log(action='SYNC', agent=agent , ip=_log_v4, ip6=_log_v6, code=return_code, xforward=ip_x_forwarded, user_affected=subdomain_obj.user.username, domain=domain, result="%s"%(message)).save()
+ 
+     return HttpResponse(json.dumps(myjson))
+ 
+@@ -435,6 +436,28 @@ def set_ip_web(request, domain, ip):
+ 
+ 
+ 
++def split_families(*addresses):
++    """Sort addresses into (v4, v6) for the activity log.
++
++    Not as trivial as "myip is v4, myipv6 is v6": with myip=auto a v6-only
++    client ends up with its address in `ip` and nothing in `ipv6`, and the
++    log columns would then disagree with their own headings. Sorting by what
++    the address actually IS keeps them honest whichever parameter carried it.
++
++    Returns:
++        A ``(v4, v6)`` tuple of strings; either may be empty.
++    """
++    v4 = v6 = ""
++    for a in addresses:
++        if not a:
++            continue
++        if ":" in a:
++            v6 = v6 or a
++        else:
++            v4 = v4 or a
++    return v4, v6
++
++
+ def delete_record(domain, rdtype):
+     """Remove one RRtype for a hostname via the nsupdate backend.
+ 
+@@ -715,6 +738,7 @@ def updateip(request):
+         register=True
+ 
+     if register:
+-        Activity_log(action='SYNC', agent=agent , ip=ip, code=return_code, xforward=ip_x_forwarded, user_affected=username, domain=domain, result="%s"%(message)).save()
++        _log_v4, _log_v6 = split_families(ip, ipv6)
++        Activity_log(action='SYNC', agent=agent , ip=_log_v4, ip6=_log_v6, code=return_code, xforward=ip_x_forwarded, user_affected=username, domain=domain, result="%s"%(message)).save()
+ 
+     return HttpResponse(return_code)

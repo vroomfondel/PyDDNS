@@ -1,0 +1,105 @@
+diff --git a/appdata/pyddns/pyddns/views.py b/appdata/pyddns/pyddns/views.py
+index 1465f89..8f2580a 100644
+--- a/appdata/pyddns/pyddns/views.py
++++ b/appdata/pyddns/pyddns/views.py
+@@ -435,6 +435,34 @@ def set_ip_web(request, domain, ip):
+ 
+ 
+ 
++def delete_record(domain, rdtype):
++    """Remove one RRtype for a hostname via the nsupdate backend.
++
++    Counterpart to set_ip for the case where a host no longer has an address
++    of that family. Uses the backend's /delete endpoint, which reports a name
++    carrying no such record as success -- the caller wanted it gone.
++
++    Returns a dyndns2 (code, message) pair so the caller can fold it into the
++    same result handling as an update.
++    """
++    subdomain = domain.split(".")[0]
++    try:
++        r = requests.get(
++            'http://%s:%s/delete' % (settings.DNS_HOST, settings.DNS_API_PORT),
++            params={
++                'secret': settings.DNS_SHARED_SECRET,
++                'domain': subdomain,
++                'rrtype': rdtype,
++            },
++            timeout=10,
++        )
++        if r.json()['Success']:
++            return "good", "The %s record was removed" % rdtype
++    except Exception:
++        pass
++    return "dnserr", "The APP could not remove the %s record" % rdtype
++
++
+ def set_ip(request, domain, ip):
+     resolver = dns.resolver.Resolver()
+     resolver.nameservers = [socket.gethostbyname(settings.DNS_RESOLVER_HOST)]
+@@ -517,7 +545,14 @@ def updateip(request):
+     #
+     # Resolved before the abuse counter below, so rate limiting keys on the
+     # real address instead of on the constant "auto".
+-    if not ip or ip.strip().lower() == "auto":
++    # "delete" as an explicit magic value, alongside "auto". Unlike an empty
++    # parameter it cannot be produced by a template that failed to expand, so
++    # it is the safe way to say "drop this record" -- and it works for v4,
++    # where the empty-means-delete rule below deliberately does not apply.
++    ip_delete = ip.strip().lower() == "delete"
++    if ip_delete:
++        ip = ""
++    elif not ip or ip.strip().lower() == "auto":
+         ip = get_client_ip(request)
+ 
+     # dyndns2 as most providers extend it: a dual-stack client puts the v4
+@@ -527,7 +562,32 @@ def updateip(request):
+     # never touches the AAAA — the failure mode that hides best, because the
+     # router reports success forever.
+     ipv6 = request.GET.get('myipv6', '').strip()
+-    if ipv6.lower() == "auto":
++
++    # Three distinguishable states, and the middle one is the point:
++    #   absent          -> the client knows nothing about v6 (an old ddclient);
++    #                      leave whatever AAAA exists alone.
++    #   present, EMPTY  -> the client knows about v6 and has none right now;
++    #                      the AAAA has to go, or it points at a dead address
++    #                      forever. A FritzBox configured with &myipv6=<ip6addr>
++    #                      produces exactly this when the box has no v6, which
++    #                      is why the rule exists at all.
++    #   present, value  -> set it ("delete" removes, "auto" infers).
++    #
++    # Deliberately asymmetric to myip: an empty myip is turned into the client
++    # address above, because v4 is effectively always present and that fallback
++    # is useful. The explicit "delete" value covers v4 instead.
++    #
++    # Both checks read the RAW parameter, before the "auto" resolution below.
++    # myipv6=auto from a v4-only client also ends up as an empty string, but it
++    # means "work it out", not "I have none" -- treating that as a delete would
++    # wipe the AAAA of every dual-stack host whose update happens to arrive
++    # over v4.
++    ipv6_delete = ipv6.lower() == "delete"
++    ipv6_cleared = ipv6_delete or ('myipv6' in request.GET and not ipv6)
++
++    if ipv6_delete:
++        ipv6 = ""
++    elif ipv6.lower() == "auto":
+         # Only meaningful if the client actually reached us over v6. With a v4
+         # client there is no v6 address to infer, and guessing one would be
+         # worse than skipping the record.
+@@ -596,6 +656,15 @@ def updateip(request):
+                                     addresses = [a for a in dict.fromkeys([ip, ipv6]) if a]
+                                     results = [set_ip(request, domain, a) for a in addresses]
+ 
++                                    # Folded into the same results list, so a
++                                    # failed delete surfaces in the status code
++                                    # exactly like a failed update instead of
++                                    # being silently dropped.
++                                    if ip_delete:
++                                        results.append(delete_record(domain, "A"))
++                                    if ipv6_cleared:
++                                        results.append(delete_record(domain, "AAAA"))
++
+                                     # dyndns2 has room for exactly one status
+                                     # code. Report the first FAILURE rather
+                                     # than the last success: a half-applied

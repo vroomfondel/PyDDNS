@@ -1,0 +1,13 @@
+diff --git a/docker/requirements.txt b/docker/requirements.txt
+index 45364d0..d5636a6 100644
+--- a/docker/requirements.txt
++++ b/docker/requirements.txt
+@@ -1,7 +1,7 @@
+ Django==5.2.13
+ djangorestframework==3.16.0
+ argon2-cffi==23.1.0
+-psycopg2-binary==2.9.10
++psycopg2-binary==2.9.12
+ python-dateutil==2.9.0.post0
+ Pillow==12.2.0
+ requests==2.33.0
