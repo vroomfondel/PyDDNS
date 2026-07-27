@@ -19,6 +19,26 @@ Applied in filename order against upstream commit
 | `0008-show-live-aaaa-in-domain-table` | The domain table shows the AAAA that is live in DNS. Resolved rather than read from `Activity_log`: its newest good row has an empty `ip6` both when a v4-only update did not mention v6 (AAAA still valid) and when one explicitly cleared it (AAAA gone) — two opposite states, one representation. |
 | `0009-resolve-v4-from-dns-too` | The v4 column resolves from DNS as well. `last_ip` returned what the client last *reported*, which drifts from what is published as soon as a record changes by any other route. Renamed to `current_ip` rather than quietly redefined. |
 
+## DNS backend
+
+Several of these patches assume the DNS write path is
+[**pyddns-nsupdate**](https://github.com/vroomfondel/pyddns-nsupdate) rather
+than `davd/docker-ddns`, which upstream pairs with and which has been
+amd64-only and unpublished since 2020. It speaks the same
+`/update?secret=&domain=&addr=` contract and turns each call into a
+TSIG-signed RFC 2136 update against a nameserver you already run.
+
+**`0005` requires it.** That patch calls a `/delete` endpoint, which is the one
+place the contract goes beyond davd's API. Against the original backend the
+call returns 404 and surfaces to the client as `dnserr`, so the AAAA is never
+removed — the exact failure the patch exists to prevent. If you apply `0005`,
+use that backend.
+
+`0001` also assumes it, though less strictly: stock PyDDNS derives both the
+update API address and the nameserver it queries from `DNS_HOST`, expecting
+one host to answer both. pyddns-nsupdate only writes; `0001` splits the two
+settings so reads go straight to the authoritative server.
+
 ## Applying
 
 ```sh
