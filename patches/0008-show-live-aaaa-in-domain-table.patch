@@ -1,0 +1,96 @@
+diff --git a/appdata/pyddns/pyddns/templates/dash.html b/appdata/pyddns/pyddns/templates/dash.html
+index 65799c7..1d1a301 100644
+--- a/appdata/pyddns/pyddns/templates/dash.html
++++ b/appdata/pyddns/pyddns/templates/dash.html
+@@ -166,7 +166,7 @@
+         {% if my_subdomains %}
+           <div class="subs">
+             {% for d in my_subdomains %}
+-              {% with last_known=d.name|last_ip last_when=d.name|last_update %}
++              {% with last_known=d.name|last_ip last_when=d.name|last_update live_ip6=d.name|current_ip6 %}
+               <div class="sub-row">
+                 <div class="fqdn">
+                   <button class="btn btn-icon btn-ghost" title="{% trans 'Copy' %}"
+@@ -177,7 +177,7 @@
+                   </button>
+                   <span class="name mono"><b>{{ d.name }}</b>.{{ domain }}</span>
+                 </div>
+-                <div class="ip-cell mono">{{ last_known }}</div>
++                <div class="ip-cell mono">{{ last_known }}{% if live_ip6 %}<br>{{ live_ip6 }}{% endif %}</div>
+                 <div class="updated">
+                   {% if last_when != "---" %}{{ last_when|timesince }} {% trans "ago" %}{% else %}—{% endif %}
+                 </div>
+diff --git a/appdata/pyddns/pyddns/templatetags/app_filters.py b/appdata/pyddns/pyddns/templatetags/app_filters.py
+index 1af1f0f..6045988 100644
+--- a/appdata/pyddns/pyddns/templatetags/app_filters.py
++++ b/appdata/pyddns/pyddns/templatetags/app_filters.py
+@@ -6,6 +6,8 @@ from django.utils.safestring import mark_safe
+ from pyddns.models import SubDomain
+ from common.models import Activity_log
+ from django.conf import settings
++import socket
++import dns.resolver
+ 
+ 
+ register = template.Library()
+@@ -27,6 +29,35 @@ def last_ip(subdomain):
+         return "---"
+ 
+ 
++@register.filter(name='current_ip6')
++def current_ip6(subdomain):
++    """The AAAA that is live in DNS right now, or "" if there is none.
++
++    Resolved rather than read back out of Activity_log, because the log cannot
++    answer the question. Its newest `good` row carries an empty ip6 both when a
++    v4-only update simply did not mention v6 (the AAAA is still valid) and when
++    an update explicitly cleared it (the AAAA is gone) -- two opposite states,
++    one representation. Falling back to "the newest row that had an ip6" would
++    show an address that was deleted minutes ago.
++
++    Asks the authoritative server directly (DNS_RESOLVER_HOST), same as
++    views.set_ip, so the answer cannot be a stale cache entry. Any failure --
++    no record, server unreachable, timeout -- yields "" and the template simply
++    shows nothing; a dashboard row is not worth an error page.
++    """
++    domain = '%s.%s' % (subdomain, settings.DNS_DOMAIN)
++    try:
++        resolver = dns.resolver.Resolver()
++        resolver.nameservers = [socket.gethostbyname(settings.DNS_RESOLVER_HOST)]
++        # Short, because this runs once per row while the user waits for the
++        # page. The default 5s lifetime would stall the whole dashboard on an
++        # unreachable master.
++        resolver.lifetime = 2.0
++        return str(resolver.resolve(domain, "AAAA")[0])
++    except Exception:
++        return ""
++
++
+ @register.filter(name='last_update')
+ def last_update(subdomain):
+     domain = '%s.%s' % (subdomain, settings.DNS_DOMAIN)
+diff --git a/appdata/static/pyddns/css/styles.css b/appdata/static/pyddns/css/styles.css
+index 77cb74f..adf075d 100644
+--- a/appdata/static/pyddns/css/styles.css
++++ b/appdata/static/pyddns/css/styles.css
+@@ -359,7 +359,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ }
+ .sub-row {
+   display: grid;
+-  grid-template-columns: minmax(0, 1.4fr) 140px 90px minmax(0, 1fr) auto;
++  grid-template-columns: minmax(0, 1.4fr) minmax(0, 300px) 90px minmax(0, 1fr) auto;
+   gap: 14px;
+   align-items: center;
+   padding: 14px var(--pad);
+@@ -369,7 +369,10 @@ input, select, textarea { font-family: inherit; color: inherit; }
+ .sub-row .fqdn { display: flex; align-items: center; gap: 10px; min-width: 0; }
+ .sub-row .fqdn .name { font-weight: 600; truncate: ellipsis; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ .sub-row .fqdn .name b { color: var(--accent); }
+-.sub-row .ip-cell { color: var(--text-muted); font-size: 13px; }
++/* Same reason as .log-row .ip: a full IPv6 is 39 characters with no break
++   opportunity, so without this it pushes the neighbouring columns out of
++   the row instead of wrapping. */
++.sub-row .ip-cell { color: var(--text-muted); font-size: 13px; min-width: 0; overflow-wrap: anywhere; }
+ .sub-row .updated { color: var(--text-muted); font-size: 12.5px; }
+ .sub-row .actions { display: flex; gap: 6px; justify-content: flex-end; }
+ .sub-row.is-stale { /* visual hint */ }

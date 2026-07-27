@@ -16,6 +16,8 @@ Applied in filename order against upstream commit
 | `0005-delete-aaaa-when-cleared` | `myipv6` present but empty removes the AAAA — a host that permanently loses IPv6 would otherwise keep a stale record that clients prefer over the A and then time out on. Adds an explicit `delete` value for both families. |
 | `0006-log-and-show-ipv6` | `Activity_log` gains an `ip6` column (with migration) and the dashboard shows it, so a dual-stack update is visible as such. |
 | `0007-wider-shell-and-ip-wrap` | Dashboard layout: the data tables span the full width with the quickstart card below them, and a long IPv6 wraps instead of overlapping the neighbouring column. |
+| `0008-show-live-aaaa-in-domain-table` | The domain table shows the AAAA that is live in DNS. Resolved rather than read from `Activity_log`: its newest good row has an empty `ip6` both when a v4-only update did not mention v6 (AAAA still valid) and when one explicitly cleared it (AAAA gone) — two opposite states, one representation. |
+| `0009-resolve-v4-from-dns-too` | The v4 column resolves from DNS as well. `last_ip` returned what the client last *reported*, which drifts from what is published as soon as a record changes by any other route. Renamed to `current_ip` rather than quietly redefined. |
 
 ## Applying
 

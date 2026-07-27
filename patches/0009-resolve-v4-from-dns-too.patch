@@ -1,0 +1,98 @@
+diff --git a/appdata/pyddns/pyddns/templates/dash.html b/appdata/pyddns/pyddns/templates/dash.html
+index 1d1a301..308fc16 100644
+--- a/appdata/pyddns/pyddns/templates/dash.html
++++ b/appdata/pyddns/pyddns/templates/dash.html
+@@ -166,7 +166,7 @@
+         {% if my_subdomains %}
+           <div class="subs">
+             {% for d in my_subdomains %}
+-              {% with last_known=d.name|last_ip last_when=d.name|last_update live_ip6=d.name|current_ip6 %}
++              {% with last_known=d.name|current_ip last_when=d.name|last_update live_ip6=d.name|current_ip6 %}
+               <div class="sub-row">
+                 <div class="fqdn">
+                   <button class="btn btn-icon btn-ghost" title="{% trans 'Copy' %}"
+diff --git a/appdata/pyddns/pyddns/templates/subdomains.html b/appdata/pyddns/pyddns/templates/subdomains.html
+index 0153089..43fc2dc 100644
+--- a/appdata/pyddns/pyddns/templates/subdomains.html
++++ b/appdata/pyddns/pyddns/templates/subdomains.html
+@@ -59,7 +59,7 @@
+                   <span class="mono" style="font-size: 12.5px; color: var(--text-muted);">@{{ s.user.username }}</span>
+                 </div>
+               </td>
+-              <td class="mono" style="color: var(--text-muted);">{{ s.name|last_ip }}</td>
++              <td class="mono" style="color: var(--text-muted); overflow-wrap: anywhere;">{{ s.name|current_ip }}{% with v6=s.name|current_ip6 %}{% if v6 %}<br>{{ v6 }}{% endif %}{% endwith %}</td>
+               <td style="color: var(--text-muted);">
+                 {% with last=s.name|last_update %}
+                   {% if last != "---" %}{{ last|timesince }} {% trans "ago" %}{% else %}—{% endif %}
+diff --git a/appdata/pyddns/pyddns/templatetags/app_filters.py b/appdata/pyddns/pyddns/templatetags/app_filters.py
+index 6045988..6f66df4 100644
+--- a/appdata/pyddns/pyddns/templatetags/app_filters.py
++++ b/appdata/pyddns/pyddns/templatetags/app_filters.py
+@@ -19,14 +19,42 @@ def count_domain(user):
+     return count
+ 
+ 
+-@register.filter(name='last_ip')
+-def last_ip(subdomain):
++def _resolve(subdomain, rdtype):
++    """First record of `rdtype` currently published for a subdomain, or "".
++
++    Asks the authoritative server directly (DNS_RESOLVER_HOST), the same one
++    views.set_ip writes through, so the answer cannot come from a cache that
++    outlives the record's 60s TTL. Every failure -- no such record, server
++    unreachable, timeout -- collapses to "", because a dashboard row is not
++    worth an error page.
++    """
+     domain = '%s.%s' % (subdomain, settings.DNS_DOMAIN)
+     try:
+-        last_activity = Activity_log.objects.filter(action="SYNC", code="good", domain=domain).latest('date')
+-        return last_activity.ip
+-    except Activity_log.DoesNotExist:
+-        return "---"
++        resolver = dns.resolver.Resolver()
++        resolver.nameservers = [socket.gethostbyname(settings.DNS_RESOLVER_HOST)]
++        # Short, because this runs while the user waits for the page. The
++        # default 5s lifetime would stall the dashboard on an unreachable
++        # master; a user with several subdomains would wait 5s per row.
++        resolver.lifetime = 2.0
++        return str(resolver.resolve(domain, rdtype)[0])
++    except Exception:
++        return ""
++
++
++@register.filter(name='current_ip')
++def current_ip(subdomain):
++    """The A record that is live in DNS right now.
++
++    Was `last_ip`, which returned the address of the newest successful SYNC in
++    Activity_log. That is what the client last REPORTED, not what is published:
++    the two drift apart whenever a record is changed by any other route, and
++    the column claims to show where the subdomain points. Renamed rather than
++    quietly redefined, so nothing keeps reading it as "last reported".
++
++    Keeps the "---" placeholder of the old filter for the empty case; the
++    templates render it unconditionally.
++    """
++    return _resolve(subdomain, "A") or "---"
+ 
+ 
+ @register.filter(name='current_ip6')
+@@ -45,17 +73,7 @@ def current_ip6(subdomain):
+     no record, server unreachable, timeout -- yields "" and the template simply
+     shows nothing; a dashboard row is not worth an error page.
+     """
+-    domain = '%s.%s' % (subdomain, settings.DNS_DOMAIN)
+-    try:
+-        resolver = dns.resolver.Resolver()
+-        resolver.nameservers = [socket.gethostbyname(settings.DNS_RESOLVER_HOST)]
+-        # Short, because this runs once per row while the user waits for the
+-        # page. The default 5s lifetime would stall the whole dashboard on an
+-        # unreachable master.
+-        resolver.lifetime = 2.0
+-        return str(resolver.resolve(domain, "AAAA")[0])
+-    except Exception:
+-        return ""
++    return _resolve(subdomain, "AAAA")
+ 
+ 
+ @register.filter(name='last_update')
